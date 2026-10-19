@@ -8,7 +8,7 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
 
-#if ANDROID || WINDOWS
+#if ANDROID || WINDOWS || MACCATALYST
         Shell.SetTabBarIsVisible(this, false);
 #endif
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -139,8 +139,8 @@ public class MockDataService
             PhoneNumber = "555-5555",
             Email = "lisa.taylor@clinic.com",
             Biography = "Pediatric Specialist",
-            Latitude = 0,
-            Longitude = 0,
+            Latitude = 42.3601,
+            Longitude = -71.0589,
             Image = "lisa_taylor.png",
             AvailableSlots = new List<string>
             {
@@ -594,70 +594,4 @@ new Medication
         };
     }
 
-    private static List<string> GetDefaultSlots()
-    {
-        return new List<string>
-        {
-            "09:00 AM",
-            "10:00 AM",
-            "11:00 AM",
-            "12:00 PM",
-            "02:00 PM",
-            "03:00 PM",
-            "04:00 PM",
-            "05:00 PM"
-        };
-    }
-
-    public List<Appointment> GetVisitPageAppointments()
-    {
-        var now = DateTime.Now;
-
-        return new()
-    {
-        new Appointment
-        {
-            AppointmentId = "1",
-            DoctorName = "Dr. Sarah Jenkins",
-            Specialization = "Cardiology",
-            Status = "Confirmed",
-            VisitType = "Video Visit",
-            Date = now.AddDays(3),
-            Time = now.AddDays(3).ToString("hh:mm tt")
-        },
-
-        new Appointment
-        {
-            AppointmentId = "2",
-            DoctorName = "Dr. Mark Roberts",
-            Specialization = "Dermatology",
-            Status = "Pending",
-            VisitType = "Clinic Visit",
-            Date = now.AddDays(10),
-            Time = now.AddDays(10).ToString("hh:mm tt")
-        },
-
-        new Appointment
-        {
-            AppointmentId = "3",
-            DoctorName = "Dr. Emily Watson",
-            Specialization = "Neurology",
-            Status = "Completed",
-            VisitType = "Video Visit",
-            Date = now.AddDays(-5),
-            Time = now.AddDays(-5).ToString("hh:mm tt")
-        },
-
-        new Appointment
-        {
-            AppointmentId = "4",
-            DoctorName = "Dr. James Wilson",
-            Specialization = "Orthopedics",
-            Status = "Completed",
-            VisitType = "Clinic Visit",
-            Date = now.AddDays(-14),
-            Time = now.AddDays(-14).ToString("hh:mm tt")
-        }
-    };
-    }
 }

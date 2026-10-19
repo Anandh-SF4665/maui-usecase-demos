@@ -5,16 +5,33 @@ public partial class BottomNavigationView : ContentView
     private static readonly Color SelectedColor = Color.FromArgb("#00685F");
     private static readonly Color UnselectedColor = Color.FromArgb("#64748B");
 
+    private EventHandler<ShellNavigatedEventArgs>? shellNavigatedHandler;
+
     public BottomNavigationView()
     {
         InitializeComponent();
         Loaded += OnLoaded;
-        Shell.Current.Navigated += OnShellNavigated;
+        Unloaded += OnUnloaded;
     }
 
     private void OnLoaded(object? sender, EventArgs e)
     {
+        if (shellNavigatedHandler is null && Shell.Current is not null)
+        {
+            shellNavigatedHandler = OnShellNavigated;
+            Shell.Current.Navigated += shellNavigatedHandler;
+        }
+
         UpdateSelectedTab();
+    }
+
+    private void OnUnloaded(object? sender, EventArgs e)
+    {
+        if (shellNavigatedHandler is not null && Shell.Current is not null)
+        {
+            Shell.Current.Navigated -= shellNavigatedHandler;
+            shellNavigatedHandler = null;
+        }
     }
 
     private void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)

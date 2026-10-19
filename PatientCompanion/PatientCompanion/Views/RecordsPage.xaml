@@ -24,7 +24,6 @@
                 Spacing="20">
 
                 <VerticalStackLayout
-                    IsVisible="{Binding IsRecordsTabVisible}"
                     Spacing="12">
 
                     <Label

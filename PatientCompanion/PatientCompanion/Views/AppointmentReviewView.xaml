@@ -166,22 +166,22 @@
 
                     <!-- Map -->
 
-                    <Border 
+                    <Border
                         StrokeThickness="0"
                         StrokeShape="RoundRectangle 12"
                         HeightRequest="140">
                                                 <map:SfMaps>
                             <map:SfMaps.Layer>
                                                                 <map:MapShapeLayer
-                                                                        ShapesSource="https://cdn.syncfusion.com/maps/map-data/world-map.json"
+                                                                        x:Name="WorldMapLayer"
                                                                         ShapeStroke="DarkGrey"
                                                                         MarkerTemplate="{StaticResource LocationMarkerTemplate}"
                                                                         ShowMarkerTooltip="True">
                                                                         <map:MapShapeLayer.Markers>
                                         <map:MapMarkerCollection>
                                             <map:MapMarker
-                                                                                                Latitude="20.5595"
-                                                                                                Longitude="22.9375"
+                                                                                                Latitude="{Binding MapLatitude}"
+                                                                                                Longitude="{Binding MapLongitude}"
                                                                                                 HorizontalAlignment="Center"
                                                                                                 VerticalAlignment="Start"
                                                 IconFill="Red"/>

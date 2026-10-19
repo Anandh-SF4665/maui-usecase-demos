@@ -4,6 +4,8 @@ namespace PatientCompanion.Views;
 
 public partial class HomePage : ContentPage
 {
+    private HomeViewModel? viewModel;
+
     public HomePage()
         : this(App.Resolve<HomeViewModel>())
     {
@@ -13,14 +15,21 @@ public partial class HomePage : ContentPage
     {
         InitializeComponent();
 
-        BindingContext = viewModel;
+        BindingContext = this.viewModel = viewModel;
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
 
-        if (BindingContext is HomeViewModel viewModel)
-            viewModel.Refresh();
+        viewModel?.Refresh();
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        viewModel?.Dispose();
+        viewModel = null;
     }
 }

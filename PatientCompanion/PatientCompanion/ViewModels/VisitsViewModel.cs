@@ -36,45 +36,57 @@ public partial class VisitsViewModel : BaseViewModel
         LoadData();
     }
 
+    protected override void OnDispose()
+    {
+        appointmentService.OnAppointmentsChanged -= LoadData;
+    }
+
     private void LoadData()
     {
-        var showUpcoming = IsUpcomingSelected;
-
-        UpcomingVisits.Clear();
-        PastVisits.Clear();
-
-        foreach (var booking in appointmentService.GetAppointments())
+        try
         {
-            if (booking.Status == "Cancelled")
-                continue;
+            var showUpcoming = IsUpcomingSelected;
 
-            var appointment = new Appointment
-            {
-                AppointmentId = booking.AppointmentId,
-                DoctorName = booking.DoctorName,
-                Specialization = booking.SelectedDoctor?.Specialization ?? "",
-                Hospital = booking.HospitalName,
-                Date = booking.SelectedDate,
-                Time = booking.SelectedTimeSlot,
-                VisitType = booking.VisitType,
-                Status =
-                    booking.Status,
-            };
+            UpcomingVisits.Clear();
+            PastVisits.Clear();
 
-            if (appointment.Status is "Confirmed" or "Upcoming" && booking.ScheduledDateTime >= DateTime.Now)
+            foreach (var booking in appointmentService.GetAppointments())
             {
-                UpcomingVisits.Add(appointment);
+                if (booking.Status == "Cancelled")
+                    continue;
+
+                var appointment = new Appointment
+                {
+                    AppointmentId = booking.AppointmentId,
+                    DoctorName = booking.DoctorName,
+                    Specialization = booking.SelectedDoctor?.Specialization ?? "",
+                    Hospital = booking.HospitalName,
+                    Date = booking.SelectedDate,
+                    Time = booking.SelectedTimeSlot,
+                    VisitType = booking.VisitType,
+                    Status =
+                        booking.Status,
+                };
+
+                if (appointment.Status is "Confirmed" or "Upcoming" && booking.ScheduledDateTime >= DateTime.Now)
+                {
+                    UpcomingVisits.Add(appointment);
+                }
+                else
+                {
+                    PastVisits.Add(appointment);
+                }
             }
-            else
-            {
-                PastVisits.Add(appointment);
-            }
+
+            DisplayVisits.Clear();
+            var visits = showUpcoming ? UpcomingVisits : PastVisits;
+            foreach (var visit in visits)
+                DisplayVisits.Add(visit);
         }
-
-        DisplayVisits.Clear();
-        var visits = showUpcoming ? UpcomingVisits : PastVisits;
-        foreach (var visit in visits)
-            DisplayVisits.Add(visit);
+        catch
+        {
+            // Defensive: don't let UI refresh failure escape into service callers.
+        }
     }
 
     [RelayCommand]

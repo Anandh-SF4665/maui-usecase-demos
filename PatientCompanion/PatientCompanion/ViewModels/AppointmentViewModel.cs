@@ -22,22 +22,32 @@ public partial class AppointmentViewModel : BaseViewModel
     private AppointmentBooking booking = new();
 
     public AppointmentViewModel()
-        : this(null)
+        : this(null, null, null, null, null)
     {
     }
 
-    public AppointmentViewModel(AppointmentBooking? existingBooking)
+    public AppointmentViewModel(
+        AppointmentBooking? existingBooking,
+        Func<AppointmentViewModel, AppointmentSpecialityView>? specialityFactory = null,
+        Func<AppointmentViewModel, AppointmentDoctorSelectionView>? doctorFactory = null,
+        Func<AppointmentViewModel, AppointmentDateTimeView>? dateTimeFactory = null,
+        Func<AppointmentViewModel, AppointmentReviewView>? reviewFactory = null)
     {
+        specialityFactory ??= vm => new AppointmentSpecialityView(vm);
+        doctorFactory ??= vm => new AppointmentDoctorSelectionView(vm);
+        dateTimeFactory ??= vm => new AppointmentDateTimeView(vm);
+        reviewFactory ??= vm => new AppointmentReviewView(vm);
+
         if (existingBooking != null)
         {
             Booking = existingBooking;
             CurrentStep = 2;
-            CurrentStepView = new AppointmentDateTimeView(this);
+            CurrentStepView = dateTimeFactory(this);
             return;
         }
 
         CurrentStep = 0;
-        CurrentStepView = new AppointmentSpecialityView(this);
+        CurrentStepView = specialityFactory(this);
     }
 
     // Convenience accessors that forward to the Booking object
@@ -116,13 +126,8 @@ public partial class AppointmentViewModel : BaseViewModel
 
         CurrentStep = CurrentStep switch
         {
-            // Step 2 - Select Doctor
             1 => 0,
-
-            // Step 3 - Date & Time
             2 => 1,
-
-            // Step 4 - Review & Confirm
             _ => 2
         };
 

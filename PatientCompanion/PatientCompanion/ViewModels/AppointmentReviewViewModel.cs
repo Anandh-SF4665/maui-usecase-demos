@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PatientCompanion.Models;
 using PatientCompanion.Services;
@@ -40,14 +40,10 @@ public partial class AppointmentReviewViewModel : ObservableObject
         Booking.SelectedDoctor?.Address ?? string.Empty;
 
     public double MapLatitude =>
-        Booking.SelectedDoctor is { Latitude: not 0 } doctor
-            ? doctor.Latitude
-            : 13.0827;
+        Booking.SelectedDoctor?.Latitude ?? 0;
 
     public double MapLongitude =>
-        Booking.SelectedDoctor is { Longitude: not 0 } doctor
-            ? doctor.Longitude
-            : 80.2707;
+        Booking.SelectedDoctor?.Longitude ?? 0;
 
     public string VisitType =>
         Booking.VisitType;
@@ -61,13 +57,17 @@ public partial class AppointmentReviewViewModel : ObservableObject
     public string AppointmentSummary =>
         $"{Booking.SelectedDate:dd MMM yyyy} • {Booking.SelectedTimeSlot}";
 
-    public string PatientName => "Maya Chen";
+    public string PatientName =>
+        App.Resolve<MockDataService>().GetPatient().Name;
 
     public string PurposeOfVisit => "Follow-up on heart rate monitoring";
 
     [RelayCommand]
     private async Task ConfirmAppointment()
     {
+        if (Booking.ScheduledDateTime < DateTime.Now)
+            return;
+
         appointmentService.AddAppointment(Booking);
 
         await Shell.Current.GoToAsync("//MainTabs/VisitsPage");

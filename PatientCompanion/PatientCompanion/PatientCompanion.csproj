@@ -31,10 +31,10 @@
 		<UseXamlCompilerExecutable>false</UseXamlCompilerExecutable>
 
 		<!-- Display name -->
-		<ApplicationTitle>PatientCompanion</ApplicationTitle>
+		<ApplicationTitle>MediFlow Patient Companion</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.patientcompanion</ApplicationId>
+		<ApplicationId>com.syncfusion.mediflow.patientcompanion</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>

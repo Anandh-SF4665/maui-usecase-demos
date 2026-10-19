@@ -44,9 +44,21 @@ public class AppointmentService
             ? AppointmentBooking.VideoVisit
             : AppointmentBooking.ClinicVisit;
         booking.Status = "Confirmed";
+
         var existing = appointments.FirstOrDefault(item => item.AppointmentId == booking.AppointmentId);
-        if (existing == null)
+        if (existing != null)
+        {
+            existing.SelectedDate = booking.SelectedDate;
+            existing.SelectedTimeSlot = booking.SelectedTimeSlot;
+            existing.VisitType = booking.VisitType;
+            existing.SelectedDoctor = booking.SelectedDoctor;
+            existing.SelectedSpeciality = booking.SelectedSpeciality;
+            existing.Status = booking.Status;
+        }
+        else
+        {
             appointments.Add(booking);
+        }
 
         Persist();
         OnAppointmentsChanged?.Invoke();

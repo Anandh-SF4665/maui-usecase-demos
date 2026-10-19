@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PatientCompanion.Models;
 using PatientCompanion.Views;
@@ -82,6 +82,12 @@ public partial class AppointmentDateTimeViewModel : ObservableObject
 
     partial void OnSelectedDateChanged(DateTime value)
     {
+        if (value.Date < DateTime.Today)
+        {
+            SelectedDate = DateTime.Today;
+            return;
+        }
+
         UpdateDateSelection();
         OnPropertyChanged(nameof(SelectedMonthText));
         GenerateTimeSlots();
@@ -208,7 +214,7 @@ public partial class AppointmentDateTimeViewModel : ObservableObject
         if (DateTime.TryParseExact(
             monthText,
             "MMMM yyyy",
-            null,
+            System.Globalization.CultureInfo.InvariantCulture,
             System.Globalization.DateTimeStyles.None,
             out var month))
         {
