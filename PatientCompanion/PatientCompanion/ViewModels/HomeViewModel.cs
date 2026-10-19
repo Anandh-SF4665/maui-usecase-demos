@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -26,6 +26,11 @@ public partial class HomeViewModel : BaseViewModel
         LoadData();
     }
 
+    protected override void OnDispose()
+    {
+        _appointmentService.OnAppointmentsChanged -= LoadData;
+    }
+
     [ObservableProperty]
     private Patient? patient;
 
@@ -48,26 +53,34 @@ public partial class HomeViewModel : BaseViewModel
 
     private void LoadData()
     {
-        Patient = _mockDataService.GetPatient();
+        try
+        {
+            Patient = _mockDataService.GetPatient();
 
-        VitalSummary = _mockDataService.GetVitalSummary();
+            VitalSummary = _mockDataService.GetVitalSummary();
 
-        var medications = _mockDataService.GetMedications();
-        MedicationCount = medications.Count;
-        TodayMedication = medications.FirstOrDefault();
+            var medications = _mockDataService.GetMedications();
+            MedicationCount = medications.Count;
+            TodayMedication = medications.FirstOrDefault();
 
-        var upcoming = _appointmentService.GetAppointments()
-            .Where(item => item.Status is "Upcoming" or "Confirmed" && item.ScheduledDateTime >= DateTime.Now)
-            .OrderBy(item => item.SelectedDate)
-            .ThenBy(item => item.SelectedTimeSlot)
-            .Select(ToAppointment)
-            .ToList();
+            var upcoming = _appointmentService.GetAppointments()
+                .Where(item => item.Status is "Upcoming" or "Confirmed" && item.ScheduledDateTime >= DateTime.Now)
+                .OrderBy(item => item.SelectedDate)
+                .ThenBy(item => item.SelectedTimeSlot)
+                .Select(ToAppointment)
+                .ToList();
 
-        NextAppointments.Clear();
-        foreach (var appointment in upcoming)
-            NextAppointments.Add(appointment);
+            NextAppointments.Clear();
+            foreach (var appointment in upcoming)
+                NextAppointments.Add(appointment);
 
-        NextAppointment = NextAppointments.FirstOrDefault();
+            NextAppointment = NextAppointments.FirstOrDefault();
+        }
+        catch
+        {
+            // Swallow — defensive: don't let a UI refresh failure escape into
+            // AppointmentService.OnAppointmentsChanged callers (e.g. CancelAppointment).
+        }
     }
 
     public void Refresh()

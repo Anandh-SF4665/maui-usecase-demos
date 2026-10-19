@@ -4,6 +4,8 @@ namespace PatientCompanion.Views;
 
 public partial class VisitsPage : ContentPage
 {
+    private VisitsViewModel? viewModel;
+
     public VisitsPage()
         : this(App.Resolve<VisitsViewModel>())
     {
@@ -12,6 +14,14 @@ public partial class VisitsPage : ContentPage
     public VisitsPage(VisitsViewModel viewModel)
     {
         InitializeComponent();
-        BindingContext = viewModel;
+        BindingContext = this.viewModel = viewModel;
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        viewModel?.Dispose();
+        viewModel = null;
     }
 }

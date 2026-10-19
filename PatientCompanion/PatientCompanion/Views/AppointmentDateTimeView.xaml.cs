@@ -34,12 +34,16 @@ public partial class AppointmentDateTimeView : ContentView
         monthPicker.Focus();
     }
 
-    private void MonthPicker_SelectedIndexChanged(object sender, EventArgs e)
+    private void MonthPicker_SelectedIndexChanged(object? sender, EventArgs e)
     {
         if (BindingContext is not AppointmentDateTimeViewModel viewModel)
             return;
 
-        if (monthPicker.SelectedItem is string monthText)
-            viewModel.SetMonth(monthText);
+        if (sender is Picker picker &&
+            picker.SelectedIndex >= 0 &&
+            picker.SelectedIndex < picker.Items.Count)
+        {
+            viewModel.SetMonth(picker.Items[picker.SelectedIndex]);
+        }
     }
 }

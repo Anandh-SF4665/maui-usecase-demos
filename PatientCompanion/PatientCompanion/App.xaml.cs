@@ -1,4 +1,4 @@
-﻿namespace PatientCompanion;
+namespace PatientCompanion;
 
 public partial class App : Application
 {

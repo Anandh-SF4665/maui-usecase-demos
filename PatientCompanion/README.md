@@ -4,7 +4,7 @@ MediFlow Patient Companion is a cross-platform patient companion application bui
 
 ## Key Highlights
 
-* A complete, realistic patient companion scenario with mock data — no backend or credentials required
+* A complete, realistic patient companion scenario with mock data — no backend, network, or credentials required
 * Guided 4-step appointment booking (Specialty → Doctor → Date & Time → Review & Confirm) with a reschedule flow
 * Multiple Syncfusion MAUI controls used in context on a single screen flow
 * Clean MVVM architecture (CommunityToolkit.Mvvm) with DI-registered ViewModels
@@ -12,7 +12,7 @@ MediFlow Patient Companion is a cross-platform patient companion application bui
 
 ## Features
 
-* **Home** – Welcome header, upcoming appointments carousel, care plan progress, quick actions, and vitals snapshot
+* **Home** – Welcome header (bound to mock patient), next-appointments collection, care-plan progress bound to the patient's `HealthScore`, quick actions, and a vitals strip
 * **Visits** – Upcoming/past visit lists with appointment cards, plus "Book an appointment" and reschedule support
 * **Health** – Health metric cards and trend charts (Heart Rate / Blood Pressure / SpO2) with range switching (7D / 1M / 3M)
 * **Medications** – Next dose card with circular progress, medication filter chips, grouped medication list
@@ -27,21 +27,22 @@ MediFlow Patient Companion is a cross-platform patient companion application bui
 | `SfCartesianChart` (Charts) | Health trend charts (line charts with legends and axes) |
 | `SfSegmentedControl` (Buttons) | Range switcher on the health chart card |
 | `SfButton` (Buttons) | Primary actions (Continue, Confirm, Select Doctor, quick actions) |
-| `SfChipGroup` (Core) | Specialty selection, visit type, time slot, and medication filters |
-| `SfCarousel` (Carousel) | Upcoming appointments carousel on Home |
-| `SfBadgeView` (Core) | Notification badge |
+| `SfChipGroup` (Core) | Time slot selection on the date/time step |
+| `SfCarousel` (Carousel) | Vitals strip on Home |
 | `SfAvatarView` (Core) | Doctor and patient avatars |
 | `SfListView` (ListView) | Medical records list |
-| `SfLinearProgressBar` (ProgressBar) | Care plan progress on Home |
+| `SfLinearProgressBar` (ProgressBar) | Care plan progress on Home (bound to `VitalSummary.HealthScore`) |
 | `SfCircularProgressBar` (ProgressBar) | Next dose progress on Medications |
-| `SfMaps` (Maps) | Hospital location map on the appointment review screen |
+| `SfMaps` (Maps) | Hospital location map on the appointment review screen (world-map data loaded from a bundled Raw asset — no network needed) |
+
+> Note: visit-type and specialty selection in the wizard are implemented with `Border` + `DataTrigger` (matching the existing component language of the sample); the time-slot picker is the only `SfChipGroup`.
 
 ## Technologies Used
 
 * .NET MAUI (net10.0) – Cross-platform framework for Android, iOS, macOS, and Windows
 * Syncfusion MAUI Controls (v34.2.6)
 * CommunityToolkit.Mvvm / CommunityToolkit.Maui
-* Mock data only – no network services, no API keys, no accounts
+* Mock data only – bundled `world-map.json` asset, no API calls, no API keys, no accounts
 
 ## Prerequisites
 
@@ -65,7 +66,7 @@ Note: Syncfusion components may require a license key. Register it in `MauiProgr
    Use Case Samples/PatientCompanion/PatientCompanion.slnx
    ```
 
-3. Select your target platform (Android, iOS, Mac Catalyst, or Windows) and start debugging. No configuration is required — all data is mocked locally.
+3. Select your target platform (Android, iOS, Mac Catalyst, or Windows) and start debugging. No configuration is required — all data is mocked locally and the map data is bundled with the app.
 
 > Sample data only — not medical advice.
 
@@ -74,7 +75,9 @@ Note: Syncfusion components may require a license key. Register it in `MauiProgr
 ```
 PatientCompanion/
 ├── Controls/          # Reusable UI controls (cards, layout, bottom navigation)
+├── Converters/        # XAML value converters
 ├── Models/            # Domain models (Doctor, Appointment, Medication, ...)
+├── Resources/         # Colors, styles, fonts, images, bundled Raw assets (world-map.json)
 ├── Services/          # MockDataService, AppointmentService (local persistence)
 ├── ViewModels/        # CommunityToolkit.Mvvm ViewModels
 └── Views/             # Shell tab pages + appointment wizard step views

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using PatientCompanion.Services;
 using PatientCompanion.ViewModels;
@@ -42,7 +42,7 @@ public static class MauiProgram
         // Centralized appointment repository
         builder.Services.AddSingleton<Services.AppointmentService>();
 
-        builder.Services.AddSingleton<AppShell>();
+        builder.Services.AddSingleton<Services.WorldMapAssetService>();
     }
 
     private static void RegisterViewModels(MauiAppBuilder builder)

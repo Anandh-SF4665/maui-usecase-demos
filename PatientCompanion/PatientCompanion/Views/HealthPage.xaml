@@ -43,10 +43,8 @@
 
                 <controls:HealthChartCardView />
 
-                <!-- Temporary Spacer -->
-
                 <BoxView
-                    HeightRequest="400"
+                    HeightRequest="12"
                     Color="Transparent" />
 
             </VerticalStackLayout>

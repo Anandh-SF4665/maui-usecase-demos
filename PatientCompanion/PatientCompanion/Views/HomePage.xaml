@@ -32,7 +32,7 @@
                     <Label
                         FontAttributes="Bold"
                         FontSize="24"
-                        Text="Good morning, Maya"
+                        Text="{Binding Patient.WelcomeText}"
                         TextColor="#191C1E" />
 
                     <HorizontalStackLayout Spacing="6">
@@ -46,7 +46,7 @@
 
                         <Label
                             FontSize="16"
-                            Text="Patient ID: MF-2094-11"
+                            Text="{Binding Patient.PatientId, StringFormat='Patient ID: {0}'}"
                             TextColor="#3D4947" />
 
                     </HorizontalStackLayout>
@@ -114,14 +114,14 @@
                                     Grid.Column="1"
                                     FontAttributes="Bold"
                                     FontSize="12"
-                                    Text="75%"
+                                    Text="{Binding VitalSummary.HealthScore, StringFormat='{0}%'}"
                                     TextColor="#00685F" />
 
                             </Grid>
 
                             <progressBar:SfLinearProgressBar
                                 HeightRequest="8"
-                                Progress="75"
+                                Progress="{Binding VitalSummary.HealthScore, Converter={StaticResource IntToDoubleConverter}}"
                                 TrackCornerRadius="4"
                                 ProgressCornerRadius="4"
                                 TrackFill="#E0E3E5"
@@ -146,7 +146,7 @@
                                     <Border
                                         WidthRequest="40"
                                         HeightRequest="40"
-                                        BackgroundColor="#E5E7EB"
+                                        BackgroundColor="#DDF3EF"
                                         StrokeThickness="0"
                                         StrokeShape="RoundRectangle 20"
                                         VerticalOptions="Center">
@@ -155,7 +155,7 @@
                                             FontFamily="Material Icons"
                                             FontSize="22"
                                             Text="{x:Static local:MaterialIcons.CheckCircle}"
-                                            TextColor="White"
+                                            TextColor="#00685F"
                                             HorizontalTextAlignment="Center"
                                             VerticalTextAlignment="Center" />
 
