@@ -92,6 +92,13 @@ public partial class AppointmentDateTimeViewModel : ObservableObject
         OnPropertyChanged(nameof(SelectedMonthText));
         GenerateTimeSlots();
 
+        // If the previously selected time slot is no longer in the future
+        // (e.g. user changed date back to today after picking a future slot),
+        // clear it so CanContinue disables and the picker shows only valid
+        // options.
+        if (IsSelectedTimeInPast())
+            SelectedTimeSlot = string.Empty;
+
         if (appointmentViewModel != null)
         {
             appointmentViewModel.Booking.SelectedDate = value;
@@ -171,14 +178,47 @@ public partial class AppointmentDateTimeViewModel : ObservableObject
             "5:00 PM"
         };
 
+        var now = DateTime.Now;
+        var isToday = SelectedDate.Date == now.Date;
+
         foreach (var slot in slots)
+        {
+            // On the day of, hide slots that have already passed so the user
+            // can't pick a past time and silently fail confirmation.
+            if (isToday &&
+                TimeSpan.TryParseExact(
+                    slot,
+                    new[] { "h:mm tt", "hh:mm tt" },
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out var slotTime) &&
+                SelectedDate.Date.Add(slotTime) <= now)
+            {
+                continue;
+            }
+
             AvailableTimeSlots.Add(slot);
+        }
 
         TimeOptions.Clear();
-        foreach (var slot in slots)
+        foreach (var slot in AvailableTimeSlots)
             TimeOptions.Add(new AppointmentTimeOption(slot));
 
         UpdateTimeSelection();
+    }
+
+    private bool IsSelectedTimeInPast()
+    {
+        if (string.IsNullOrWhiteSpace(SelectedTimeSlot))
+            return false;
+
+        if (!TimeSpan.TryParseExact(
+            SelectedTimeSlot,
+            new[] { "h:mm tt", "hh:mm tt" },
+            System.Globalization.CultureInfo.InvariantCulture,
+            out var time))
+            return false;
+
+        return SelectedDate.Date.Add(time) <= DateTime.Now;
     }
 
     public bool CanContinue =>
