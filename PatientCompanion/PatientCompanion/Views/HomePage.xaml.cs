@@ -22,14 +22,13 @@ public partial class HomePage : ContentPage
     {
         base.OnAppearing();
 
-        viewModel?.Refresh();
+        viewModel?.Subscribe();
     }
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
 
-        viewModel?.Dispose();
-        viewModel = null;
+        viewModel?.Unsubscribe();
     }
 }

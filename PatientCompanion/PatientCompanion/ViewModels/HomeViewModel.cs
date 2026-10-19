@@ -26,7 +26,14 @@ public partial class HomeViewModel : BaseViewModel
         LoadData();
     }
 
-    protected override void OnDispose()
+    public void Subscribe()
+    {
+        _appointmentService.OnAppointmentsChanged -= LoadData;
+        _appointmentService.OnAppointmentsChanged += LoadData;
+        LoadData();
+    }
+
+    public void Unsubscribe()
     {
         _appointmentService.OnAppointmentsChanged -= LoadData;
     }

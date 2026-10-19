@@ -36,7 +36,14 @@ public partial class VisitsViewModel : BaseViewModel
         LoadData();
     }
 
-    protected override void OnDispose()
+    public void Subscribe()
+    {
+        appointmentService.OnAppointmentsChanged -= LoadData;
+        appointmentService.OnAppointmentsChanged += LoadData;
+        LoadData();
+    }
+
+    public void Unsubscribe()
     {
         appointmentService.OnAppointmentsChanged -= LoadData;
     }

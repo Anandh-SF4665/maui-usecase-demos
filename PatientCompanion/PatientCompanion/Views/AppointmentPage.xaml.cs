@@ -5,8 +5,6 @@ namespace PatientCompanion.Views;
 
 public partial class AppointmentPage : ContentPage
 {
-    private AppointmentViewModel? viewModel;
-
     public AppointmentPage()
         : this(App.Resolve<AppointmentService>(), null)
     {
@@ -16,15 +14,6 @@ public partial class AppointmentPage : ContentPage
     {
         InitializeComponent();
 
-        this.viewModel = viewModel ?? new AppointmentViewModel(appointmentService.ConsumePendingReschedule());
-        BindingContext = this.viewModel;
-    }
-
-    protected override void OnDisappearing()
-    {
-        base.OnDisappearing();
-
-        viewModel?.Dispose();
-        viewModel = null;
+        BindingContext = viewModel ?? new AppointmentViewModel(appointmentService.ConsumePendingReschedule());
     }
 }

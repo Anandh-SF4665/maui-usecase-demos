@@ -17,11 +17,17 @@ public partial class VisitsPage : ContentPage
         BindingContext = this.viewModel = viewModel;
     }
 
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        viewModel?.Subscribe();
+    }
+
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
 
-        viewModel?.Dispose();
-        viewModel = null;
+        viewModel?.Unsubscribe();
     }
 }
