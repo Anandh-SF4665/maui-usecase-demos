@@ -22,10 +22,11 @@ public class AppointmentService
         var doctors = mockDataService.GetDoctors();
         var now = DateTime.Now;
 
+        // Seed with a single upcoming and a single past appointment so the
+        // demo starts with two items. The user can then book more at
+        // runtime and they all appear in the list.
         AddDefaultAppointment(doctors[0], now.Date.AddDays(1).AddHours(10), "Clinic Visit");
-        AddDefaultAppointment(doctors[1], now.Date.AddDays(3).AddHours(14), "Video Visit");
-        AddDefaultAppointment(doctors[2], now.Date.AddDays(-7).AddHours(11), "Clinic Visit", "Completed");
-        AddDefaultAppointment(doctors[3], now.Date.AddDays(-21).AddHours(15), "Video Visit", "Completed");
+        AddDefaultAppointment(doctors[1], now.Date.AddDays(-7).AddHours(11), "Video Visit", "Completed");
         Persist();
     }
 
