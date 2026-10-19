@@ -1,6 +1,7 @@
-﻿using System.Collections.Specialized;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using StockChart.Helpers;
 using StockChart.Models;
 using StockChart.Services;
 using StockChart.ViewModels;
@@ -313,35 +314,13 @@ namespace StockChart
             if (isMobile)
             {
                 var display = DeviceDisplay.MainDisplayInfo;
-                var screenWidth = display.Width / display.Density;
-                var screenHeight = display.Height / display.Density;
-                popup.WidthRequest = screenWidth;
-                popup.StartX = 0;
-                popup.StartY = (int)Math.Max(0, screenHeight - popup.HeightRequest);
-                popup.PopupStyle.PopupBackground = Colors.Transparent;
-                popup.PopupStyle.Stroke = Colors.Transparent;
-                popup.PopupStyle.StrokeThickness = 0;
-                popup.PopupStyle.CornerRadius = 0;
-                popup.AnimationMode = PopupAnimationMode.SlideOnBottom;
+                PopupPresentation.ApplyBottomSheetLayout(popup, display.Width / display.Density, display.Height / display.Density);
                 SafePopupOperation(() => popup.Show(popup.StartX, popup.StartY));
                 return;
             }
 
-            ConfigureDesktopPopupStyle(popup);
-            popup.PopupStyle.PopupBackground = Application.Current?.RequestedTheme == AppTheme.Dark
-                ? Color.FromArgb("#1E293B")
-                : Colors.White;
-            popup.PopupStyle.Stroke = Application.Current?.RequestedTheme == AppTheme.Dark
-                ? Color.FromArgb("#334155")
-                : Color.FromArgb("#E2E8F0");
-            popup.PopupStyle.StrokeThickness = 1;
+            PopupPresentation.ApplyThemedDesktopCardStyle(popup);
             SafePopupOperation(() => popup.Show());
-        }
-
-        private static void ConfigureDesktopPopupStyle(SfPopup popup)
-        {
-            popup.PopupStyle.CornerRadius = 20;
-            popup.PopupStyle.StrokeThickness = 1;
         }
 
         private void OnPageLoaded(object? sender, EventArgs e)
@@ -374,7 +353,7 @@ namespace StockChart
                 // Size to the message content rather than a fraction of the screen height,
                 // otherwise the card is left with a large empty area below the text.
                 DisclaimerPopup.HeightRequest = isMobile ? 300 : 200;
-                ConfigureDesktopPopupStyle(DisclaimerPopup);
+                PopupPresentation.ApplyDesktopCardStyle(DisclaimerPopup);
                 Dispatcher.Dispatch(() =>
                 {
                     if (CanUsePopup && !_disclaimerShown)
@@ -394,7 +373,7 @@ namespace StockChart
                 {
                     InformationPopup.WidthRequest = 350;
                     InformationPopup.HeightRequest = 220;
-                    ConfigureDesktopPopupStyle(InformationPopup);
+                    PopupPresentation.ApplyDesktopCardStyle(InformationPopup);
                 }
                 else
                 {
@@ -451,24 +430,19 @@ namespace StockChart
             if (isMobile)
             {
                 var display = DeviceDisplay.MainDisplayInfo;
-                var screenWidth = display.Width / display.Density;
-                var screenHeight = display.Height / display.Density;
-                SettingsPopup.WidthRequest = screenWidth;
-                SettingsPopup.HeightRequest = Math.Min(520, screenHeight * 0.78);
-                SettingsPopup.StartX = 0;
-                SettingsPopup.StartY = (int)Math.Max(0, screenHeight - SettingsPopup.HeightRequest);
-                SettingsPopup.PopupStyle.PopupBackground = Colors.Transparent;
-                SettingsPopup.PopupStyle.Stroke = Colors.Transparent;
-                SettingsPopup.PopupStyle.StrokeThickness = 0;
-                SettingsPopup.PopupStyle.CornerRadius = new CornerRadius(20, 20, 0, 0);
-                SettingsPopup.AnimationMode = PopupAnimationMode.SlideOnBottom;
+                PopupPresentation.ApplyBottomSheetLayout(
+                    SettingsPopup,
+                    display.Width / display.Density,
+                    display.Height / display.Density,
+                    Math.Min(520, (display.Height / display.Density) * 0.78),
+                    topCornerRadius: 20);
                 SafePopupOperation(() => SettingsPopup.Show(SettingsPopup.StartX, SettingsPopup.StartY));
             }
             else
             {
                 SettingsPopup.WidthRequest = 625;
                 SettingsPopup.HeightRequest = 540;
-                ConfigureDesktopPopupStyle(SettingsPopup);
+                PopupPresentation.ApplyDesktopCardStyle(SettingsPopup);
                 SafePopupOperation(() => SettingsPopup.Show());
             }
         }
@@ -521,7 +495,7 @@ namespace StockChart
             ConfigureSheet(WatchlistMenuPopup, 240, viewModel.CanDeleteSelectedWatchlist ? 105 : 52);
             if (Width >= MobileBreakpoint)
             {
-                ConfigureDesktopPopupStyle(WatchlistMenuPopup);
+                PopupPresentation.ApplyDesktopCardStyle(WatchlistMenuPopup);
             }
             else
             {
