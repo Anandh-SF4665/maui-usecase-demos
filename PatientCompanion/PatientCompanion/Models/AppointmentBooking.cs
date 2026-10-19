@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using PatientCompanion.Models;
 
 namespace PatientCompanion.Models;
@@ -56,8 +56,13 @@ public class AppointmentBooking
     {
         get
         {
-            if (DateTime.TryParse(SelectedTimeSlot, out var time))
-                return SelectedDate.Date.Add(time.TimeOfDay);
+            var timeFormats = new[] { "h:mm tt", "hh:mm tt" };
+            if (TimeSpan.TryParseExact(
+                    SelectedTimeSlot,
+                    timeFormats,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out var time))
+                return SelectedDate.Date.Add(time);
 
             return SelectedDate.Date;
         }

@@ -1,4 +1,4 @@
-﻿namespace PatientCompanion;
+namespace PatientCompanion;
 
 public partial class App : Application
 {
@@ -19,5 +19,11 @@ public partial class App : Application
             return typedService;
 
         throw new InvalidOperationException($"Service {typeof(T).Name} is not registered.");
+    }
+
+    public static Stream GetResourceAsStream(string assetName)
+    {
+        return Current!.Handler.MauiContext.Files
+            .OpenAsync($"Raw/{assetName}").AsStream();
     }
 }
