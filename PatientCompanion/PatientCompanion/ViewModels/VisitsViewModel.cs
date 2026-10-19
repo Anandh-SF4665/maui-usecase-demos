@@ -57,7 +57,10 @@ public partial class VisitsViewModel : BaseViewModel
             UpcomingVisits.Clear();
             PastVisits.Clear();
 
-            foreach (var booking in appointmentService.GetAppointments())
+            var now = DateTime.Now;
+
+            foreach (var booking in appointmentService
+                .GetAppointments())
             {
                 if (booking.Status == "Cancelled")
                     continue;
@@ -71,11 +74,11 @@ public partial class VisitsViewModel : BaseViewModel
                     Date = booking.SelectedDate,
                     Time = booking.SelectedTimeSlot,
                     VisitType = booking.VisitType,
-                    Status =
-                        booking.Status,
+                    Status = booking.Status,
                 };
 
-                if (appointment.Status is "Confirmed" or "Upcoming" && booking.ScheduledDateTime >= DateTime.Now)
+                if (appointment.Status is "Confirmed" or "Upcoming"
+                    && booking.ScheduledDateTime > now)
                 {
                     UpcomingVisits.Add(appointment);
                 }
@@ -85,8 +88,16 @@ public partial class VisitsViewModel : BaseViewModel
                 }
             }
 
+            // Upcoming: chronological ascending (next first). Past: reverse
+            // chronological (most recent past first), matching the standard
+            // history-view convention.
+            var upcomingOrdered = UpcomingVisits
+                .OrderBy(a => a.ScheduledDateTime);
+            var pastOrdered = PastVisits
+                .OrderByDescending(a => a.ScheduledDateTime);
+
             DisplayVisits.Clear();
-            var visits = showUpcoming ? UpcomingVisits : PastVisits;
+            var visits = showUpcoming ? upcomingOrdered : pastOrdered;
             foreach (var visit in visits)
                 DisplayVisits.Add(visit);
         }
@@ -126,7 +137,7 @@ public partial class VisitsViewModel : BaseViewModel
 
         DisplayVisits.Clear();
 
-        foreach (var item in UpcomingVisits)
+        foreach (var item in UpcomingVisits.OrderBy(a => a.ScheduledDateTime))
         {
             DisplayVisits.Add(item);
         }
@@ -139,7 +150,7 @@ public partial class VisitsViewModel : BaseViewModel
 
         DisplayVisits.Clear();
 
-        foreach (var item in PastVisits)
+        foreach (var item in PastVisits.OrderByDescending(a => a.ScheduledDateTime))
         {
             DisplayVisits.Add(item);
         }

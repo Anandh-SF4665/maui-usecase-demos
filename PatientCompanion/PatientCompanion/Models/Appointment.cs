@@ -1,4 +1,4 @@
-﻿namespace PatientCompanion.Models;
+namespace PatientCompanion.Models;
 
 public class Appointment
 {
@@ -34,6 +34,26 @@ public class Appointment
     public string Notes { get; set; } = string.Empty;
 
     public string VisitType { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Combined date+time used for chronological sorting and "is this in
+    /// the future" filtering. Falls back to the date alone if the time
+    /// string cannot be parsed.
+    /// </summary>
+    public DateTime ScheduledDateTime
+    {
+        get
+        {
+            if (TimeSpan.TryParseExact(
+                    Time,
+                    new[] { "h:mm tt", "hh:mm tt" },
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out var time))
+                return Date.Date.Add(time);
+
+            return Date.Date;
+        }
+    }
 
     public string AvatarText
     {

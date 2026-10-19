@@ -71,9 +71,9 @@ public partial class HomeViewModel : BaseViewModel
             TodayMedication = medications.FirstOrDefault();
 
             var upcoming = _appointmentService.GetAppointments()
-                .Where(item => item.Status is "Upcoming" or "Confirmed" && item.ScheduledDateTime >= DateTime.Now)
-                .OrderBy(item => item.SelectedDate)
-                .ThenBy(item => item.SelectedTimeSlot)
+                .Where(item => item.Status is "Upcoming" or "Confirmed"
+                               && item.ScheduledDateTime > DateTime.Now)
+                .OrderBy(item => item.ScheduledDateTime)
                 .Select(ToAppointment)
                 .ToList();
 
