@@ -66,7 +66,13 @@ public partial class AppointmentReviewViewModel : ObservableObject
     private async Task ConfirmAppointment()
     {
         if (Booking.ScheduledDateTime < DateTime.Now)
+        {
+            await Shell.Current.DisplayAlert(
+                "Cannot book appointment",
+                "Please pick a date and time in the future.",
+                "OK");
             return;
+        }
 
         appointmentService.AddAppointment(Booking);
 
