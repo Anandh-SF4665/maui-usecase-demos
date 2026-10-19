@@ -12,6 +12,12 @@ namespace PatientCompanion.ViewModels;
 
 public partial class HomeViewModel : BaseViewModel
 {
+    /// <summary>
+    /// Home preview shows at most this many upcoming appointments.
+    /// The full list is on VisitsPage (no cap there).
+    /// </summary>
+    public const int MaxNextAppointmentPreview = 2;
+
     private readonly MockDataService _mockDataService;
     private readonly AppointmentService _appointmentService;
 
@@ -75,6 +81,7 @@ public partial class HomeViewModel : BaseViewModel
                                && item.ScheduledDateTime > DateTime.Now)
                 .OrderBy(item => item.ScheduledDateTime)
                 .Select(ToAppointment)
+                .Take(MaxNextAppointmentPreview)
                 .ToList();
 
             NextAppointments.Clear();
