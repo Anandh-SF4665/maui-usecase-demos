@@ -416,18 +416,13 @@ namespace StockChart
 
         private void OnSettingsClicked(object? sender, EventArgs e)
         {
-            if (!CanUsePopup || BindingContext is not StockChartViewModel)
+            if (!CanUsePopup || BindingContext is not StockChartViewModel viewModel)
             {
                 return;
             }
 
-            var isMobile = Width > 0 && Width < MobileBreakpoint;
-            if (BindingContext is StockChartViewModel viewModel)
-            {
-                viewModel.LoadSettingsDraft();
-            }
-
-            if (isMobile)
+            viewModel.OpenSettingsPopupCommand.Execute(null);
+            if (Width > 0 && Width < MobileBreakpoint)
             {
                 var display = DeviceDisplay.MainDisplayInfo;
                 PopupPresentation.ApplyBottomSheetLayout(
@@ -454,7 +449,7 @@ namespace StockChart
                 return;
             }
 
-            viewModel.PrepareAddStockCommand.Execute(null);
+            viewModel.OpenAddStockPopupCommand.Execute(null);
             ConfigureSheet(AddStockPopup, 690, 450);
             ShowWorkflowPopup(AddStockPopup);
         }
@@ -474,7 +469,7 @@ namespace StockChart
                     return;
                 }
 
-                viewModel.PrepareNewWatchlistCommand.Execute(null);
+                viewModel.OpenNewWatchlistPopupCommand.Execute(null);
                 ConfigureSheet(NewWatchlistPopup, 620, 360);
                 ShowWorkflowPopup(NewWatchlistPopup);
             });
@@ -524,7 +519,7 @@ namespace StockChart
                         return;
                     }
 
-                    viewModel.PrepareEditWatchlistCommand.Execute(null);
+                    viewModel.OpenEditWatchlistPopupCommand.Execute(null);
                     ConfigureSheet(EditWatchlistPopup, 620, Width > 0 && Width < MobileBreakpoint ? 440 : 460);
                     ShowWorkflowPopup(EditWatchlistPopup);
                 });
@@ -543,6 +538,7 @@ namespace StockChart
                         return;
                     }
 
+                    viewModel.OpenDeleteWatchlistPopupCommand.Execute(null);
                     ConfigureSheet(DeleteWatchlistPopup, 530, Width > 0 && Width < MobileBreakpoint ? 215 : 200);
                     ShowWorkflowPopup(DeleteWatchlistPopup);
                 });
@@ -555,7 +551,7 @@ namespace StockChart
         {
             if (BindingContext is StockChartViewModel viewModel)
             {
-                viewModel.DeleteSelectedWatchlist();
+                viewModel.ConfirmDeleteWatchlistCommand.Execute(null);
             }
 
             SafePopupOperation(DeleteWatchlistPopup.Dismiss);
@@ -570,15 +566,14 @@ namespace StockChart
                 return;
             }
 
-            if (viewModel.IsLastSelectedStockInSelectedWatchlist)
+            viewModel.OpenFavoriteOrRemovePopupCommand.Execute(null);
+            if (viewModel.RequestedPopup == StockChartViewModel.WorkflowPopup.RemoveStock)
             {
-                viewModel.PrepareRemoveStock();
                 ConfigureSheet(RemoveStockPopup, 530, 360);
                 ShowWorkflowPopup(RemoveStockPopup);
             }
             else
             {
-                viewModel.PrepareFavoriteStock();
                 ConfigureSheet(FavoritePopup, 420, 360);
                 ShowWorkflowPopup(FavoritePopup);
             }
@@ -592,15 +587,14 @@ namespace StockChart
                 return;
             }
 
-            if (viewModel.IsWatchlistSelected)
+            viewModel.OpenStockActionPopupCommand.Execute(stock);
+            if (viewModel.RequestedPopup == StockChartViewModel.WorkflowPopup.RemoveStock)
             {
-                viewModel.PrepareRemoveStock(stock, viewModel.SelectedWatchlist);
                 ConfigureSheet(RemoveStockPopup, 530, 360);
                 ShowWorkflowPopup(RemoveStockPopup);
             }
             else
             {
-                viewModel.PrepareFavoriteStock(stock);
                 ConfigureSheet(FavoritePopup, 420, 360);
                 ShowWorkflowPopup(FavoritePopup);
             }
@@ -611,7 +605,7 @@ namespace StockChart
         {
             if (BindingContext is StockChartViewModel viewModel)
             {
-                viewModel.ApplyFavoriteStock();
+                viewModel.ConfirmFavoriteStockCommand.Execute(null);
             }
 
             SafePopupOperation(FavoritePopup.Dismiss);
@@ -623,7 +617,7 @@ namespace StockChart
         {
             if (BindingContext is StockChartViewModel viewModel)
             {
-                viewModel.ApplyRemoveStock();
+                viewModel.ConfirmRemoveStockCommand.Execute(null);
             }
 
             SafePopupOperation(RemoveStockPopup.Dismiss);
@@ -633,7 +627,7 @@ namespace StockChart
         {
             if (BindingContext is StockChartViewModel viewModel && viewModel.PendingStock is not null)
             {
-                viewModel.AddPendingStockToWatchlistsCommand.Execute(null);
+                viewModel.ConfirmAddStockCommand.Execute(null);
                 SafePopupOperation(AddStockPopup.Dismiss);
             }
         }
@@ -643,8 +637,7 @@ namespace StockChart
         {
             if (BindingContext is StockChartViewModel viewModel && !string.IsNullOrWhiteSpace(viewModel.NewWatchlistName))
             {
-                viewModel.CreateWatchlistCommand.Execute(null);
-                viewModel.PrepareAddStockCommand.Execute(null);
+                viewModel.ConfirmNewWatchlistCommand.Execute(null);
                 SafePopupOperation(NewWatchlistPopup.Dismiss);
             }
         }
@@ -654,11 +647,10 @@ namespace StockChart
         {
             if (BindingContext is StockChartViewModel viewModel && !string.IsNullOrWhiteSpace(viewModel.EditWatchlistName))
             {
-                viewModel.SaveWatchlistEditCommand.Execute(null);
+                viewModel.ConfirmEditWatchlistCommand.Execute(null);
                 SafePopupOperation(EditWatchlistPopup.Dismiss);
             }
         }
-
         private static void ConfigureSheet(SfPopup popup, double width, double height)
         {
             popup.WidthRequest = width;
@@ -695,6 +687,7 @@ namespace StockChart
             {
                 viewModel.ApplySettingsDraft();
                 ApplyChartSettings(viewModel);
+                viewModel.CompleteSettingsWorkflow();
             }
 
             CloseSettingsPopup();
