@@ -1,6 +1,7 @@
 using HotelManagerSample.Controls;
 using HotelManagerSample;
-using Syncfusion.Maui.DataGrid.DataPager;
+using Syncfusion.Maui.DataGrid;
+using Syncfusion.Maui.DataPager;
 
 namespace HotelManagerSample;
 
@@ -142,5 +143,60 @@ public partial class BookingsPage : ContentPage
     {
         if (BookingsSearchEntry is not null)
             BookingsSearchEntry.Text = string.Empty;
+    }
+
+    // ============== SfDataGrid interaction ==============
+
+    /// <summary>Forwards the grid's selection into
+    /// <see cref="BookingsViewModel.SelectedBooking"/>. The XAML already
+    /// declares a two-way <c>SelectedItem</c> binding for the same
+    /// property; this handler covers the case where the grid raises
+    /// <c>SelectionChanged</c> without writing the binding source back
+    /// (e.g. when a selection is cleared programmatically or shifted
+    /// between paged sources).</summary>
+    /// <param name="sender">The bookings SfDataGrid. Unused.</param>
+    /// <param name="e">Syncfusion grid selection payload.</param>
+    private void OnBookingsGridSelectionChanged(object? sender, DataGridSelectionChangedEventArgs e)
+    {
+        if (BindingContext is not BookingsViewModel vm)
+            return;
+
+        var added = e.AddedRows;
+        var removed = e.RemovedRows;
+        object? selected = added is { Count: > 0 } ? added[0] : null;
+        if (selected is null && sender is SfDataGrid grid)
+            selected = grid.SelectedRow;
+
+        // Treat a non-empty removal as a deselection.
+        if (selected is null && removed is { Count: > 0 })
+            selected = null;
+
+        if (!ReferenceEquals(vm.SelectedBooking, selected))
+            vm.SelectedBooking = selected;
+    }
+
+    /// <summary>Row-cell-tap handler. Demonstrates the grid's built-in
+    /// <c>CellTapped</c> API — tapping anywhere in a row (not just the
+    /// header) surfaces the reservation in the detail strip below the
+    /// pager. The two-way <c>SelectedItem</c> binding does the same
+    /// thing; this handler is here so the sample shows both entry
+    /// points a customer would reach for.</summary>
+    /// <param name="sender">The bookings SfDataGrid. Unused.</param>
+    /// <param name="e">Cell-tapped payload carrying the tapped row.</param>
+    private void OnBookingsGridCellTapped(object? sender, DataGridCellTappedEventArgs e)
+    {
+        if (e.RowData is SelectableBooking row)
+            _vm.SelectedBooking = row;
+    }
+
+    /// <summary>Drops the grid selection and hides the detail strip when
+    /// the user taps the "×" in the strip's trailing cell.</summary>
+    /// <param name="sender">The tapped glyph. Unused.</param>
+    /// <param name="e">Tapped-event payload. Unused.</param>
+    private void OnClearSelectionTapped(object? sender, TappedEventArgs e)
+    {
+        _vm.ClearBookingSelection();
+        if (BookingsGrid is not null)
+            BookingsGrid.SelectedRow = null!;
     }
 }

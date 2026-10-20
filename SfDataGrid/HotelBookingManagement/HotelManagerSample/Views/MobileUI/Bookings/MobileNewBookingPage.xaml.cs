@@ -1,6 +1,6 @@
-using System.Linq;
 using ChipSelectionChangedEventArgs = Syncfusion.Maui.Core.Chips.SelectionChangedEventArgs;
 using Syncfusion.Maui.Core.Chips;
+using HotelManagerSample.Controls;
 
 namespace HotelManagerSample.Bookings;
 
@@ -69,11 +69,13 @@ public partial class MobileNewBookingPage : ContentPage
     // digit and clamp the length so the field can never hold a country-code
     // prefix, a dash, or a stray 11th character. Mirrors the cleaned value
     // back into the Entry so a paste containing "+1 (555) 123-4567" lands
-    // in the field as "5551234567".
+    // in the field as "5551234567". The actual rule lives in
+    // HotelManagerSample.Controls.PhoneSanitiser so the desktop Add-Booking
+    // popup never drifts out of sync.
 
     /// <summary>Strips non-digit characters from the phone entry and
-    /// clamps its length to 10 so the VM's <see cref="StandardPhonePattern"/>
-    /// never sees an over-long value.</summary>
+    /// clamps its length to 10 so the VM's validator never sees an
+    /// over-long value.</summary>
     /// <param name="sender">The <see cref="Entry"/> that fired the
     /// event. Used to write the sanitised text back into the control.</param>
     /// <param name="e">Standard <see cref="TextChangedEventArgs"/>
@@ -81,10 +83,7 @@ public partial class MobileNewBookingPage : ContentPage
     private void OnPhoneTextChanged(object? sender, TextChangedEventArgs e)
     {
         var raw = e.NewTextValue ?? string.Empty;
-
-        var digitsOnly = new string(raw.Where(char.IsDigit).ToArray());
-        if (digitsOnly.Length > 10)
-            digitsOnly = digitsOnly.Substring(0, 10);
+        var digitsOnly = PhoneSanitiser.Clean(raw);
 
         if (!string.Equals(raw, digitsOnly, StringComparison.Ordinal)
             && sender is Entry entry

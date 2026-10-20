@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using HotelManagerSample;
 
 namespace HotelManagerSample;
@@ -159,9 +160,7 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
         };
     }
 
-    /// <summary>Legend rows for the inventory-breakdown card. Names, values
-    /// and percentages are derived from <see cref="BuildInventoryBreakdown"/>
-    /// every time the rooms collection changes.</summary>
+    /// <summary>Legend rows for the inventory-breakdown card. Names, values and percentages are derived every time the rooms collection changes.</summary>
     public IReadOnlyList<InventoryLegendRow> InventoryLegend => BuildInventoryLegend();
 
     /// <summary>Legend-only color override. Add a token here to make a
@@ -225,6 +224,51 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(Revenue));
         }
     }
+
+    /// <summary>Backing field for <see cref="ActiveRevenueRange"/>.</summary>
+    private string _activeRevenueRange = "7D";
+    /// <summary>Active revenue-range key — "7D", "1M", or "3M". the XAML binds the toggle's label colour + bold state against.</summary>
+    public string ActiveRevenueRange
+    {
+        get => _activeRevenueRange;
+        private set
+        {
+            if (_activeRevenueRange == value) return;
+            _activeRevenueRange = value;
+            OnPropertyChanged(nameof(IsRevenue7DActive));
+            OnPropertyChanged(nameof(IsRevenue1MActive));
+            OnPropertyChanged(nameof(IsRevenue3MActive));
+        }
+    }
+
+    /// <summary>True when the 7-day revenue range is the active one.</summary>
+    public bool IsRevenue7DActive =>
+        string.Equals(_activeRevenueRange, "7D", StringComparison.OrdinalIgnoreCase);
+    /// <summary>True when the 1-month revenue range is the active one.</summary>
+    public bool IsRevenue1MActive =>
+        string.Equals(_activeRevenueRange, "1M", StringComparison.OrdinalIgnoreCase);
+    /// <summary>True when the 3-month revenue range is the active one.</summary>
+    public bool IsRevenue3MActive =>
+        string.Equals(_activeRevenueRange, "3M", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>True when the reservations panel is showing the
+    /// "Today's Check-Ins" segment.</summary>
+    public bool IsCheckInsActive =>
+        string.Equals(_activeSegment, "CheckIns", StringComparison.OrdinalIgnoreCase);
+    /// <summary>True when the reservations panel is showing the
+    /// "Pending Payments" segment.</summary>
+    public bool IsPendingActive =>
+        string.Equals(_activeSegment, "Pending", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Command bound to the 7D / 1M / 3M revenue-range toggle.
+    /// Replaces the imperative <c>OnRevenueRangeTapped</c> code-behind
+    /// handler so styling + series swap ride the same property change.</summary>
+    public ICommand SetRevenueRangeCommand { get; }
+
+    /// <summary>Command bound to the Check-Ins / Pending segment pills.
+    /// Replaces the imperative <c>OnSegmentTapped</c> code-behind
+    /// handler so styling + filter swap ride the same property change.</summary>
+    public ICommand SetActiveSegmentCommand { get; }
 
     /// <summary>
     /// Master collection of recent reservations. Binds DIRECTLY to the
@@ -324,6 +368,8 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
 
             _activeSegment = value;
             OnPropertyChanged(nameof(ActiveSegment));
+            OnPropertyChanged(nameof(IsCheckInsActive));
+            OnPropertyChanged(nameof(IsPendingActive));
             _ = ApplyFiltersAsync();
         }
     }
@@ -517,6 +563,24 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
         InventoryBreakdown = BuildInventoryBreakdownFrom(_store.Rooms);
         _ = ApplyFiltersAsync();
 
+        // ---- Commands ----
+        // The 7D / 1M / 3M toggle and the Check-Ins / Pending segment pills
+        // used to be imperative code-behind handlers (OnRevenueRangeTapped /
+        // OnSegmentTapped). Driving them through commands keeps all of the
+        // styling state on the VM so the XAML can bind flag properties
+        // (IsRevenue7DActive, IsCheckInsActive, ...) instead of mutating
+        // label colours in code.
+        SetRevenueRangeCommand = new Command<string>(range =>
+        {
+            if (string.IsNullOrWhiteSpace(range)) return;
+            SetRevenueRange(range!);
+        });
+        SetActiveSegmentCommand = new Command<string>(segment =>
+        {
+            if (string.IsNullOrWhiteSpace(segment)) return;
+            ActiveSegment = segment!;
+        });
+
         // ---- Store subscriptions ----
         _store.BookingsChanged += OnStoreBookingsChanged;
         _store.RoomsChanged   += OnStoreRoomsChanged;
@@ -582,12 +646,16 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
     /// <param name="range">Range key — "7D", "1M", or "3M".</param>
     public void SetRevenueRange(string range)
     {
-        Revenue = range switch
+        var normalized = (range ?? string.Empty).Trim();
+        if (string.IsNullOrEmpty(normalized))
+            normalized = "7D";
+
+        ActiveRevenueRange = normalized;
+        Revenue = normalized switch
         {
-            "7D" => HotelData.Revenue7D,
             "1M" => HotelData.Revenue1M,
             "3M" => HotelData.Revenue3M,
-            _ => HotelData.Revenue7D
+            _    => HotelData.Revenue7D
         };
     }
 }

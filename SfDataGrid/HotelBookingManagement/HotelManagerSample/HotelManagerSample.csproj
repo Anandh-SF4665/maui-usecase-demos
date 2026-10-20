@@ -43,8 +43,7 @@
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
-		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
-		
+
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 
@@ -66,12 +65,6 @@
 		<PackageReference Include="Syncfusion.Maui.Popup" Version="*" />
 		<PackageReference Include="Syncfusion.Maui.Expander" Version="*" />
 		<PackageReference Include="Syncfusion.Maui.TabView" Version="*" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiXaml Update="AppShell.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	</ItemGroup>
 
 </Project>

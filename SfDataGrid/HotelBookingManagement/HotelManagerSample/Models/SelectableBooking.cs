@@ -60,8 +60,6 @@ public sealed class SelectableBooking : INotifyPropertyChanged
     public string TierColor => Booking.TierColor;
     /// <summary>Free-form notes.</summary>
     public string Notes => Booking.Notes;
-    /// <summary>Avatar image URL (unused by the current design).</summary>
-    public string AvatarUrl => Booking.AvatarUrl;
     /// <summary>Total folio value.</summary>
     public decimal Total => Booking.Total;
     /// <summary>Night count.</summary>

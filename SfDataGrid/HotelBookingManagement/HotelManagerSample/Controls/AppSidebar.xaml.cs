@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using HotelManagerSample;
-using HotelManagerSample;
 
 namespace HotelManagerSample.Controls;
 

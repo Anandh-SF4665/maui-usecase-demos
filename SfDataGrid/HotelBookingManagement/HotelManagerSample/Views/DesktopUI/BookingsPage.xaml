@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
-             xmlns:pager="clr-namespace:Syncfusion.Maui.DataGrid.DataPager;assembly=Syncfusion.Maui.DataGrid"
+             xmlns:pager="clr-namespace:Syncfusion.Maui.DataPager;assembly=Syncfusion.Maui.DataPager"
              xmlns:syncfusionPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:conv="clr-namespace:HotelManagerSample.Converters;assembly=HotelManagerSample"
              xmlns:vm="clr-namespace:HotelManagerSample;assembly=HotelManagerSample"
@@ -201,9 +201,12 @@
                                                HeaderRowHeight="32"
                                                RowHeight="56"
                                                HorizontalOptions="Fill"
-                                               InputTransparent="True"
                                                VerticalOptions="Fill"
-                                               SelectionMode="None"
+                                               SelectionMode="Single"
+                                               SelectedRow="{Binding SelectedBooking, Mode=TwoWay}"
+                                               SelectionChanged="OnBookingsGridSelectionChanged"
+                                               CellTapped="OnBookingsGridCellTapped"
+                                               SortingMode="Multiple"
                                                ShowRowHeader="False"
                                                VerticalScrollBarVisibility="Never"
                                                HorizontalScrollBarVisibility="Never"
@@ -247,13 +250,13 @@
                                 <!-- 4) ASSIGNED KEY / ROOM -->
                                 <syncfusion:DataGridTemplateColumn MappingName="Room"
                                                                    HeaderText="Assigned Room"
-                                                                   Width="150">
+                                                                   Width="200">
                                     <syncfusion:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate x:DataType="models:SelectableBooking">
                                             <VerticalStackLayout Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
                                                 <Border BackgroundColor="#EEF2FF"
                                                         StrokeThickness="0" StrokeShape="RoundRectangle 6"
-                                                        Padding="6,3" VerticalOptions="Center" WidthRequest="75">
+                                                        Padding="6,3" VerticalOptions="Center">
                                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
                                                         <Label Text="&#xe73b;" FontFamily="MaterialAssets" FontSize="11" TextColor="#4A43E6" VerticalTextAlignment="Center" />
                                                         <Label Text="{Binding Room, StringFormat='{0}'}" FontSize="9" FontFamily="OpenSansSemibold" TextColor="#4A43E6" VerticalTextAlignment="Center" />
@@ -303,7 +306,7 @@
                                 <!-- 7) BILLING DETAILS -->
                                 <syncfusion:DataGridTemplateColumn MappingName="Total"
                                                                    HeaderText="Billing Details"
-                                                                   Width="130">
+                                                                   Width="100">
                                     <syncfusion:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate x:DataType="models:SelectableBooking">
                                             <VerticalStackLayout Spacing="0" Margin="30,0,0,0" VerticalOptions="Center" HorizontalOptions="Start">
@@ -366,6 +369,30 @@
                                                VerticalOptions="Center"
                                                HeightRequest="36" />
                         </Grid>
+
+                        <!-- Selection detail strip — populated by the grid's
+                             RecordClick / SelectionChanged pair. This is the
+                             payoff for making the SfDataGrid interactive
+                             instead of a passive renderer. -->
+                        <Border IsVisible="{Binding HasSelectedBooking}"
+                                BackgroundColor="#F1F4FA"
+                                Stroke="#E3E9F5"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12,8">
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="Selected Booking" FontSize="8" FontFamily="OpenSansSemibold" TextColor="#6E7A8F" />
+                                    <Label Text="{Binding SelectedBookingSummary}" FontSize="10" TextColor="#1B2435" LineBreakMode="TailTruncation" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="1" BackgroundColor="Transparent" StrokeThickness="0" Padding="8,2" VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnClearSelectionTapped" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="&#xe5cd;" FontFamily="MaterialAssets" FontSize="13" TextColor="#6E7A8F" VerticalTextAlignment="Center" />
+                                </Border>
+                            </Grid>
+                        </Border>
 
                     </VerticalStackLayout>
                 </Border>

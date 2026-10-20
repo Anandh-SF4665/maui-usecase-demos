@@ -369,3 +369,68 @@ public sealed class StringToBoolConverter : IValueConverter
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotSupportedException();
 }
+
+/// <summary>
+/// True → the supplied <c>ConverterParameter</c> hex colour. False →
+/// <c>#3B4860</c>. Binds the revenue-range toggle labels to a
+/// view-model flag instead of an imperative code-behind handler.
+/// </summary>
+public sealed class ActiveBoolToColorConverter : IValueConverter
+{
+    /// <summary>Resolves the colour for the bound boolean.</summary>
+    /// <param name="value">Bound boolean. Any non-bool resolves to false.</param>
+    /// <param name="targetType">Target type. Unused.</param>
+    /// <param name="parameter">Active-state hex colour (e.g. "#4A43E6").</param>
+    /// <param name="culture">Culture. Unused.</param>
+    /// <returns>The active colour when <paramref name="value"/> is true;
+    /// otherwise the inactive muted-slate colour.</returns>
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var isActive = value is bool b && b;
+        var colorParam = parameter as string;
+
+        // Text color usage
+        if (colorParam == "White")
+        {
+            return isActive ? Colors.White : Colors.Black;
+        }
+
+        // Background color usage
+        if (isActive && !string.IsNullOrEmpty(colorParam))
+        {
+            return Color.FromArgb(colorParam);
+        }
+
+        return Color.FromArgb("#F6F8FD");
+    }
+
+    /// <summary>Not supported — colour resolution is one-way.</summary>
+    /// <returns>Always throws <see cref="NotSupportedException"/>.</returns>
+    /// <exception cref="NotSupportedException">Always thrown.</exception>
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+/// <summary>
+/// True → <see cref="FontAttributes.Bold"/>. False →
+/// <see cref="FontAttributes.None"/>. Binds the revenue-range toggle
+/// labels' bold state to a view-model flag.
+/// </summary>
+public sealed class ActiveBoolToFontAttributesConverter : IValueConverter
+{
+    /// <summary>Resolves the font-attribute state for the bound boolean.</summary>
+    /// <param name="value">Bound boolean. Any non-bool resolves to false.</param>
+    /// <param name="targetType">Target type. Unused.</param>
+    /// <param name="parameter">Converter parameter. Unused.</param>
+    /// <param name="culture">Culture. Unused.</param>
+    /// <returns><see cref="FontAttributes.Bold"/> when true;
+    /// <see cref="FontAttributes.None"/> otherwise.</returns>
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => (value is bool b && b) ? FontAttributes.Bold : FontAttributes.None;
+
+    /// <summary>Not supported — font-attribute resolution is one-way.</summary>
+    /// <returns>Always throws <see cref="NotSupportedException"/>.</returns>
+    /// <exception cref="NotSupportedException">Always thrown.</exception>
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
