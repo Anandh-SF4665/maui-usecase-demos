@@ -6,7 +6,7 @@
              xmlns:dashboard="clr-namespace:HotelManagerSample.Dashboard;assembly=HotelManagerSample"
              xmlns:bookings="clr-namespace:HotelManagerSample.Bookings;assembly=HotelManagerSample"
              xmlns:rooms="clr-namespace:HotelManagerSample.Rooms;assembly=HotelManagerSample"
-             x:Class="HotelManagerSample.Shell.MobileShell"
+             x:Class="HotelManagerSample.MobileShell"
              x:DataType="vm:MobileShellViewModel"
              Title="MobileShell"
              NavigationPage.HasNavigationBar="False"

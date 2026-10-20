@@ -63,7 +63,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<MobileBookingsPage>();
         builder.Services.AddSingleton<MobileRoomsPage>();
         builder.Services.AddTransient<MobileNewBookingPage>();
-        builder.Services.AddSingleton<Views.MobileUI.Shell.MobileShell>();
+        builder.Services.AddSingleton<MobileShell>();
 
 #if DEBUG
         builder.Logging.AddDebug();

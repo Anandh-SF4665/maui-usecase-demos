@@ -1,5 +1,5 @@
 using HotelManagerSample;
-using MobileShellHost = HotelManagerSample.Shell.MobileShell;
+using MobileShellHost = HotelManagerSample.MobileShell;
 
 namespace HotelManagerSample.Dashboard;
 

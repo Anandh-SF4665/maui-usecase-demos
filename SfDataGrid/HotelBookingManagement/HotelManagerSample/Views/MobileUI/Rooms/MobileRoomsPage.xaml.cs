@@ -1,6 +1,6 @@
 using HotelManagerSample;
 using ChipSelectionChangedEventArgs = Syncfusion.Maui.Core.Chips.SelectionChangedEventArgs;
-using MobileShellHost = HotelManagerSample.Shell.MobileShell;
+using MobileShellHost = HotelManagerSample.MobileShell;
 
 namespace HotelManagerSample.Rooms;
 
@@ -35,7 +35,7 @@ public partial class MobileRoomsPage : ContentView
         var host = ResolveShell();
         var alertHost = (Page?)host ?? Application.Current?.MainPage;
         if (alertHost is null) return;
-        await alertHost.DisplayAlert("Notifications", "No new notifications.", "OK");
+        await alertHost.DisplayAlertAsync("Notifications", "No new notifications.", "OK");
     }
 
     /// <summary>Switches to the "More" tab when the user taps the

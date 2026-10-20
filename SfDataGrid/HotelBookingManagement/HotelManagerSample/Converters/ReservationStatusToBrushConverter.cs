@@ -109,7 +109,7 @@ public sealed class GuestInitialsConverter : IValueConverter
         if (value is null)
             return string.Empty;
 
-        if (value is Models.Booking booking)
+        if (value is Booking booking)
             return string.IsNullOrEmpty(booking.Initials) ? "?" : booking.Initials;
 
         if (value is string s && !string.IsNullOrWhiteSpace(s))

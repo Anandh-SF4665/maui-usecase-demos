@@ -1,6 +1,6 @@
 using HotelManagerSample.Bookings;
 
-namespace HotelManagerSample.Shell;
+namespace HotelManagerSample;
 
 
 /// <summary>

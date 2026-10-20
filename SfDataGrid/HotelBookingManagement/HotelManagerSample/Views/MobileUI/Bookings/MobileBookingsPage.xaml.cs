@@ -1,6 +1,5 @@
-using HotelManagerSample;
 using ChipSelectionChangedEventArgs = Syncfusion.Maui.Core.Chips.SelectionChangedEventArgs;
-using MobileShellHost = HotelManagerSample.Shell.MobileShell;
+using MobileShellHost = HotelManagerSample.MobileShell;
 
 namespace HotelManagerSample.Bookings;
 
@@ -41,7 +40,7 @@ public partial class MobileBookingsPage : ContentView
         var host = ResolveShell();
         var alertHost = (Page?)host ?? Application.Current?.MainPage;
         if (alertHost is null) return;
-        await alertHost.DisplayAlert("Notifications", "No new notifications.", "OK");
+        await alertHost.DisplayAlertAsync("Notifications", "No new notifications.", "OK");
     }
 
     /// <summary>Switches to the "More" tab when the user taps the
@@ -89,7 +88,7 @@ public partial class MobileBookingsPage : ContentView
         var alertHost = (Page?)host ?? Application.Current?.MainPage;
         if (alertHost is null) return;
 
-        await alertHost.DisplayAlert(ctaLabel, $"{booking.Guest} • {booking.Room}", "OK");
+        await alertHost.DisplayAlertAsync(ctaLabel, $"{booking.Guest} • {booking.Room}", "OK");
     }
 
     /// <summary>Walks up the visual tree from this <see cref="ContentView"/>
