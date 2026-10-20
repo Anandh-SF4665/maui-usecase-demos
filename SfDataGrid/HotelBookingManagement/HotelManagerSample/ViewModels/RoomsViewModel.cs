@@ -117,21 +117,29 @@ public sealed class RoomsViewModel : INotifyPropertyChanged
     /// <summary>Filtered subset backing the table view.</summary>
     public ObservableCollection<RoomDetailsModel> TableRooms { get; } = new();
 
-    /// <summary>Command bound to the "Book Now" card action. Placeholder —
-    /// the actual booking flow lives on the AddBookingViewModel.</summary>
-    public ICommand BookNowCommand { get; }
-    /// <summary>Command bound to the "Room Service" card action. Placeholder.</summary>
-    public ICommand RoomServiceCommand { get; }
-    /// <summary>Command bound to the "Mark Ready" maintenance action. Placeholder.</summary>
-    public ICommand MarkReadyCommand { get; }
-    /// <summary>Command bound to the "Pre Check-In" reservation action. Placeholder.</summary>
-    public ICommand PreCheckInCommand { get; }
-    /// <summary>Command bound to the "Resolve Ticket" maintenance action. Placeholder.</summary>
-    public ICommand ResolveTicketCommand { get; }
-    /// <summary>Command bound to the "Assign" reservation action. Placeholder.</summary>
-    public ICommand AssignCommand { get; }
-    /// <summary>Command bound to the "View Folio" reservation action. Placeholder.</summary>
-    public ICommand ViewFolioCommand { get; }
+    /// <summary>Constants that mirror the XAML on <c>RoomsTable</c>:
+    /// <c>HeaderRowHeight="32"</c>, <c>RowHeight="56"</c>, and a 1-DIP
+    /// bottom grid-line stroke. Living on the VM keeps the height math
+    /// in the same file as the row-count projection so the two cannot
+    /// drift apart.</summary>
+    public const double RoomsGridHeaderHeight = 32;
+    /// <summary>Row height in DIPs for the rooms SfDataGrid.</summary>
+    public const double RoomsGridRowHeight = 56;
+    /// <summary>Bottom grid-line stroke thickness in DIPs.</summary>
+    public const double RoomsGridBottomBorder = 1;
+
+    /// <summary>Height (in DIPs) that the rooms SfDataGrid should request
+    /// based on the visible row count. Always renders at least one row
+    /// so the column header stays visible on an empty result.</summary>
+    public double GridHeight
+    {
+        get
+        {
+            var shown = Math.Max(1, TableRooms.Count);
+            return RoomsGridHeaderHeight + shown * RoomsGridRowHeight + RoomsGridBottomBorder;
+        }
+    }
+
     /// <summary>Command bound to the Grid / Table view toggle.</summary>
     public ICommand SetActiveViewCommand { get; }
 
@@ -166,13 +174,6 @@ public sealed class RoomsViewModel : INotifyPropertyChanged
         _store.BookingsChanged += OnStoreDataChanged;
         _store.RoomsChanged   += OnRoomChanged;
 
-        BookNowCommand = new Command<RoomDetailsModel>(_ => { /* booking flow */ });
-        RoomServiceCommand = new Command<RoomDetailsModel>(_ => { /* room service flow */ });
-        MarkReadyCommand = new Command<RoomDetailsModel>(_ => { /* mark ready */ });
-        PreCheckInCommand = new Command<RoomDetailsModel>(_ => { /* pre-check-in */ });
-        ResolveTicketCommand = new Command<RoomDetailsModel>(_ => { /* resolve ticket */ });
-        AssignCommand = new Command<RoomDetailsModel>(_ => { /* assign */ });
-        ViewFolioCommand = new Command<RoomDetailsModel>(_ => { /* open folio */ });
         SetActiveViewCommand = new Command<string>(view =>
         {
             if (string.IsNullOrWhiteSpace(view)) return;
@@ -181,9 +182,9 @@ public sealed class RoomsViewModel : INotifyPropertyChanged
     }
 
     /// <summary>
-    /// BookingAdded handler — kept as a thin shim so any old reference
-    /// continues to compile. New code should subscribe via
-    /// <see cref="IHotelStore.BookingsChanged"/> instead.
+    /// <see cref="IHotelStore.BookingsChanged"/> handler — rebuilds the
+    /// matching rich model so the visible tile (and KPI counts) reflects
+    /// the change without resetting the user's scroll/filter.
     /// </summary>
     /// <param name="sender">The store raising the event. Unused.</param>
     /// <param name="e">The booking that changed.</param>
@@ -201,6 +202,7 @@ public sealed class RoomsViewModel : INotifyPropertyChanged
         ApplyFilter();
         OnPropertyChanged(nameof(TotalRooms));
         OnPropertyChanged(nameof(VisibleCountLabel));
+        NotifyGridHeight();
     }
 
     /// <summary>
@@ -219,6 +221,7 @@ public sealed class RoomsViewModel : INotifyPropertyChanged
         ApplyFilter();
         OnPropertyChanged(nameof(TotalRooms));
         OnPropertyChanged(nameof(VisibleCountLabel));
+        NotifyGridHeight();
     }
 
     /// <summary>Replaces (in-place) the rich model backing the supplied
@@ -241,6 +244,12 @@ public sealed class RoomsViewModel : INotifyPropertyChanged
         var idx = Rooms.IndexOf(existing);
         if (idx >= 0) Rooms[idx] = rebuilt;
     }
+
+    /// <summary>Raises <see cref="PropertyChanged"/> for the
+    /// <see cref="GridHeight"/> derived property so the XAML
+    /// <c>HeightRequest</c> binding re-evaluates whenever the
+    /// visible row count changes.</summary>
+    private void NotifyGridHeight() => OnPropertyChanged(nameof(GridHeight));
 
     /// <summary>Count of rooms currently held in the rich collection.</summary>
     public int TotalRooms => Rooms.Count;
@@ -382,6 +391,7 @@ public sealed class RoomsViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(FilteredRooms));
         OnPropertyChanged(nameof(TableRooms));
         OnPropertyChanged(nameof(VisibleCountLabel));
+        NotifyGridHeight();
     }
 
     /// <summary>Projects <see cref="Rooms"/> through the active

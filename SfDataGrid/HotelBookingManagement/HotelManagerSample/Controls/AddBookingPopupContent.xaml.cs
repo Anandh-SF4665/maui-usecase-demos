@@ -1,7 +1,7 @@
-using System.Linq;
 using HotelManagerSample;
 using HotelManagerSample;
 using Syncfusion.Maui.Calendar;
+using HotelManagerSample.Controls;
 
 namespace HotelManagerSample.Controls;
 
@@ -88,7 +88,10 @@ public partial class AddBookingPopupContent : ContentView
     /// <summary>Strips non-digit characters from the phone entry, caps
     /// the value at 10 digits, and pushes the cleaned value into the
     /// view-model. Mirrors the cleanup back into the Entry when needed
-    /// so a paste containing "+1 (555) 123-4567" lands as "5551234567".</summary>
+    /// so a paste containing "+1 (555) 123-4567" lands as "5551234567".
+    /// The actual rule lives in
+    /// <see cref="PhoneSanitiser"/> so the mobile New-Booking wizard
+    /// never drifts out of sync.</summary>
     /// <param name="sender">The <see cref="Entry"/> that fired the
     /// event. Used to write the sanitised text back into the control.</param>
     /// <param name="e">Standard <see cref="TextChangedEventArgs"/>
@@ -96,9 +99,7 @@ public partial class AddBookingPopupContent : ContentView
     private void OnPhoneValueChanged(object? sender, TextChangedEventArgs e)
     {
         var raw        = e.NewTextValue ?? string.Empty;
-        var digitsOnly = new string(raw.Where(char.IsDigit).ToArray());
-        if (digitsOnly.Length > 10)
-            digitsOnly = digitsOnly.Substring(0, 10);
+        var digitsOnly = PhoneSanitiser.Clean(raw);
 
         // Push the cleaned value into the VM so CanSubmit / TryValidate
         // observe a sanitised string.

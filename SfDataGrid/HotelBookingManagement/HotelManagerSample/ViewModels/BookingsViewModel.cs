@@ -122,6 +122,54 @@ public sealed class BookingsViewModel : INotifyPropertyChanged
     /// <summary>Fires whenever VisibleBookings changes so the pager can move to page 1.</summary>
     public event EventHandler? PagerResetRequested;
 
+    // ---------- Grid selection ----------
+    /// <summary>Backing field for <see cref="SelectedBooking"/>.</summary>
+    private object? _selectedBooking;
+    /// <summary>Row currently highlighted in the bookings SfDataGrid. Bound
+    /// two-way from the grid's <c>SelectedItem</c> so the selection survives
+    /// a filter rebuild and drives the detail strip below the pager.</summary>
+    public object? SelectedBooking
+    {
+        get => _selectedBooking;
+        set
+        {
+            if (ReferenceEquals(_selectedBooking, value))
+                return;
+            _selectedBooking = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(SelectedBookingRow));
+            OnPropertyChanged(nameof(HasSelectedBooking));
+            OnPropertyChanged(nameof(SelectedBookingSummary));
+        }
+    }
+
+    /// <summary>The selected row as a <see cref="SelectableBooking"/>, or
+    /// <c>null</c> when the cast fails (e.g. the grid briefly holds a stale
+    /// item from a previous paged source while the filter rebuilds).</summary>
+    public SelectableBooking? SelectedBookingRow => SelectedBooking as SelectableBooking;
+
+    /// <summary>True when a booking row is currently selected. Binds the
+    /// detail strip's visibility.</summary>
+    public bool HasSelectedBooking => SelectedBookingRow is not null;
+
+    /// <summary>One-line summary of the selected booking rendered in the
+    /// detail strip under the pager.</summary>
+    public string SelectedBookingSummary
+    {
+        get
+        {
+            var row = SelectedBookingRow;
+            if (row is null)
+                return string.Empty;
+            return $"{row.Reference} \u00b7 {row.Guest} \u00b7 {row.Room} \u00b7 {row.Status} \u00b7 ${row.Total:N0}";
+        }
+    }
+
+    /// <summary>Clears the grid selection. Wired to the detail strip's
+    /// dismiss button so the user can drop the selection without leaving
+    /// the page.</summary>
+    public void ClearBookingSelection() => SelectedBooking = null;
+
     // ---------- DataGrid dynamic height ----------
     /// <summary>Constants that mirror the XAML on <c>BookingsGrid</c>:
     /// <c>HeaderRowHeight="32"</c>, <c>RowHeight="56"</c>, and a 1-DIP

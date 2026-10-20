@@ -28,6 +28,8 @@
             <conv:AvatarForegroundConverter x:Key="AvatarFg" />
             <conv:PercentToBarConverter x:Key="PercentToBar" />
             <conv:StringToColorConverter x:Key="StringToColor" />
+            <conv:ActiveBoolToColorConverter x:Key="ActiveColor" />
+            <conv:ActiveBoolToFontAttributesConverter x:Key="ActiveFontAttr" />
 
             <!-- DataGrid styling — matches the hotel reservation theme -->
             <syncfusion:DataGridStyle x:Key="ReservationsStyle"
@@ -181,19 +183,28 @@
                                 </VerticalStackLayout>
                                 <Border Grid.Column="1" BackgroundColor="#F1F4FA" StrokeThickness="0" Padding="8,4">
                                     <HorizontalStackLayout Spacing="18">
-                                        <Label x:Name="Revenue7DLabel" Text="7D" FontSize="9" TextColor="#1B2435" FontAttributes="Bold" VerticalTextAlignment="Center">
+                                        <Label Text="7D" FontSize="9"
+                                               TextColor="{Binding IsRevenue7DActive, Converter={StaticResource ActiveColor}, ConverterParameter=#4A43E6}"
+                                               FontAttributes="{Binding IsRevenue7DActive, Converter={StaticResource ActiveFontAttr}}"
+                                               VerticalTextAlignment="Center">
                                             <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="OnRevenueRangeTapped" CommandParameter="7D" />
+                                                <TapGestureRecognizer Command="{Binding SetRevenueRangeCommand}" CommandParameter="7D" />
                                             </Label.GestureRecognizers>
                                         </Label>
-                                        <Label x:Name="Revenue1MLabel" Text="1M" FontSize="9" TextColor="#1B2435" VerticalTextAlignment="Center">
+                                        <Label Text="1M" FontSize="9"
+                                               TextColor="{Binding IsRevenue1MActive, Converter={StaticResource ActiveColor}, ConverterParameter=#4A43E6}"
+                                               FontAttributes="{Binding IsRevenue1MActive, Converter={StaticResource ActiveFontAttr}}"
+                                               VerticalTextAlignment="Center">
                                             <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="OnRevenueRangeTapped" CommandParameter="1M" />
+                                                <TapGestureRecognizer Command="{Binding SetRevenueRangeCommand}" CommandParameter="1M" />
                                             </Label.GestureRecognizers>
                                         </Label>
-                                        <Label x:Name="Revenue3MLabel" Text="3M" FontSize="9" TextColor="#1B2435" VerticalTextAlignment="Center">
+                                        <Label Text="3M" FontSize="9"
+                                               TextColor="{Binding IsRevenue3MActive, Converter={StaticResource ActiveColor}, ConverterParameter=#4A43E6}"
+                                               FontAttributes="{Binding IsRevenue3MActive, Converter={StaticResource ActiveFontAttr}}"
+                                               VerticalTextAlignment="Center">
                                             <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="OnRevenueRangeTapped" CommandParameter="3M" />
+                                                <TapGestureRecognizer Command="{Binding SetRevenueRangeCommand}" CommandParameter="3M" />
                                             </Label.GestureRecognizers>
                                         </Label>
                                     </HorizontalStackLayout>
@@ -448,30 +459,40 @@
                                     Padding="3" HeightRequest="32" VerticalOptions="Center">
 
                                 <Grid ColumnDefinitions="Auto,Auto" ColumnSpacing="0" VerticalOptions="Center">
-                                    <!-- Today's Check-Ins (active by default) -->
-                                    <Border x:Name="CheckInsPill"
-                                            BackgroundColor="#4A43E6" StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                    <!-- Today's Check-Ins (active state is bound to IsCheckInsActive) -->
+                                    <Border BackgroundColor="{Binding IsCheckInsActive, Converter={StaticResource ActiveColor}, ConverterParameter=#4A43E6}"
+                                            StrokeThickness="0" StrokeShape="RoundRectangle 8"
                                             Padding="10,3" VerticalOptions="Center">
                                         <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Tapped="OnSegmentTapped" CommandParameter="CheckIns" />
+                                            <TapGestureRecognizer Command="{Binding SetActiveSegmentCommand}" CommandParameter="CheckIns" />
                                         </Border.GestureRecognizers>
                                         <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
-                                            <Label Text="Today's Check-ins" FontSize="8" TextColor="White" FontAttributes="Bold" VerticalTextAlignment="Center" />
-                                            <Label Text="{Binding CheckInsCount}" FontSize="8" TextColor="White" VerticalTextAlignment="Center" />
+                                            <Label Text="Today's Check-ins" FontSize="8"
+                                                   TextColor="{Binding IsCheckInsActive, Converter={StaticResource ActiveColor}, ConverterParameter=White}"
+                                                   FontAttributes="{Binding IsCheckInsActive, Converter={StaticResource ActiveFontAttr}}"
+                                                   VerticalTextAlignment="Center" />
+                                            <Label Text="{Binding CheckInsCount}" FontSize="8"
+                                                   TextColor="{Binding IsCheckInsActive, Converter={StaticResource ActiveColor}, ConverterParameter=White}"
+                                                   VerticalTextAlignment="Center" />
                                         </HorizontalStackLayout>
                                     </Border>
 
-                                    <!-- Pending Payment (inactive) -->
-                                    <Border x:Name="PendingPill"
-                                            Grid.Column="1" StrokeShape="RoundRectangle 8"
-                                            BackgroundColor="Transparent" StrokeThickness="0" Padding="10,3"
+                                    <!-- Pending Payment (active state is bound to IsPendingActive) -->
+                                    <Border Grid.Column="1" StrokeShape="RoundRectangle 8"
+                                            BackgroundColor="{Binding IsPendingActive, Converter={StaticResource ActiveColor}, ConverterParameter=#4A43E6}"
+                                            StrokeThickness="0" Padding="10,3"
                                             VerticalOptions="Center">
                                         <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Tapped="OnSegmentTapped" CommandParameter="Pending" />
+                                            <TapGestureRecognizer Command="{Binding SetActiveSegmentCommand}" CommandParameter="Pending" />
                                         </Border.GestureRecognizers>
                                         <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
-                                            <Label Text="Pending Payments" FontSize="9" TextColor="#3A4658" FontAttributes="Bold" VerticalTextAlignment="Center" />
-                                            <Label Text="{Binding PendingPaymentsCount}" FontSize="9" TextColor="#3A4658" VerticalTextAlignment="Center" />
+                                            <Label Text="Pending Payments" FontSize="9"
+                                                   TextColor="{Binding IsPendingActive, Converter={StaticResource ActiveColor}, ConverterParameter=White}"
+                                                   FontAttributes="{Binding IsPendingActive, Converter={StaticResource ActiveFontAttr}}"
+                                                   VerticalTextAlignment="Center" />
+                                            <Label Text="{Binding PendingPaymentsCount}" FontSize="9"
+                                                   TextColor="{Binding IsPendingActive, Converter={StaticResource ActiveColor}, ConverterParameter=White}"
+                                                   VerticalTextAlignment="Center" />
                                         </HorizontalStackLayout>
                                     </Border>
                                 </Grid>

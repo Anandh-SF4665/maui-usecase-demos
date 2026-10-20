@@ -78,9 +78,6 @@ public sealed class Booking
     public string TierColor { get; init; } = "#8C6B1F";
     /// <summary>Free-form notes attached to the booking.</summary>
     public string Notes { get; init; } = string.Empty;
-    /// <summary>Avatar image URL (unused by the current design but kept
-    /// for backwards compatibility).</summary>
-    public string AvatarUrl { get; init; } = string.Empty;
     /// <summary>Total folio value in dollars.</summary>
     public decimal Total { get; init; }
 
@@ -373,15 +370,15 @@ public static class HotelData
         var rng0 = new Random(20260910);
         var list = new List<Booking>
         {
-            RealBooking("#BK-10482", "Olivia Bennett",   "Deluxe King",      PickRoom(rng0), HotelConfig.ReferenceToday.AddDays(2), 3, new(2026, 9, 12), "#6E7A8F", "Direct",      "DIRECT • OTA", "Confirmed",   "Paid in full",      594, "DIAMOND", "#4A43E6"),
-            RealBooking("#BK-10481", "Mateo Rodriguez",  "Standard Queen",   PickRoom(rng0), HotelConfig.ReferenceToday,         2, new(2026, 9, 12), "#0E6E80", "Phone Desk",  "PHONE DESK",   "Confirmed",   "On Arrival",        310, null,     null),
-            RealBooking("#BK-10480", "Hon. Marcus Vance","Presidential Suite",PickRoom(rng0),HotelConfig.ReferenceToday,         4, new(2026, 9, 14), "#7A4ECC", "Phone Desk",   "PHONE DESK",    "Checked in", "Corporate Billing", 3450,"PLATINUM","#5C36C7"),
-            RealBooking("#BK-10479", "Dr. Elena Rostova","Executive Suite",  PickRoom(rng0), HotelConfig.ReferenceToday,         3, new(2026, 9, 13), "#188A61", "Direct",   "DIRECT • OTA",    "Checked in", "Authorized",        870, "GOLD",    "#B86A11"),
-            RealBooking("#BK-10478", "Liam Davies",      "Deluxe King",      PickRoom(rng0), HotelConfig.ReferenceToday.AddDays(4),4, new(2026, 9, 18), "#003580", "Phone Desk", "PHONE DESK",  "Confirmed",   "Pre-Auth held",     790, null,     null),
-            RealBooking("#BK-10475", "Dr. David & Sarah Kim","Family Suite",  PickRoom(rng0), HotelConfig.ReferenceToday.AddDays(1),5, new(2026, 9, 16), "#7A879B", "Phone Desk",     "PHONE DESK",      "Confirmed",   "Pre-Auth needed",  1250, null,     null),
-            RealBooking("#BK-10472", "Sophia Chen",      "Deluxe King",      PickRoom(rng0), HotelConfig.ReferenceToday,         1, new(2026, 9, 11), "#B86A11", "Direct",  "DIRECT • OTA",   "Confirmed",   "Paid in full",      195, "SILVER",  "#526075"),
-            RealBooking("#BK-10469", "Arthur Pendelton", "Standard Queen",   PickRoom(rng0), HotelConfig.ReferenceToday.AddDays(-2),2,new(2026, 9, 10), "#B0233E", "Direct",      "CANCELLATION", "Cancelled",   "Refund Proceeded",  280, null,     null, "Cancelled (Guest Notice)"),
-            RealBooking("#BK-10468", "Julian Thorne",    "Standard Queen",   PickRoom(rng0), HotelConfig.ReferenceToday.AddDays(-1),4,new(2026, 9, 13), "#6E7A8F", "Direct",      "DIRECT • OTA", "Checked out", "Settled",             320, null,     null),
+            RealBooking("#BK-10482", "Olivia Bennett",   PickRoom(rng0), HotelConfig.ReferenceToday.AddDays(2), 3, new(2026, 9, 12), "#6E7A8F", "Direct",      "DIRECT • OTA", "Confirmed",   "Paid in full",      594, "DIAMOND", "#4A43E6"),
+            RealBooking("#BK-10481", "Mateo Rodriguez",  PickRoom(rng0), HotelConfig.ReferenceToday,         2, new(2026, 9, 12), "#0E6E80", "Phone Desk",  "PHONE DESK",   "Confirmed",   "On Arrival",        310, null,     null),
+            RealBooking("#BK-10480", "Hon. Marcus Vance",PickRoom(rng0),HotelConfig.ReferenceToday,         4, new(2026, 9, 14), "#7A4ECC", "Phone Desk",   "PHONE DESK",    "Checked in", "Corporate Billing", 3450,"PLATINUM","#5C36C7"),
+            RealBooking("#BK-10479", "Dr. Elena Rostova",PickRoom(rng0), HotelConfig.ReferenceToday,         3, new(2026, 9, 13), "#188A61", "Direct",   "DIRECT • OTA",    "Checked in", "Authorized",        870, "GOLD",    "#B86A11"),
+            RealBooking("#BK-10478", "Liam Davies",      PickRoom(rng0), HotelConfig.ReferenceToday.AddDays(4),4, new(2026, 9, 18), "#003580", "Phone Desk", "PHONE DESK",  "Confirmed",   "Pre-Auth held",     790, null,     null),
+            RealBooking("#BK-10475", "Dr. David & Sarah Kim",PickRoom(rng0), HotelConfig.ReferenceToday.AddDays(1),5, new(2026, 9, 16), "#7A879B", "Phone Desk",     "PHONE DESK",      "Confirmed",   "Pre-Auth needed",  1250, null,     null),
+            RealBooking("#BK-10472", "Sophia Chen",      PickRoom(rng0), HotelConfig.ReferenceToday,         1, new(2026, 9, 11), "#B86A11", "Direct",  "DIRECT • OTA",   "Confirmed",   "Paid in full",      195, "SILVER",  "#526075"),
+            RealBooking("#BK-10469", "Arthur Pendelton", PickRoom(rng0), HotelConfig.ReferenceToday.AddDays(-2),2,new(2026, 9, 10), "#B0233E", "Direct",      "CANCELLATION", "Cancelled",   "Refund Proceeded",  280, null,     null, "Cancelled (Guest Notice)"),
+            RealBooking("#BK-10468", "Julian Thorne",    PickRoom(rng0), HotelConfig.ReferenceToday.AddDays(-1),4,new(2026, 9, 13), "#6E7A8F", "Direct",      "DIRECT • OTA", "Checked out", "Settled",             320, null,     null),
         };
 
         // A few extra generated bookings centered on today's date so the
@@ -418,7 +415,6 @@ public static class HotelData
             list.Add(RealBooking(
                 $"#BK-{(10500 + i):D5}",
                 $"{firstName} {lastName}",
-                room.Type,
                 room,
                 checkIn,
                 nights,
@@ -442,8 +438,6 @@ public static class HotelData
     /// </summary>
     /// <param name="reference">Booking reference number.</param>
     /// <param name="guest">Guest full name.</param>
-    /// <param name="legacyRoomLabel">Unused — kept for backwards
-    /// compatibility with the original call sites.</param>
     /// <param name="room">Master <see cref="Room"/> the booking
     /// references.</param>
     /// <param name="checkIn">Check-in date.</param>
@@ -464,7 +458,6 @@ public static class HotelData
     private static Booking RealBooking(
         string reference,
         string guest,
-        string legacyRoomLabel,
         Room room,
         DateTime checkIn,
         int nights,
