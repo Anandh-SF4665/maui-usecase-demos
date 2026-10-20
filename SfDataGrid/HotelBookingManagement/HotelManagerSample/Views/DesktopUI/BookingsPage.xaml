@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
-             xmlns:pager="clr-namespace:Syncfusion.Maui.DataGrid.DataPager;assembly=Syncfusion.Maui.DataGrid"
+             xmlns:pager="clr-namespace:Syncfusion.Maui.DataPager;assembly=Syncfusion.Maui.DataPager"
              xmlns:syncfusionPopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:conv="clr-namespace:HotelManagerSample.Converters;assembly=HotelManagerSample"
              xmlns:vm="clr-namespace:HotelManagerSample;assembly=HotelManagerSample"
@@ -203,10 +203,10 @@
                                                HorizontalOptions="Fill"
                                                VerticalOptions="Fill"
                                                SelectionMode="Single"
-                                               SelectedItem="{Binding SelectedBooking, Mode=TwoWay}"
+                                               SelectedRow="{Binding SelectedBooking, Mode=TwoWay}"
                                                SelectionChanged="OnBookingsGridSelectionChanged"
                                                CellTapped="OnBookingsGridCellTapped"
-                                               AllowSorting="True"
+                                               SortingMode="Multiple"
                                                ShowRowHeader="False"
                                                VerticalScrollBarVisibility="Never"
                                                HorizontalScrollBarVisibility="Never"
@@ -250,13 +250,13 @@
                                 <!-- 4) ASSIGNED KEY / ROOM -->
                                 <syncfusion:DataGridTemplateColumn MappingName="Room"
                                                                    HeaderText="Assigned Room"
-                                                                   Width="150">
+                                                                   Width="200">
                                     <syncfusion:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate x:DataType="models:SelectableBooking">
                                             <VerticalStackLayout Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
                                                 <Border BackgroundColor="#EEF2FF"
                                                         StrokeThickness="0" StrokeShape="RoundRectangle 6"
-                                                        Padding="6,3" VerticalOptions="Center" WidthRequest="75">
+                                                        Padding="6,3" VerticalOptions="Center">
                                                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
                                                         <Label Text="&#xe73b;" FontFamily="MaterialAssets" FontSize="11" TextColor="#4A43E6" VerticalTextAlignment="Center" />
                                                         <Label Text="{Binding Room, StringFormat='{0}'}" FontSize="9" FontFamily="OpenSansSemibold" TextColor="#4A43E6" VerticalTextAlignment="Center" />
@@ -306,7 +306,7 @@
                                 <!-- 7) BILLING DETAILS -->
                                 <syncfusion:DataGridTemplateColumn MappingName="Total"
                                                                    HeaderText="Billing Details"
-                                                                   Width="130">
+                                                                   Width="100">
                                     <syncfusion:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate x:DataType="models:SelectableBooking">
                                             <VerticalStackLayout Spacing="0" Margin="30,0,0,0" VerticalOptions="Center" HorizontalOptions="Start">

@@ -1,5 +1,5 @@
 using HotelManagerSample;
-using Syncfusion.Maui.DataGrid.DataPager;
+using Syncfusion.Maui.DataPager;
 
 namespace HotelManagerSample;
 

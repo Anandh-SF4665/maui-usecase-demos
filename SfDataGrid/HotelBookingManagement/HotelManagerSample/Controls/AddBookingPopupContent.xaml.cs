@@ -1,7 +1,5 @@
 using HotelManagerSample;
-using HotelManagerSample;
 using Syncfusion.Maui.Calendar;
-using HotelManagerSample.Controls;
 
 namespace HotelManagerSample.Controls;
 

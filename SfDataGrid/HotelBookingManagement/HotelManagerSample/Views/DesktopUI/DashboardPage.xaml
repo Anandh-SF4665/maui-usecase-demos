@@ -5,7 +5,7 @@
              xmlns:list="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
              xmlns:toolkit="clr-namespace:Syncfusion.Maui.Toolkit;assembly=Syncfusion.Maui.Toolkit"
              xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
-             xmlns:pager="clr-namespace:Syncfusion.Maui.DataGrid.DataPager;assembly=Syncfusion.Maui.DataGrid"
+             xmlns:pager="clr-namespace:Syncfusion.Maui.DataPager;assembly=Syncfusion.Maui.DataPager"
              xmlns:inputLayout="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:conv="clr-namespace:HotelManagerSample.Converters;assembly=HotelManagerSample"
              xmlns:vm="clr-namespace:HotelManagerSample;assembly=HotelManagerSample"
@@ -456,12 +456,12 @@
                             <!-- Segmented toggle — aligned to centre of header row -->
                             <Border Grid.Row="0" Grid.Column="2" Margin="0,0,20,0"
                                     BackgroundColor="#F4F6FB" StrokeThickness="0" StrokeShape="RoundRectangle 10"
-                                    Padding="3" HeightRequest="32" VerticalOptions="Center">
+                                    Padding="3" HeightRequest="42" VerticalOptions="Center">
 
-                                <Grid ColumnDefinitions="Auto,Auto" ColumnSpacing="0" VerticalOptions="Center">
+                                <Grid ColumnDefinitions="Auto,Auto" ColumnSpacing="6" VerticalOptions="Center">
                                     <!-- Today's Check-Ins (active state is bound to IsCheckInsActive) -->
                                     <Border BackgroundColor="{Binding IsCheckInsActive, Converter={StaticResource ActiveColor}, ConverterParameter=#4A43E6}"
-                                            StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                            StrokeThickness="0" StrokeShape="RoundRectangle 12" HeightRequest="22"
                                             Padding="10,3" VerticalOptions="Center">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding SetActiveSegmentCommand}" CommandParameter="CheckIns" />
@@ -478,9 +478,9 @@
                                     </Border>
 
                                     <!-- Pending Payment (active state is bound to IsPendingActive) -->
-                                    <Border Grid.Column="1" StrokeShape="RoundRectangle 8"
+                                    <Border Grid.Column="1" StrokeShape="RoundRectangle 12"
                                             BackgroundColor="{Binding IsPendingActive, Converter={StaticResource ActiveColor}, ConverterParameter=#4A43E6}"
-                                            StrokeThickness="0" Padding="10,3"
+                                            StrokeThickness="0" Padding="10,3" HeightRequest="22"
                                             VerticalOptions="Center">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding SetActiveSegmentCommand}" CommandParameter="Pending" />

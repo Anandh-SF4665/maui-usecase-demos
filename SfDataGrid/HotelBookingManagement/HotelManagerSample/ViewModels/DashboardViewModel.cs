@@ -160,9 +160,7 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
         };
     }
 
-    /// <summary>Legend rows for the inventory-breakdown card. Names, values
-    /// and percentages are derived from <see cref="BuildInventoryBreakdown"/>
-    /// every time the rooms collection changes.</summary>
+    /// <summary>Legend rows for the inventory-breakdown card. Names, values and percentages are derived every time the rooms collection changes.</summary>
     public IReadOnlyList<InventoryLegendRow> InventoryLegend => BuildInventoryLegend();
 
     /// <summary>Legend-only color override. Add a token here to make a
@@ -229,9 +227,7 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
 
     /// <summary>Backing field for <see cref="ActiveRevenueRange"/>.</summary>
     private string _activeRevenueRange = "7D";
-    /// <summary>Active revenue-range key — "7D", "1M", or "3M". Drives
-    /// the three <see cref="IsRevenueXxxActive"/> flags the XAML
-    /// binds the toggle's label colour + bold state against.</summary>
+    /// <summary>Active revenue-range key — "7D", "1M", or "3M". the XAML binds the toggle's label colour + bold state against.</summary>
     public string ActiveRevenueRange
     {
         get => _activeRevenueRange;
@@ -239,7 +235,6 @@ public sealed class DashboardViewModel : INotifyPropertyChanged
         {
             if (_activeRevenueRange == value) return;
             _activeRevenueRange = value;
-            OnPropertyChanged();
             OnPropertyChanged(nameof(IsRevenue7DActive));
             OnPropertyChanged(nameof(IsRevenue1MActive));
             OnPropertyChanged(nameof(IsRevenue3MActive));

@@ -1,7 +1,7 @@
 using HotelManagerSample.Controls;
 using HotelManagerSample;
 using Syncfusion.Maui.DataGrid;
-using Syncfusion.Maui.DataGrid.DataPager;
+using Syncfusion.Maui.DataPager;
 
 namespace HotelManagerSample;
 
@@ -161,11 +161,11 @@ public partial class BookingsPage : ContentPage
         if (BindingContext is not BookingsViewModel vm)
             return;
 
-        var added = e.AddedItems;
-        var removed = e.RemovedItems;
+        var added = e.AddedRows;
+        var removed = e.RemovedRows;
         object? selected = added is { Count: > 0 } ? added[0] : null;
         if (selected is null && sender is SfDataGrid grid)
-            selected = grid.SelectedItem;
+            selected = grid.SelectedRow;
 
         // Treat a non-empty removal as a deselection.
         if (selected is null && removed is { Count: > 0 })
@@ -197,6 +197,6 @@ public partial class BookingsPage : ContentPage
     {
         _vm.ClearBookingSelection();
         if (BookingsGrid is not null)
-            BookingsGrid.SelectedItem = null;
+            BookingsGrid.SelectedRow = null!;
     }
 }

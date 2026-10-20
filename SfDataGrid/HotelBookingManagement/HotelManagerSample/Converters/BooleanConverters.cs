@@ -387,9 +387,21 @@ public sealed class ActiveBoolToColorConverter : IValueConverter
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         var isActive = value is bool b && b;
-        if (isActive && parameter is string s && !string.IsNullOrEmpty(s))
-            return Color.FromArgb(s);
-        return Color.FromArgb("#3B4860");
+        var colorParam = parameter as string;
+
+        // Text color usage
+        if (colorParam == "White")
+        {
+            return isActive ? Colors.White : Colors.Black;
+        }
+
+        // Background color usage
+        if (isActive && !string.IsNullOrEmpty(colorParam))
+        {
+            return Color.FromArgb(colorParam);
+        }
+
+        return Color.FromArgb("#F6F8FD");
     }
 
     /// <summary>Not supported — colour resolution is one-way.</summary>
