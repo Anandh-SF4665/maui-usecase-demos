@@ -67,6 +67,7 @@ public partial class StockChartViewModel
 
     public DateTime AvailableDataStartDate => LastSelectedStock?.Data.FirstOrDefault()?.Date.Date ?? DateTime.Today;
     public DateTime AvailableDataEndDate => LastSelectedStock?.Data.LastOrDefault()?.Date.Date ?? DateTime.Today;
+    [RelayCommand]
     public void ApplyCustomDateRange()
     {
         if (LastSelectedStock is null || LastSelectedStock.Data.Count == 0)
