@@ -58,6 +58,28 @@ namespace StockChart
         {
             ApplyChartRangeWhenReady(viewModel, 0);
         }
+
+        private void ApplyChartRangeWhenReady(StockChartViewModel viewModel, int attempt)
+        {
+            if (!_isPageActive || Handler is null || !ReferenceEquals(BindingContext, viewModel))
+            {
+                return;
+            }
+
+            if (StockChartView.Width > 0 &&
+                StockChartView.Height > 0 &&
+                StockChartView.Series.Count > 0 &&
+                StockChartView.XAxes.Count > 0)
+            {
+                ApplyChartRange(viewModel);
+            }
+
+            if (attempt < 5)
+            {
+                var delay = TimeSpan.FromMilliseconds(50 * (attempt + 1));
+                Dispatcher.DispatchDelayed(delay, () => ApplyChartRangeWhenReady(viewModel, attempt + 1));
+            }
+        }
         private void ApplyChartSettings(StockChartViewModel viewModel)
         {
             var isDarkTheme = Application.Current?.RequestedTheme == AppTheme.Dark;

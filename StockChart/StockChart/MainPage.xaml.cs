@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using StockChart.Helpers;
 using StockChart.Services;
 using StockChart.ViewModels;
 using Syncfusion.Maui.Popup;
