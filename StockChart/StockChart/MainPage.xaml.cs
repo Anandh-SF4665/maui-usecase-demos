@@ -46,7 +46,8 @@ namespace StockChart
         public MainPage()
         {
             InitializeComponent();
-            var viewModel = Handler.MauiContext.Services.GetRequiredService<StockChartViewModel>();
+            var viewModel = Application.Current?.Handler?.MauiContext?.Services.GetRequiredService<StockChartViewModel>()
+                ?? throw new InvalidOperationException("StockChartViewModel is not registered in the app's service provider.");
             BindingContext = viewModel;
             SettingsPopup.BindingContext = viewModel;
             DisclaimerPopup.BindingContext = viewModel;
