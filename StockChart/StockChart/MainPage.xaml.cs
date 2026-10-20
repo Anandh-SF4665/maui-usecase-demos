@@ -45,7 +45,7 @@ namespace StockChart
         public MainPage()
         {
             InitializeComponent();
-            var viewModel = new StockChartViewModel(new StockDataService());
+            var viewModel = Resolve<StockChartViewModel>();
             BindingContext = viewModel;
             SettingsPopup.BindingContext = viewModel;
             DisclaimerPopup.BindingContext = viewModel;

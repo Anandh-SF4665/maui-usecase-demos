@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
+using StockChart.Services;
+using StockChart.ViewModels;
 using Syncfusion.Maui.Core.Hosting;
 using Syncfusion.Licensing;
 #if MAUI_DEVFLOW
@@ -24,13 +26,8 @@ namespace StockChart
                     fonts.AddFont("MaterialIcons-Regular.ttf", "MaterialIcons");
                 });
 
-#if MAUI_DEVFLOW
-            builder.AddMauiDevFlowAgent();
-#endif
-
-#if DEBUG
-    		builder.Logging.AddDebug();
-#endif
+            builder.Services.AddSingleton<StockDataService>();
+            builder.Services.AddTransient<StockChartViewModel>();
 
             return builder.Build();
         }
