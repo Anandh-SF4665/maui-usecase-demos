@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using Microsoft.Extensions.DependencyInjection;
 using StockChart.Helpers;
 using StockChart.Services;
 using StockChart.ViewModels;
@@ -43,11 +42,10 @@ namespace StockChart
         private SfPopup RemoveStockPopup => (SfPopup)Resources["RemoveStockPopup"];
         private VisualElement ResetChartZoomControl => RootPage.FindByName<VisualElement>("ResetChartZoomButton");
 
-        public MainPage()
+        public MainPage(StockChartViewModel viewModel)
         {
             InitializeComponent();
-            var viewModel = Application.Current?.Handler?.MauiContext?.Services.GetRequiredService<StockChartViewModel>()
-                ?? throw new InvalidOperationException("StockChartViewModel is not registered in the app's service provider.");
+            ArgumentNullException.ThrowIfNull(viewModel);
             BindingContext = viewModel;
             SettingsPopup.BindingContext = viewModel;
             DisclaimerPopup.BindingContext = viewModel;
