@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using PatientCompanion.ViewModels;
 
 namespace PatientCompanion.Views;
@@ -7,7 +8,7 @@ public partial class HomePage : ContentPage
     private HomeViewModel? viewModel;
 
     public HomePage()
-        : this(App.Resolve<HomeViewModel>())
+        : this(IPlatformApplication.Current!.Services.GetRequiredService<HomeViewModel>())
     {
     }
 

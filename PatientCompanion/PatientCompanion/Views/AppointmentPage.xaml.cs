@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using PatientCompanion.Services;
 using PatientCompanion.ViewModels;
 
@@ -6,7 +7,9 @@ namespace PatientCompanion.Views;
 public partial class AppointmentPage : ContentPage
 {
     public AppointmentPage()
-        : this(App.Resolve<AppointmentService>(), null)
+        : this(
+            IPlatformApplication.Current!.Services.GetRequiredService<AppointmentService>(),
+            null)
     {
     }
 

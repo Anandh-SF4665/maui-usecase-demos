@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Syncfusion.Maui.Maps;
 using PatientCompanion.Services;
 using PatientCompanion.ViewModels;
@@ -6,11 +7,7 @@ namespace PatientCompanion.Views;
 
 public partial class AppointmentReviewView : ContentView
 {
-    public AppointmentReviewView()
-    {
-        InitializeComponent();
-        Loaded += OnLoaded;
-    }
+    private readonly WorldMapAssetService? worldMapAsset;
 
     public AppointmentReviewView(
         AppointmentViewModel appointmentViewModel)
@@ -18,10 +15,14 @@ public partial class AppointmentReviewView : ContentView
         InitializeComponent();
         Loaded += OnLoaded;
 
+        var services = IPlatformApplication.Current!.Services;
+        worldMapAsset = services.GetService<WorldMapAssetService>();
+
         BindingContext =
             new AppointmentReviewViewModel(
                 appointmentViewModel,
-                App.Resolve<AppointmentService>());
+                services.GetRequiredService<AppointmentService>(),
+                services.GetRequiredService<MockDataService>());
     }
 
     private void OnLoaded(object? sender, EventArgs e)
@@ -29,7 +30,10 @@ public partial class AppointmentReviewView : ContentView
         if (WorldMapLayer.ShapesSource is not null)
             return;
 
-        var asset = App.Resolve<WorldMapAssetService>();
+        var asset = worldMapAsset;
+        if (asset is null)
+            return;
+
         var stream = asset.ShapesStream;
         if (stream is null)
         {

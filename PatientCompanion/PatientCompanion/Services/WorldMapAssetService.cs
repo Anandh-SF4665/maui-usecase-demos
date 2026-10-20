@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace PatientCompanion.Services;
 
@@ -25,8 +26,13 @@ public class WorldMapAssetService
     private readonly Task<byte[]?> loadTask;
 
     public WorldMapAssetService()
+        : this(logger: null)
     {
-        loadTask = LoadAsync();
+    }
+
+    public WorldMapAssetService(ILogger<WorldMapAssetService>? logger)
+    {
+        loadTask = LoadAsync(logger);
     }
 
     /// <summary>
@@ -56,7 +62,7 @@ public class WorldMapAssetService
         return bytes is null ? null : new MemoryStream(bytes, writable: false);
     }
 
-    private static async Task<byte[]?> LoadAsync()
+    private static async Task<byte[]?> LoadAsync(ILogger<WorldMapAssetService>? logger)
     {
         try
         {
@@ -65,9 +71,14 @@ public class WorldMapAssetService
             await source.CopyToAsync(buffer);
             return buffer.ToArray();
         }
-        catch
+        catch (Exception ex)
         {
+            logger?.LogError(
+                ex,
+                "Bundled map asset '{Asset}' could not be loaded; the location preview will be empty.",
+                AssetName);
             return null;
         }
     }
 }
+

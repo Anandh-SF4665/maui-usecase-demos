@@ -1,12 +1,12 @@
+using Microsoft.Extensions.DependencyInjection;
 using PatientCompanion.ViewModels;
-using Syncfusion.Maui.Core;
 
 namespace PatientCompanion.Views;
 
 public partial class MedicationsPage : ContentPage
 {
     public MedicationsPage()
-        : this(App.Resolve<MedicationsViewModel>())
+        : this(IPlatformApplication.Current!.Services.GetRequiredService<MedicationsViewModel>())
     {
     }
 

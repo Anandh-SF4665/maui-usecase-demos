@@ -12,12 +12,14 @@ public partial class AppointmentReviewViewModel : ObservableObject
 
     public AppointmentReviewViewModel(
         AppointmentViewModel appointmentViewModel,
-        AppointmentService appointmentService)
+        AppointmentService appointmentService,
+        MockDataService mockDataService)
     {
         this.appointmentViewModel = appointmentViewModel;
         this.appointmentService = appointmentService;
 
         Booking = appointmentViewModel.Booking;
+        PatientName = mockDataService.GetPatient().Name;
     }
 
     public AppointmentBooking Booking { get; }
@@ -57,8 +59,7 @@ public partial class AppointmentReviewViewModel : ObservableObject
     public string AppointmentSummary =>
         $"{Booking.SelectedDate:dd MMM yyyy} • {Booking.SelectedTimeSlot}";
 
-    public string PatientName =>
-        App.Resolve<MockDataService>().GetPatient().Name;
+    public string PatientName { get; }
 
     public string PurposeOfVisit => "Follow-up on heart rate monitoring";
 

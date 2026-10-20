@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using PatientCompanion.ViewModels;
 
 namespace PatientCompanion.Views;
@@ -7,7 +8,7 @@ public partial class VisitsPage : ContentPage
     private VisitsViewModel? viewModel;
 
     public VisitsPage()
-        : this(App.Resolve<VisitsViewModel>())
+        : this(IPlatformApplication.Current!.Services.GetRequiredService<VisitsViewModel>())
     {
     }
 

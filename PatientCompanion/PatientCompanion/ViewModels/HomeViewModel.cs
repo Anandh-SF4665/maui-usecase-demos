@@ -99,7 +99,7 @@ public partial class HomeViewModel : BaseViewModel
     {
         AppointmentId = booking.AppointmentId,
         DoctorName = booking.DoctorName,
-        Specialization = booking.SelectedDoctor?.Specialization ?? booking.SpecialityName,
+        Specialization = booking.SelectedDoctor?.Specialization ?? booking.SpecialtyName,
         Hospital = booking.HospitalName,
         Date = booking.SelectedDate,
         Time = booking.SelectedTimeSlot,

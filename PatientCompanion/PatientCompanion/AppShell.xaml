@@ -34,7 +34,7 @@
             ContentTemplate="{DataTemplate views:HealthPage}" />
         <ShellContent
             Title="MEDS"
-            Icon="{FontImageSource FontFamily='Material Icons', Glyph={x:Static local:MaterialIcons.LocalPharmacy}, Size=22}"
+            Icon="{FontImageSource FontFamily='Material Icons', Glyph={x:Static local:MaterialIcons.LocalPharmacyIcon}, Size=22}"
             Route="MedicationsPage"
             ContentTemplate="{DataTemplate views:MedicationsPage}" />
         <ShellContent

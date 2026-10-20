@@ -88,7 +88,7 @@ public partial class HealthViewModel : BaseViewModel
             ChartTitle = "Heart Rate",
             DisplayValue = "72",
             Unit = "bpm",
-            Icon = MaterialIcons.TrendingUp,
+            Icon = MaterialIcons.TrendingUpIcon,
             SelectCommand = SelectHeartRateCommand
         });
 

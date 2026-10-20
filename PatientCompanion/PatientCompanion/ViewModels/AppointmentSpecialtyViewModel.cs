@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PatientCompanion;
 using PatientCompanion.Models;
@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace PatientCompanion.ViewModels;
 
-public partial class AppointmentSpecialityViewModel : ObservableObject
+public partial class AppointmentSpecialtyViewModel : ObservableObject
 {
     private readonly AppointmentViewModel appointmentViewModel;
 
@@ -21,7 +21,7 @@ public partial class AppointmentSpecialityViewModel : ObservableObject
 
     public bool CanContinue => SelectedSpecialty != null;
 
-    public AppointmentSpecialityViewModel(
+    public AppointmentSpecialtyViewModel(
         AppointmentViewModel appointmentViewModel)
     {
         this.appointmentViewModel = appointmentViewModel;
@@ -44,7 +44,7 @@ public partial class AppointmentSpecialityViewModel : ObservableObject
         if (SelectedSpecialty == null)
             return Task.CompletedTask;
 
-        appointmentViewModel.Booking.SelectedSpeciality = SelectedSpecialty;
+        appointmentViewModel.Booking.SelectedSpecialty = SelectedSpecialty;
         appointmentViewModel.CurrentStep = 1;
         appointmentViewModel.CurrentStepView = new AppointmentDoctorSelectionView(appointmentViewModel);
 

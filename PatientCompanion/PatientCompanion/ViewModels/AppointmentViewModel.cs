@@ -28,12 +28,12 @@ public partial class AppointmentViewModel : BaseViewModel
 
     public AppointmentViewModel(
         AppointmentBooking? existingBooking,
-        Func<AppointmentViewModel, AppointmentSpecialityView>? specialityFactory = null,
+        Func<AppointmentViewModel, AppointmentSpecialtyView>? specialtyFactory = null,
         Func<AppointmentViewModel, AppointmentDoctorSelectionView>? doctorFactory = null,
         Func<AppointmentViewModel, AppointmentDateTimeView>? dateTimeFactory = null,
         Func<AppointmentViewModel, AppointmentReviewView>? reviewFactory = null)
     {
-        specialityFactory ??= vm => new AppointmentSpecialityView(vm);
+        specialtyFactory ??= vm => new AppointmentSpecialtyView(vm);
         doctorFactory ??= vm => new AppointmentDoctorSelectionView(vm);
         dateTimeFactory ??= vm => new AppointmentDateTimeView(vm);
         reviewFactory ??= vm => new AppointmentReviewView(vm);
@@ -47,7 +47,7 @@ public partial class AppointmentViewModel : BaseViewModel
         }
 
         CurrentStep = 0;
-        CurrentStepView = specialityFactory(this);
+        CurrentStepView = specialtyFactory(this);
     }
 
     // Convenience accessors that forward to the Booking object
@@ -61,13 +61,13 @@ public partial class AppointmentViewModel : BaseViewModel
         }
     }
 
-    public SpecialtyItem? SelectedSpeciality
+    public SpecialtyItem? SelectedSpecialty
     {
-        get => Booking.SelectedSpeciality;
+        get => Booking.SelectedSpecialty;
         set
         {
-            Booking.SelectedSpeciality = value;
-            OnPropertyChanged(nameof(SelectedSpeciality));
+            Booking.SelectedSpecialty = value;
+            OnPropertyChanged(nameof(SelectedSpecialty));
         }
     }
 
@@ -133,7 +133,7 @@ public partial class AppointmentViewModel : BaseViewModel
 
         CurrentStepView = CurrentStep switch
         {
-            0 => new AppointmentSpecialityView(this),
+            0 => new AppointmentSpecialtyView(this),
             1 => new AppointmentDoctorSelectionView(this),
             _ => new AppointmentDateTimeView(this)
         };

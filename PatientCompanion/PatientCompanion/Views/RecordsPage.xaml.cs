@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using PatientCompanion.ViewModels;
 
 namespace PatientCompanion.Views;
@@ -5,7 +6,7 @@ namespace PatientCompanion.Views;
 public partial class RecordsPage : ContentPage
 {
     public RecordsPage()
-        : this(App.Resolve<RecordsViewModel>())
+        : this(IPlatformApplication.Current!.Services.GetRequiredService<RecordsViewModel>())
     {
     }
 
