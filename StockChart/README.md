@@ -51,8 +51,8 @@ Replace `YOUR_LICENSE_KEY` with your license key before running (see [Syncfusion
 Open `StockChart/StockChart.slnx` in Visual Studio or VS Code, restore packages, and deploy to your target platform (Android, iOS, Windows, or Mac Catalyst). Alternatively, from the command line:
 
 ```bash
-dotnet restore StockChart/StockChart/StockChart.csproj
-dotnet build StockChart/StockChart/StockChart.csproj -t:Run -f net10.0-android   # or your target framework
+dotnet build StockChart/StockChart/StockChart.csproj -f net10.0-android   # or your target framework
+dotnet run --project StockChart/StockChart/StockChart.csproj -f net10.0-android
 ```
 
 ## Data

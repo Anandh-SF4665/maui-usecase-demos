@@ -8,8 +8,7 @@
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              xmlns:models="clr-namespace:StockChart.Models"
-             xmlns:editorsCore="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
-             xmlns:popup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
+                         xmlns:popup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              xmlns:sliders="clr-namespace:Syncfusion.Maui.Sliders;assembly=Syncfusion.Maui.Sliders"
             
              xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
@@ -524,18 +523,18 @@
                             </buttons:SfButton>
                             <buttons:SfButton x:Name="WatchlistOverflowButton" Grid.Column="2" Text="&#xE5D4;" FontFamily="MaterialIcons" FontSize="20" WidthRequest="40" HeightRequest="40" Padding="0" VerticalOptions="Center" Background="Transparent" TextColor="{AppThemeBinding Light=#475569, Dark=#CBD5E1}" Clicked="OnWatchlistOverflowClicked" AutomationId="WatchlistOverflowButton" SemanticProperties.Description="Watchlist actions" />
                         </Grid>
-                        <editorsCore:SfTextInputLayout Grid.Row="3" Hint="Search Stocks" EnableFloating="False" IsHintAlwaysFloated="False" ContainerType="None" Stroke="{AppThemeBinding Light=#CBD5E1, Dark=#475569}" TrailingViewPosition="Inside">
+                        <core:SfTextInputLayout Grid.Row="3" Hint="Search Stocks" EnableFloating="False" IsHintAlwaysFloated="False" ContainerType="None" Stroke="{AppThemeBinding Light=#CBD5E1, Dark=#475569}" TrailingViewPosition="Inside">
                             <Entry Text="{Binding SearchText, Mode=TwoWay}" AutomationId="StockSearch" />
-                            <editorsCore:SfTextInputLayout.HintLabelStyle>
-                                <editorsCore:LabelStyle FontSize="14" TextColor="{AppThemeBinding Light=#94A3B8, Dark=#64748B}" />
-                            </editorsCore:SfTextInputLayout.HintLabelStyle>
-                            <editorsCore:SfTextInputLayout.TrailingView>
+                            <core:SfTextInputLayout.HintLabelStyle>
+                                <core:LabelStyle FontSize="14" TextColor="{AppThemeBinding Light=#94A3B8, Dark=#64748B}" />
+                            </core:SfTextInputLayout.HintLabelStyle>
+                            <core:SfTextInputLayout.TrailingView>
                                 <Grid WidthRequest="16" HeightRequest="16" Margin="0,0,4,0">
                                     <Ellipse WidthRequest="10" HeightRequest="10" Stroke="{AppThemeBinding Light=#94A3B8, Dark=#64748B}" StrokeThickness="1.6" HorizontalOptions="Start" VerticalOptions="Start" />
                                     <Line X1="9" Y1="9" X2="15" Y2="15" Stroke="{AppThemeBinding Light=#94A3B8, Dark=#64748B}" StrokeThickness="1.6" StrokeLineCap="Round" />
                                 </Grid>
-                            </editorsCore:SfTextInputLayout.TrailingView>
-                        </editorsCore:SfTextInputLayout>
+                            </core:SfTextInputLayout.TrailingView>
+                        </core:SfTextInputLayout>
                         <Grid Grid.Row="4">
                         <CollectionView x:Name="StockListView" ItemsSource="{Binding FilteredStocks}" SelectedItem="{Binding SelectedStock, Mode=TwoWay}" SelectionMode="Single" AutomationId="StockCollection" VerticalScrollBarVisibility="Never" SemanticProperties.Hint="{Binding StockCountText}">
                             <CollectionView.ItemsLayout>
