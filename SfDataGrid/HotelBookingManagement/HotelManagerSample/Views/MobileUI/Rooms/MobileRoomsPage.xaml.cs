@@ -1,15 +1,11 @@
 using HotelManagerSample;
 using ChipSelectionChangedEventArgs = Syncfusion.Maui.Core.Chips.SelectionChangedEventArgs;
-using MobileShellHost = HotelManagerSample.MobileShell;
 
 namespace HotelManagerSample.Rooms;
 
 /// <summary>
 /// Code-behind for the mobile Rooms page. Pure navigation glue — the
-/// heavy lifting is owned by <see cref="MobileRoomsViewModel"/>. Tap
-/// handlers route through the visual tree to find the
-/// <see cref="MobileShell"/> host so they don't accidentally break out
-/// of the SfTabView surface. Shell.Current is never consulted.
+/// heavy lifting is owned by <see cref="MobileRoomsViewModel"/>.
 /// </summary>
 public partial class MobileRoomsPage : ContentView
 {
@@ -25,25 +21,6 @@ public partial class MobileRoomsPage : ContentView
         _vm = App.Services!.GetRequiredService<MobileRoomsViewModel>();
         BindingContext = _vm;
     }
-
-    /// <summary>Displays a placeholder "no new notifications" alert when
-    /// the user taps the bell glyph on the top bar.</summary>
-    /// <param name="sender">The tapped bell. Unused.</param>
-    /// <param name="e">Tapped-event payload. Unused.</param>
-    private async void OnBellTapped(object? sender, EventArgs e)
-    {
-        var host = ResolveShell();
-        var alertHost = (Page?)host ?? Application.Current?.MainPage;
-        if (alertHost is null) return;
-        await alertHost.DisplayAlertAsync("Notifications", "No new notifications.", "OK");
-    }
-
-    /// <summary>Switches to the "More" tab when the user taps the
-    /// profile glyph on the top bar.</summary>
-    /// <param name="sender">The tapped glyph. Unused.</param>
-    /// <param name="e">Tapped-event payload. Unused.</param>
-    private void OnProfileTapped(object? sender, EventArgs e)
-        => ResolveShell()?.SwitchToTab(MobileShellViewModel.MoreTabIndex);
 
     // ============== Floor chip selection ==============
 
@@ -77,21 +54,4 @@ public partial class MobileRoomsPage : ContentView
     /// <param name="e">Tapped-event payload. Unused.</param>
     private void OnClearSearchTapped(object? sender, TappedEventArgs e)
         => _vm.SearchText = string.Empty;
-
-    /// <summary>Walks up the visual tree from this <see cref="ContentView"/>
-    /// looking for the <see cref="MobileShellHost"/> that owns the
-    /// navigation stack. Returns <c>null</c> when the page has not
-    /// been parented under a shell yet.</summary>
-    /// <returns>The discovered shell host, or <c>null</c> when not
-    /// parented.</returns>
-    private MobileShellHost? ResolveShell()
-    {
-        Element? walker = this.Parent;
-        while (walker is not null)
-        {
-            if (walker is MobileShellHost shell) return shell;
-            walker = walker.Parent;
-        }
-        return null;
-    }
 }

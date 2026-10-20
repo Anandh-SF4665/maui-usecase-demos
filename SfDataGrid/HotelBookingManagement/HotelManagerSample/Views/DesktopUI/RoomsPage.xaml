@@ -634,9 +634,8 @@
                                                RowHeight="56"
                                                HorizontalOptions="Fill"
                                                VerticalOptions="Fill"
-                                               HeightRequest="{Binding GridHeight, Source={x:Reference RoomsPageHost}}"
+                                               HeightRequest="{Binding GridHeight}"
                                                SelectionMode="Single"
-                                               PropertyChanged="RoomsTable_PropertyChanged"
                                                ShowRowHeader="False"
                                                VerticalScrollBarVisibility="Never"
                                                HorizontalScrollBarVisibility="Never">
