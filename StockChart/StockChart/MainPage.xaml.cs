@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.DependencyInjection;
 using StockChart.Helpers;
 using StockChart.Services;
 using StockChart.ViewModels;
@@ -45,7 +46,7 @@ namespace StockChart
         public MainPage()
         {
             InitializeComponent();
-            var viewModel = Resolve<StockChartViewModel>();
+            var viewModel = Handler.MauiContext.Services.GetRequiredService<StockChartViewModel>();
             BindingContext = viewModel;
             SettingsPopup.BindingContext = viewModel;
             DisclaimerPopup.BindingContext = viewModel;
