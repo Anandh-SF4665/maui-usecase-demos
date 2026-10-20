@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using PatientCompanion.Services;
 using PatientCompanion.ViewModels;
 
@@ -12,7 +13,7 @@ public partial class AppointmentDoctorSelectionView : ContentView
 
         BindingContext =
             new DoctorsViewModel(
-                App.Resolve<MockDataService>(),
+                IPlatformApplication.Current!.Services.GetRequiredService<MockDataService>(),
                 appointmentViewModel);
     }
 }

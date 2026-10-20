@@ -12,7 +12,7 @@ public class AppointmentBooking
         = Guid.NewGuid().ToString();
 
     // Step 1
-    public SpecialtyItem? SelectedSpeciality { get; set; }
+    public SpecialtyItem? SelectedSpecialty { get; set; }
 
     // Step 2
     public Doctor? SelectedDoctor { get; set; }
@@ -38,8 +38,8 @@ public class AppointmentBooking
     public string DoctorImage =>
         SelectedDoctor?.Image ?? "patient_avatar.png";
 
-    public string SpecialityName =>
-        SelectedSpeciality?.Name ?? string.Empty;
+    public string SpecialtyName =>
+        SelectedSpecialty?.Name ?? string.Empty;
 
     public string HospitalName =>
         SelectedDoctor?.HospitalName ?? string.Empty;

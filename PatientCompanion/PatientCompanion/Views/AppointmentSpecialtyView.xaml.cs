@@ -3,20 +3,20 @@ using PatientCompanion.ViewModels;
 
 namespace PatientCompanion.Views;
 
-public partial class AppointmentSpecialityView : ContentView
+public partial class AppointmentSpecialtyView : ContentView
 {
-    public AppointmentSpecialityView(
+    public AppointmentSpecialtyView(
         AppointmentViewModel appointmentViewModel)
     {
         InitializeComponent();
-        BindingContext = new AppointmentSpecialityViewModel(appointmentViewModel);
+        BindingContext = new AppointmentSpecialtyViewModel(appointmentViewModel);
     }
 
-    private void SpecialityChipGroup_SelectionChanged(
+    private void SpecialtyChipGroup_SelectionChanged(
         object sender,
         EventArgs e)
     {
-        if (BindingContext is AppointmentSpecialityViewModel vm)
+        if (BindingContext is AppointmentSpecialtyViewModel vm)
         {
             var chipGroup =
                 sender as Syncfusion.Maui.Core.SfChipGroup;

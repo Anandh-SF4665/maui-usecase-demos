@@ -53,7 +53,7 @@ public class AppointmentService
             existing.SelectedTimeSlot = booking.SelectedTimeSlot;
             existing.VisitType = booking.VisitType;
             existing.SelectedDoctor = booking.SelectedDoctor;
-            existing.SelectedSpeciality = booking.SelectedSpeciality;
+            existing.SelectedSpecialty = booking.SelectedSpecialty;
             existing.Status = booking.Status;
         }
         else
@@ -137,7 +137,7 @@ public class AppointmentService
                 {
                     AppointmentId = record.AppointmentId,
                     SelectedDoctor = doctor,
-                    SelectedSpeciality = new SpecialtyItem(doctor.Specialization, "heart.png"),
+                    SelectedSpecialty = new SpecialtyItem(doctor.Specialization, "heart.png"),
                     VisitType = record.VisitType,
                     SelectedDate = record.SelectedDate,
                     SelectedTimeSlot = record.SelectedTimeSlot,
@@ -191,7 +191,7 @@ public class AppointmentService
         appointments.Add(new AppointmentBooking
         {
             SelectedDoctor = doctor,
-            SelectedSpeciality = new SpecialtyItem(doctor.Specialization, "heart.png"),
+            SelectedSpecialty = new SpecialtyItem(doctor.Specialization, "heart.png"),
             VisitType = visitType,
             SelectedDate = dateTime.Date,
             SelectedTimeSlot = dateTime.ToString("h:mm tt"),

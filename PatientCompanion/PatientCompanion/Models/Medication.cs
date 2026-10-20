@@ -20,7 +20,7 @@ public partial class Medication : ObservableObject
     private string notificationText = string.Empty;
 
     [ObservableProperty]
-    private string instructionIconGlyph = MaterialIcons.LocalPharmacy;
+    private string instructionIconGlyph = MaterialIcons.LocalPharmacyIcon;
 
     [ObservableProperty]
     private string iconGlyph = "💊";

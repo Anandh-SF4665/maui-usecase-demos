@@ -8,9 +8,10 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
 
-#if ANDROID || WINDOWS || MACCATALYST
+        // Custom BottomNavigationView is rendered inside AppPageLayout on every
+        // main page; the Shell's built-in tab bar would double-render and steal
+        // hit-testing on the custom nav.
         Shell.SetTabBarIsVisible(this, false);
-#endif
 
         Routing.RegisterRoute(nameof(AppointmentPage), typeof(AppointmentPage));
     }

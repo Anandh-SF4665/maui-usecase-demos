@@ -33,7 +33,7 @@ public partial class DoctorsViewModel : BaseViewModel
     {
         Doctors.Clear();
 
-        var selectedSpeciality = appointmentViewModel.SelectedSpeciality?.Name;
+        var selectedSpecialty = appointmentViewModel.SelectedSpecialty?.Name;
 
         foreach (var doctor in mockDataService.GetDoctors()
             .Where(item => string.Equals(

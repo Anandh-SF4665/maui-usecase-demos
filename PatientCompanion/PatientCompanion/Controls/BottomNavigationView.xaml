@@ -45,7 +45,7 @@
                     <TapGestureRecognizer Tapped="MedicationsTapped" />
                 </Border.GestureRecognizers>
                 <VerticalStackLayout Spacing="2">
-                    <Label x:Name="MedicationsIcon" FontFamily="Material Icons" Text="{x:Static local:MaterialIcons.LocalPharmacy}" Style="{StaticResource BottomNavigationIconStyle}" />
+                    <Label x:Name="MedicationsIcon" FontFamily="Material Icons" Text="{x:Static local:MaterialIcons.LocalPharmacyIcon}" Style="{StaticResource BottomNavigationIconStyle}" />
                     <Label x:Name="MedicationsText" Text="MEDS" Style="{StaticResource BottomNavigationTextStyle}" />
                 </VerticalStackLayout>
             </Border>

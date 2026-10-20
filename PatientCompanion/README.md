@@ -57,13 +57,13 @@ Note: Syncfusion components may require a license key. Register it in `MauiProgr
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/syncfusion/maui-ai-usecase-demos
+   git clone https://github.com/syncfusion/maui-usecase-demos
    ```
 
 2. Open the solution:
 
    ```
-   Use Case Samples/PatientCompanion/PatientCompanion.slnx
+   PatientCompanion/PatientCompanion.slnx
    ```
 
 3. Select your target platform (Android, iOS, Mac Catalyst, or Windows) and start debugging. No configuration is required — all data is mocked locally and the map data is bundled with the app.
