@@ -1,4 +1,4 @@
-﻿namespace HospitalManagement
+namespace HospitalManagement
 {
     public partial class AppShell : Shell
     {

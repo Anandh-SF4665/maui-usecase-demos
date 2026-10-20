@@ -1,12 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using SalesOrderTracker.Services.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using SalesOrderTracker.Contracts;
 using SalesOrderTracker.Services.Repositories;
 using SalesOrderTracker.Services.Storage;
 using Syncfusion.Maui.Core.Hosting;
-using SalesOrderTracker.Services.Seeders;
-using Microsoft.Maui.Storage;
 
 namespace SalesOrderTracker
 {
@@ -32,12 +30,8 @@ namespace SalesOrderTracker
             // Register ViewModels and Pages for DI injection
             builder.Services.AddTransient<ViewModels.OrderListViewModel>();
             builder.Services.AddTransient<ViewModels.OrderDetailsViewModel>();
-            builder.Services.AddTransient<ViewModels.SettingsViewModel>();
-            builder.Services.AddTransient<ViewModels.WelcomeViewModel>();
             builder.Services.AddTransient<Views.OrderListPage>();
             builder.Services.AddTransient<Views.OrderDetailsPage>();
-            builder.Services.AddTransient<Views.SettingsPage>();
-            builder.Services.AddTransient<Views.WelcomePage>();
 
             // Configure application logging
             builder.Logging.AddAppLogging();
@@ -60,7 +54,7 @@ namespace SalesOrderTracker
             // expose DI container for pages/viewmodels created manually
             App.Services = app.Services;
 
-            // Initialize DB and kick off seeding asynchronously — NEVER block the UI thread
+            // Initialize DB and seed local sample data asynchronously — NEVER block the UI thread
             var services = app.Services;
             Task.Run(async () =>
             {
@@ -68,16 +62,18 @@ namespace SalesOrderTracker
                 {
                     var db = services.GetRequiredService<Database>();
                     await db.InitAsync();
-                    // Always seed from DummyJSON on startup with a forced reseed for consistent test data
                     try
                     {
                         await SeedData.EnsureSeedAsync(services, limit: 50, force: true);
                     }
-                    catch { /* best-effort */ }
+                    catch
+                    {
+                        // best-effort: seeding failures shouldn't block runs
+                    }
                 }
                 catch
                 {
-                    // startup seeding failures shouldn't block runs
+                    // startup failures shouldn't block runs
                 }
             });
 

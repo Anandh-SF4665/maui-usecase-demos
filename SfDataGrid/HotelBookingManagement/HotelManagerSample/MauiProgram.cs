@@ -1,6 +1,3 @@
-using HotelManagerSample;
-using HotelManagerSample;
-using HotelManagerSample;
 using HotelManagerSample.Bookings;
 using HotelManagerSample.Dashboard;
 using HotelManagerSample.Rooms;

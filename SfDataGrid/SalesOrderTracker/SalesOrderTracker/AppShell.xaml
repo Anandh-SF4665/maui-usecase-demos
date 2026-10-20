@@ -9,31 +9,9 @@
     BackgroundColor="#FFFFFF"
     ForegroundColor="#512BD4">
 
-        <!-- Use TabBar on Android and iOS for bottom tab navigation; use a flyout on desktop platforms -->
-        <TabBar IsVisible="{OnPlatform Android=true, iOS=true, WinUI=false, MacCatalyst=false}">
-            <ShellContent
-                Title="Orders"
-                Icon="list_icon.png"
-                ContentTemplate="{DataTemplate views:OrderListPage}"
-                Route="OrderListPage" />
-
-            <ShellContent
-                Title="Settings"
-                Icon="settings_icon.png"
-                ContentTemplate="{DataTemplate views:SettingsPage}"
-                Route="SettingsPage" />
-        </TabBar>
-
-    <FlyoutItem Title="Orders" Icon="list_icon.png" IsVisible="{OnPlatform WinUI=true, MacCatalyst=true, Android=false, iOS=false}">
-        <Tab Title="Orders">
-            <ShellContent ContentTemplate="{DataTemplate views:OrderListPage}" Route="OrderListPage" />
-        </Tab>
-    </FlyoutItem>
-
-    <FlyoutItem Title="Settings" Icon="settings_icon.png" IsVisible="{OnPlatform WinUI=true, MacCatalyst=true, Android=false, iOS=false}">
-        <Tab Title="Settings">
-            <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}" Route="SettingsPage" />
-        </Tab>
-    </FlyoutItem>
+    <ShellContent
+        Title="Orders"
+        ContentTemplate="{DataTemplate views:OrderListPage}"
+        Route="OrderListPage" />
 
 </Shell>

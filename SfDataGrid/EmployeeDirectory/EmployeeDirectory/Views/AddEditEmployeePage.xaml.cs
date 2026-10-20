@@ -76,7 +76,6 @@ namespace EmployeeDirectory.Views
                 _originalEmployee.Sex = _viewModel.SelectedEmployee.Sex;
                 _originalEmployee.Birthdate = _viewModel.SelectedEmployee.Birthdate;
                 _originalEmployee.Amount = _viewModel.SelectedEmployee.Amount;
-                _originalEmployee.Password = _viewModel.SelectedEmployee.Password;
             }
             else if (_originalEmployee == null && _viewModel.SelectedEmployee != null)
             {

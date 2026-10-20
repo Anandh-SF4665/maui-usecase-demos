@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SalesOrderTracker
 {
@@ -13,19 +13,6 @@ namespace SalesOrderTracker
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            // If the user hasn't logged in (prototype flag), show WelcomePage first
-            var isLogged = Microsoft.Maui.Storage.Preferences.Default.Get("IsLoggedIn", false);
-            if (!isLogged)
-            {
-                var page = App.Services?.GetService(typeof(Views.WelcomePage)) as Views.WelcomePage;
-                if (page is null)
-                {
-                    page = new Views.WelcomePage();
-                }
-
-                return new Window(page);
-            }
-
             return new Window(new AppShell());
         }
     }

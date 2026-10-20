@@ -3,16 +3,14 @@ using ProductCatalogViewerApp.Models;
 namespace ProductCatalogViewerApp.Services
 {
     /// <summary>
-    /// Contract for fetching product data from the remote API.
+    /// Contract for loading product data from the bundled sample asset.
     /// </summary>
     public interface IProductService
     {
         /// <summary>
-        /// Fetches all products from FakeStoreAPI (with DummyJSON fallback).
+        /// Loads all products from the bundled Products.json asset.
         /// </summary>
-        /// <returns>List of validated products, or empty list on failure.</returns>
-        /// <exception cref="HttpRequestException">Thrown on network/HTTP errors.</exception>
-        /// <exception cref="TaskCanceledException">Thrown on timeout.</exception>
+        /// <returns>List of validated products.</returns>
         Task<List<Product>> FetchProductsAsync();
     }
 }

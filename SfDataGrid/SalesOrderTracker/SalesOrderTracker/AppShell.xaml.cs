@@ -1,4 +1,4 @@
-﻿namespace SalesOrderTracker
+namespace SalesOrderTracker
 {
     public partial class AppShell : Shell
     {
@@ -6,8 +6,6 @@
         {
             InitializeComponent();
             Routing.RegisterRoute("OrderDetailsPage", typeof(Views.OrderDetailsPage));
-            Routing.RegisterRoute("SettingsPage", typeof(Views.SettingsPage));
         }
     }
 }
-

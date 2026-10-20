@@ -64,7 +64,7 @@ namespace ProductCatalogViewerApp.ViewModels
 
         // ─── Commands ─────────────────────────────────────────────────────────
 
-        /// <summary>Loads products from the API on first appearance.</summary>
+        /// <summary>Loads products from the bundled sample asset on first appearance.</summary>
         [RelayCommand]
         public async Task LoadProductsAsync()
         {
@@ -96,25 +96,13 @@ namespace ProductCatalogViewerApp.ViewModels
 
                 ApplyFiltersAndSort();
             }
-            catch (TaskCanceledException)
-            {
-                ErrorMessage = "Product load timed out. Please try again.";
-            }
-            catch (HttpRequestException ex) when ((int?)ex.StatusCode >= 400)
-            {
-                ErrorMessage = $"Failed to load products (Error: {(int?)ex.StatusCode}). Please try again later.";
-            }
-            catch (HttpRequestException)
-            {
-                ErrorMessage = "Unable to connect to product server. Please check your internet connection.";
-            }
             catch (System.Text.Json.JsonException)
             {
-                ErrorMessage = "Invalid product data received. Please try again.";
+                ErrorMessage = "Invalid product data. Please reinstall the sample.";
             }
             catch (Exception)
             {
-                ErrorMessage = "An unexpected error occurred. Please try again.";
+                ErrorMessage = "An unexpected error occurred while loading products.";
             }
             finally
             {
@@ -123,7 +111,7 @@ namespace ProductCatalogViewerApp.ViewModels
         }
 
         /// <summary>
-        /// Forces a reload from the API (e.g., on retry).
+        /// Forces a reload from the bundled sample asset (e.g., on retry).
         /// </summary>
         [RelayCommand]
         public async Task ReloadProductsAsync()

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 using HospitalManagement.Models;
 using HospitalManagement.Services;
 
@@ -28,6 +29,16 @@ namespace HospitalManagement.ViewModels
             _patientService = new PatientService();
             _patients = new ObservableCollection<Patient>();
             LoadPatients();
+
+            RefreshCommand = new Command(LoadPatients);
+            AddPatientCommand = new Command(async () => await Shell.Current.GoToAsync("addpatient"));
+            ViewPatientCommand = new Command<Patient>(async (patient) =>
+            {
+                if (patient == null) return;
+                var page = new View.PatientDetailsPage();
+                page.LoadPatient(patient.PatientId);
+                await Shell.Current.Navigation.PushAsync(page);
+            });
         }
 
         public ObservableCollection<Patient> Patients
@@ -39,6 +50,10 @@ namespace HospitalManagement.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        public ICommand RefreshCommand { get; }
+        public ICommand AddPatientCommand { get; }
+        public ICommand ViewPatientCommand { get; }
 
         private void UpdatePatients(IEnumerable<Patient> patients)
         {
@@ -94,8 +109,15 @@ namespace HospitalManagement.ViewModels
             get => _selectedPatient;
             set
             {
-                _selectedPatient = value;
-                OnPropertyChanged();
+                if (_selectedPatient != value)
+                {
+                    _selectedPatient = value;
+                    OnPropertyChanged();
+                    if (value != null && ViewPatientCommand.CanExecute(value))
+                    {
+                        ViewPatientCommand.Execute(value);
+                    }
+                }
             }
         }
 

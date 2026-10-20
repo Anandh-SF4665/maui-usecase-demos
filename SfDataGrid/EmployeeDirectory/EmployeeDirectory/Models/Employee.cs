@@ -89,14 +89,6 @@ namespace EmployeeDirectory.Models
             set => SetProperty(ref _amount, value);
         }
 
-        private string _password = string.Empty;
-        [JsonPropertyName("password")]
-        public string Password
-        {
-            get => _password;
-            set => SetProperty(ref _password, value);
-        }
-
         /// <summary>
         /// Creates a deep clone of this employee for editing without affecting the original
         /// </summary>
@@ -113,8 +105,7 @@ namespace EmployeeDirectory.Models
                 Country = this.Country,
                 Sex = this.Sex,
                 Birthdate = this.Birthdate,
-                Amount = this.Amount,
-                Password = this.Password
+                Amount = this.Amount
             };
         }
     }

@@ -11,11 +11,11 @@
     <Grid RowDefinitions="Auto,*" Padding="0" RowSpacing="0">
         <!-- Header Section -->
         <StackLayout Grid.Row="0" Padding="16" BackgroundColor="{AppThemeBinding Light={StaticResource Color.Light.CardBackground}, Dark={StaticResource Color.Dark.CardBackground}}" Spacing="12">
-            <Label Text="Hospital Patient Records Management" 
-                   FontSize="24" 
-                   FontAttributes="Bold" 
+            <Label Text="Hospital Patient Records Management"
+                   FontSize="24"
+                   FontAttributes="Bold"
                    TextColor="{AppThemeBinding Light={StaticResource Color.Light.TitleText}, Dark={StaticResource Color.Dark.TitleText}}"/>
-            
+
             <!-- Search Bar -->
             <SearchBar x:Name="SearchBar"
                       Placeholder="Search by Name, ID, or Diagnosis..."
@@ -44,7 +44,7 @@
 
                 <button:SfButton Grid.Column="1"
                                Text="Add Patient"
-                               Clicked="OnAddPatientClicked"
+                               Command="{Binding AddPatientCommand}"
                                BackgroundColor="{AppThemeBinding Light={StaticResource Color.Light.Primary}, Dark={StaticResource Color.Dark.Primary}}"
                                TextColor="{AppThemeBinding Light={StaticResource Color.Light.OnPrimary}, Dark={StaticResource Color.Dark.OnPrimary}}"
                                CornerRadius="5"
@@ -52,7 +52,7 @@
 
                 <button:SfButton Grid.Column="2"
                                Text="Refresh"
-                               Clicked="OnRefreshClicked"
+                               Command="{Binding RefreshCommand}"
                                BackgroundColor="{AppThemeBinding Light={StaticResource Color.Light.Secondary}, Dark={StaticResource Color.Dark.Secondary}}"
                                TextColor="{AppThemeBinding Light={StaticResource Color.Light.OnSecondary}, Dark={StaticResource Color.Dark.OnSecondary}}"
                                CornerRadius="5"
@@ -67,11 +67,11 @@
                                HeaderGridLinesVisibility="Both"
                               ItemsSource="{Binding Patients}"
                               SelectionMode="Single"
+                              SelectedItem="{Binding SelectedPatient, Mode=TwoWay}"
                               VerticalOptions="FillAndExpand"
                               ColumnWidthMode="Auto"
                               HeaderRowHeight="50"
-                              RowHeight="60"
-                              SelectionChanged="OnDataGridSelectionChanged">
+                              RowHeight="60">
             <syncfusion:SfDataGrid.DefaultStyle>
                 <syncfusion:DataGridStyle
                             RowTextColor="{AppThemeBinding Light={StaticResource Color.OnBackground}, Dark={StaticResource White}}"
@@ -82,33 +82,40 @@
             </syncfusion:SfDataGrid.DefaultStyle>
             <!-- Column Definitions -->
             <syncfusion:SfDataGrid.Columns>
-                <syncfusion:DataGridNumericColumn MappingName="PatientId" 
+                <syncfusion:DataGridNumericColumn MappingName="PatientId"
                                                   HeaderText="Patient ID"
                                                   Width="100"/>
-                <syncfusion:DataGridTextColumn MappingName="Name" 
+                <syncfusion:DataGridTextColumn MappingName="Name"
                                               HeaderText="Name"
                                               Width="140"/>
-                <syncfusion:DataGridNumericColumn MappingName="Age" 
+                <syncfusion:DataGridNumericColumn MappingName="Age"
                                                   HeaderText="Age"
                                                   Width="80"/>
-                <syncfusion:DataGridTextColumn MappingName="Diagnosis" 
+                <syncfusion:DataGridTextColumn MappingName="Diagnosis"
                                               HeaderText="Diagnosis"
                                               Width="150"/>
-                <syncfusion:DataGridTextColumn MappingName="DoctorAssigned" 
+                <syncfusion:DataGridTextColumn MappingName="DoctorAssigned"
                                               HeaderText="Doctor Assigned"
                                               Width="160"/>
-                <syncfusion:DataGridDateColumn MappingName="AdmissionDate" 
+                <syncfusion:DataGridDateColumn MappingName="AdmissionDate"
                                               HeaderText="Admission Date"
                                               Format="MM/dd/yyyy"
                                               Width="140"/>
-                <syncfusion:DataGridTextColumn MappingName="Status" 
+                <syncfusion:DataGridTextColumn MappingName="Status"
                                               HeaderText="Status"
                                               Width="120"/>
-                <syncfusion:DataGridTextColumn MappingName="Department" 
+                <syncfusion:DataGridTextColumn MappingName="Department"
                                               HeaderText="Department"
                                               Width="140"/>
             </syncfusion:SfDataGrid.Columns>
 
         </syncfusion:SfDataGrid>
+
+        <!-- Loading indicator bound to the ViewModel -->
+        <ActivityIndicator Grid.Row="1"
+                           IsRunning="{Binding IsLoading}"
+                           IsVisible="{Binding IsLoading}"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center" />
     </Grid>
 </ContentPage>

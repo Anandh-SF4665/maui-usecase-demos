@@ -1,11 +1,11 @@
 namespace ProductCatalogViewerApp.Models
 {
     /// <summary>
-    /// Represents a product in the catalog fetched from the API.
+    /// Represents a product in the catalog loaded from the bundled sample data.
     /// </summary>
     public class Product
     {
-        /// <summary>Unique identifier from API.</summary>
+        /// <summary>Unique identifier.</summary>
         public int Id { get; set; }
 
         /// <summary>Product name displayed in the DataGrid.</summary>
