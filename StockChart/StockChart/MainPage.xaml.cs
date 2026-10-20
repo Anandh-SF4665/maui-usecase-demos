@@ -42,10 +42,10 @@ namespace StockChart
         private SfPopup RemoveStockPopup => (SfPopup)Resources["RemoveStockPopup"];
         private VisualElement ResetChartZoomControl => RootPage.FindByName<VisualElement>("ResetChartZoomButton");
 
-        public MainPage(StockChartViewModel viewModel)
+        public MainPage()
         {
             InitializeComponent();
-            ArgumentNullException.ThrowIfNull(viewModel);
+            var viewModel = new StockChartViewModel(new StockDataService());
             BindingContext = viewModel;
             SettingsPopup.BindingContext = viewModel;
             DisclaimerPopup.BindingContext = viewModel;

@@ -1,18 +1,15 @@
-namespace StockChart
+﻿namespace StockChart
 {
     public partial class App : Application
     {
-        private readonly AppShell _appShell;
-
-        public App(AppShell appShell)
+        public App()
         {
             InitializeComponent();
-            _appShell = appShell;
         }
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(_appShell);
+            return new Window(new AppShell());
         }
     }
 }
