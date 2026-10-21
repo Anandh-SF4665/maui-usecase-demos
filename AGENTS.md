@@ -170,7 +170,7 @@ For every task (`VP-NNN`):
 | Barcode | `SfBarcodeGenerator` | Set `Value`, `Symbology` |
 | Step progress | `SfStepProgressBar` | Set `ItemsSource` of step labels |
 | Popup (desktop/tablet idiom) | `SfPopup` | Set `ContentTemplate` to your form |
-| Bottom sheet (phone idiom) | `SfBottomSheet` | Set `Content` to a `ContentPage` / `ContentView` |
+| Bottom sheet (phone idiom) | MAUI-native modal `ContentPage` | Syncfusion has no `SfBottomSheet` for MAUI; slide-up is achieved via `Navigation.PushModalAsync` to a `ContentPage` styled with a top-handle bar and rounded top corners. Choose with `OnIdiom`. |
 | Date+time picker | `SfDateTimePicker` | Configure `Format`, bind `SelectedDateTime` |
 
 Always check the version installed in `SfDataGrid/VisitorPass/VisitorPass/VisitorPass.csproj`
@@ -243,7 +243,8 @@ These notes complement `SPEC.md`. Read both before starting a screen.
 ### Registration Surface (single page, two idioms)
 
 - One `RegisterVisitorPage`; the container in the Dashboard chooses between
-  `SfPopup` (desktop / tablet) and `SfBottomSheet` (phone) via `OnIdiom`.
+  `SfPopup` (desktop / tablet) and a MAUI-native modal slide-up page
+  (phone) via `OnIdiom`.
 - Step 1 → Step 2: validate visitor name, host, purpose, contact number.
 - Step 2 → Generate Pass: validate date, time, duration.
 - `Generate Pass` command:

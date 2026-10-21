@@ -368,20 +368,25 @@
   "Cancel" dismisses the surface without saving.
 - **Parallel:** After VP-071.
 
-### VP-073 — Register page — idiom-aware host (`SfPopup` vs `SfBottomSheet`)
+### VP-073 — Register page — idiom-aware host (`SfPopup` vs MAUI modal slide-up)
 
 - **Goal:** Same `RegisterVisitorPage` is wrapped by `SfPopup` on
-  desktop/tablet and by `SfBottomSheet` on phone. The wrapping is chosen by
-  an `OnIdiom` branch in the **container** that opens the page (the
-  Dashboard's register trigger). The page itself is identical on both
-  idioms; only the outer surface differs.
+  desktop/tablet and by a MAUI-native modal slide-up page on phone. The
+  wrapping is chosen by an `OnIdiom` branch in the **container** that
+  opens the page (the Dashboard's register trigger). The page itself is
+  identical on both idioms; only the outer surface differs. (Syncfusion
+  does not ship an MAUI bottom-sheet control, so the phone idiom is
+  implemented as `Navigation.PushModalAsync` to a `ContentPage` styled
+  with a top handle bar, rounded top corners and a translucent scrim
+  backdrop.)
 - **Files:**
   - `Views/DashboardPage.xaml` / code-behind — branch on idiom:
     - Desktop / Tablet → `SfPopup` whose `ContentTemplate` inflates
       `RegisterVisitorPage`
-    - Phone → `SfBottomSheet` whose content is `RegisterVisitorPage`
+    - Phone → `Navigation.PushModalAsync(RegisterVisitorPage)` to a
+      `ContentPage` styled as a slide-up sheet
 - **Done when:** Toggling the designer idiom switches the registration
-  trigger between popup and bottom-sheet without duplicating XAML or
+  trigger between popup and slide-up sheet without duplicating XAML or
   view-model.
 - **Parallel:** After VP-072.
 

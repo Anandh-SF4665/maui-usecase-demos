@@ -2,11 +2,21 @@
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:VisitorPass"
+             xmlns:syncTheme="clr-namespace:Syncfusion.Maui.Themes;assembly=Syncfusion.Maui.Core"
              UserAppTheme="Light"
              x:Class="VisitorPass.App">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <!-- Syncfusion MaterialLight palette + control brushes.
+                     Loaded BEFORE our local Colors.xaml / Styles.xaml so
+                     that any visitor-pass-specific keys defined later
+                     override the Syncfusion defaults where there is a
+                     clash. -->
+                <syncTheme:SyncfusionThemeResourceDictionary VisualTheme="MaterialLight" />
+
+                <!-- Local theme: palette tokens, named brushes, per-idiom
+                     styles (added by VP-003). -->
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>

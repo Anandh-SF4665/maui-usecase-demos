@@ -511,7 +511,7 @@ Benefits:
 | `Charts` (Cartesian / Circular) | Dashboard analytics (column + donut) |
 | `BadgeView` | Status indicators across all screens |
 | `SfPopup` | Register Visitor dialog on desktop / tablet idiom |
-| `SfBottomSheet` | Register Visitor sheet on phone idiom |
+| MAUI-native modal `ContentPage` (slide-up) | Register Visitor sheet on phone idiom — Syncfusion does not ship `SfBottomSheet` for MAUI, so the phone idiom uses a MAUI-native `ContentPage` pushed via `Navigation.PushModalAsync` and styled to slide up |
 
 ---
 
@@ -587,7 +587,7 @@ named font/spacing values.
 | KPI grid | 4 cols × 1 row | 2 cols × 2 rows | `OnIdiom` on `Grid ColumnDefinitions` |
 | Donut + column panels | Side-by-side | Stacked | `OnIdiom` on parent `Grid` |
 | Donut legend | Right of chart | Below chart | `OnIdiom` on legend container |
-| Register Visitor | `SfPopup` centred | `SfBottomSheet` slide-up | `OnIdiom` on the registration root |
+| Register Visitor | `SfPopup` centred | MAUI-native modal slide-up page | `OnIdiom` on the registration root |
 | Register Visitor trigger | Header pill | Floating action button | `OnIdiom` visibility / position on the trigger |
 | DataGrid columns | All columns visible | Pass ID hidden on narrow widths | `OnIdiom` on `DataGridTextColumn.IsVisible` |
 | Status badge label | Full label | Compact (`Checked In` → `In`) | Converter + `OnIdiom` |

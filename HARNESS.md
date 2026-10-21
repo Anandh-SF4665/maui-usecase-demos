@@ -131,20 +131,37 @@ Pin to the same Syncfusion version family used elsewhere in the repository.
 
 | Package | Version | Purpose |
 |---|---|---|
-| `Microsoft.Maui.Controls` | `$(MauiVersion)` | MAUI core |
+| `Microsoft.Maui.Controls` | `10.0.0` (literal — `$(MauiVersion)` resolves to 10.0.110 which is unavailable on NuGet) | MAUI core |
 | `Microsoft.Extensions.Logging.Debug` | `10.0.0` | Debug logging |
 | `CommunityToolkit.Mvvm` | `8.4.0` | `ObservableObject`, `RelayCommand` helpers |
-| `Syncfusion.Maui.Core` | `33.2.15` | SfBadgeView, SfAvatarView, base controls |
-| `Syncfusion.Maui.Toolkit` | `33.2.15` | SfPopup (desktop idiom), SfBottomSheet (mobile idiom), SfStepProgressBar |
-| `Syncfusion.Maui.DataGrid` | `33.2.15` | SfDataGrid |
+| `Syncfusion.Maui.Core` | `33.2.15` | SfBadgeView, SfAvatarView, base controls + theme resource dictionary |
 | `Syncfusion.Maui.Charts` | `33.2.15` | SfCartesianChart + SfCircularChart (donut) |
+| `Syncfusion.Maui.DataGrid` | `33.2.15` | SfDataGrid |
 | `Syncfusion.Maui.Barcode` | `33.2.15` | SfBarcodeGenerator |
-| `Syncfusion.Maui.Inputs` | `33.2.15` | DateTimePicker, SfEntry |
+| `Syncfusion.Maui.Inputs` | `33.2.15` | SfEntry, SfComboBox, SfDateTimePicker |
+| `Syncfusion.Maui.Popup` | `33.2.15` | SfPopup |
+| `Syncfusion.Maui.Picker` | `33.2.15` | SfPicker (used for date/time selection in registration) |
+| `Syncfusion.Maui.Calendar` | `33.2.15` | SfCalendar (date selection) |
+| `Syncfusion.Maui.DataForm` | `33.2.15` | DataForm (optional registration form) |
+| `Syncfusion.Maui.Toolkit` | `1.0.11` (separate product — pinned to its own version line) | SfStepProgressBar, SfChips, SfEffectsView, SfTabView, SfNavigationDrawer, SfPullToRefresh, SfCarousel, SfTextInputLayout, SfShimmer, SfSegmentedControl |
 
-> `Syncfusion.Maui.Toolkit` already includes the DataForm, SfPopup, SfBottomSheet
-> and SfStepProgressBar controls. Do **not** add separate `Syncfusion.Maui.Popup`
-> or `Syncfusion.Maui.DataForm` packages unless the code explicitly fails to
-> resolve them.
+> Two Syncfusion product lines ship under separate version numbers:
+> - The **MAUI** controls (`Syncfusion.Maui.*`) version in lockstep at
+>   `33.2.15` / `34.2.x` / `35.x.x`. They live in NuGet under their
+>   per-control package names.
+> - The **MAUI Toolkit** (`Syncfusion.Maui.Toolkit`) is a separate product
+>   shipping under its own version line (`1.0.x`); it bundles the
+>   supplementary toolkit controls (`SfStepProgressBar`, `SfChips`, etc.)
+>   and hosts `ConfigureSyncfusionToolkit()`.
+>
+> **Note on `SfBottomSheet`:** Syncfusion does **not** ship an MAUI
+> bottom-sheet control. The mobile-idiom registration container in
+> `RegisterVisitorPage` is implemented with a MAUI-native
+> `Page`-based slide-up layout (a `Grid` inside a `Navigation.PushModalAsync`
+> page with a swipe-to-dismiss handle), **not** `SfBottomSheet`. The
+> desktop idiom continues to use `SfPopup`. The choice is encapsulated
+> inside the single `RegisterVisitorPage` XAML via `OnIdiom` so callers
+> don't branch by `DeviceInfo.Idiom`.
 
 ---
 
@@ -300,10 +317,11 @@ the variation (e.g. data shaping for a chart that needs different ranges).
 | `SfCircularChart` + `DoughnutSeries` | Dashboard "Visitor status distribution" | Donut visualisation |
 | `SfBarcodeGenerator` | Digital Pass screen | Demonstration pass code |
 | `SfPopup` | Register Visitor (desktop idiom) | Centered modal dialog |
-| `SfBottomSheet` | Register Visitor (phone idiom) | Slide-up sheet, single source page |
+| MAUI-native modal page | Register Visitor (phone idiom) | Slide-up registration container — Syncfusion does not ship a `SfBottomSheet` for MAUI, so the mobile idiom uses a `ContentPage` pushed modally from the Dashboard and styled to slide up over a translucent scrim. |
 | `SfStepProgressBar` | Registration popup (3 steps) + Visit Journey timeline | Step / timeline UI |
-| `DataForm` | Registration popup visitor details | Quick form binding (alternative to manual entry) |
-| `DateTimePicker` / `SfDateTimePicker` | Registration popup schedule | Date + time selection |
+| `SfChips` | Directory status filter row | Single-select status filter |
+| `DataForm` (optional) | Registration popup visitor details | Quick form binding (alternative to manual SfEntry grid) |
+| `SfDateTimePicker` / `SfCalendar` | Registration popup schedule | Date + time selection |
 
 **Hard rule:** if a control is not in this table, do not introduce it. The
 `SfTabView` from the HotelManagerSample reference is **not** used here —
@@ -377,5 +395,5 @@ and drift for Visitor Pass's three-screen linear flow.
 | `Views/DesktopUI/` + `Views/MobileUI/` folders | We use `OnIdiom` branches inside a single page |
 | `App.IsMobileRuntime()` choosing root page | Same reason — produces two parallel UI trees |
 | `MobileShell` (`SfTabView` bottom bar) | Shell + `TopNavBar` + in-page navigation is sufficient |
-| Two separate registration files (`RegisterVisitorPopup.xaml` + `RegisterVisitorBottomSheet.xaml`) | One `RegisterVisitorPage` renders as `SfPopup` or `SfBottomSheet` via `OnIdiom` |
+| Two separate registration files (popup + phone-modal variants) | One `RegisterVisitorPage` renders as `SfPopup` (desktop) or a MAUI-native modal slide-up page (phone) via `OnIdiom` |
 | Sidebar / `AppSidebar` control | The three screens are linear; a horizontal `TopNavBar` covers the navigation surface on both form factors |
