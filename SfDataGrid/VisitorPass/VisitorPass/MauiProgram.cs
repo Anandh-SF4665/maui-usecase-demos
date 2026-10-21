@@ -48,6 +48,11 @@ public static class MauiProgram
         // counter state.
         builder.Services.AddSingleton<PassCodeGenerator>();
 
+        // ThemeService (VP-080) — singleton so the toggle state
+        // persists across page navigations and every page that
+        // binds to its CurrentTheme property sees the same value.
+        builder.Services.AddSingleton<ThemeService>();
+
         // ----- ViewModels (VP-030 — Phase 3 Shell wiring) -----
         // Each ViewModel is a singleton so the same instance backs the
         // page it inflates for and survives any
