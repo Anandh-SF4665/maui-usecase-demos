@@ -1,28 +1,315 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Phase 6 — Digital Pass / Visitor Details (Screen 3, single page).
+
+    Hosts everything the Digital Pass shows on one ContentPage:
+
+      Section A — TopNavBar (no register; Dashboard owns that).
+      Section B — Identity card (VP-021 VisitorAvatar + name +
+                  host / purpose two-line caption + VP-020
+                  VisitorStatusBadge).
+      Section C — Pass card with the pass code rendered in a
+                  styled monospace label (the would-be
+                  SfBarcodeGenerator slot — Syncfusion.Maui.Barcode
+                  is not referenced in this project per HARNESS §8;
+                  see VP-062 future-extension note below) plus a
+                  3x2 grid of visitor details.
+      Section D — Timeline rendered as a VerticalStackLayout of
+                  4 step rows (Registered / Expected / Checked In
+                  / Checked Out, or "Cancelled" for step 4 when
+                  the visit is cancelled). The Toolkit 1.0.11 used
+                  here doesn't ship SfStepProgressBar, so the
+                  timeline is built with a StackLayout of bullet
+                  icons + labels — matching the dashboard's
+                  bullet-row visual language.
+      Section E — Action button row (Check In / Check Out / Cancel
+                  Visit). Buttons driven by IsCheckInVisible /
+                  IsCheckOutVisible / IsCancelVisible on the VM
+                  so the row changes shape with the visitor's
+                  current status.
+      Section F — EmptyState when no visitor has been resolved.
+                  If the user lands here without a passId (e.g. via
+                  deep link with no parameter), the page shows an
+                  explanatory empty state instead of a blank
+                  identity card.
+-->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:VisitorPass.ViewModels;assembly=VisitorPass"
              xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
+             xmlns:models="clr-namespace:VisitorPass.Models;assembly=VisitorPass"
              x:Class="VisitorPass.Views.VisitorDetailsPage"
              x:DataType="vm:VisitorDetailsViewModel"
              Title="Digital Pass"
              BackgroundColor="{StaticResource SurfaceAlt}">
 
     <ScrollView>
-        <VerticalStackLayout Spacing="14">
+        <VerticalStackLayout Padding="{OnIdiom Desktop='24,0,24,28', Phone='14,8,14,14'}"
+                             Spacing="14">
 
-            <!-- Details has no "Register Visitor" trigger either. -->
+            <!-- =======================================================
+                 Section A — TopNavBar (no Register trigger)
+                 ======================================================= -->
             <controls:TopNavBar Title="Digital Pass"
                                 Subtitle="Visitor identity, pass code, and journey"
                                 ShowRegisterButton="False" />
 
-            <!-- Phase 6 will replace this placeholder with the digital
-                 pass card, barcode, timeline, summary, and action buttons. -->
-            <Label Text="Details content will be built in VP-061..VP-064."
-                   TextColor="{StaticResource TextMuted}"
-                   FontSize="13"
-                   HorizontalTextAlignment="Center"
-                   Margin="0,40,0,0" />
+            <!-- =======================================================
+                 Visitor resolved? Then show the full pass surface;
+                 otherwise show the EmptyState placeholder.
+                 ======================================================= -->
+            <Grid IsVisible="{Binding HasVisitor}">
+
+                <VerticalStackLayout Spacing="14">
+
+                    <!-- ===============================================
+                         Section B — Identity card
+                         (VP-021 VisitorAvatar + name + status badge)
+                         =============================================== -->
+                    <Border Style="{StaticResource PanelCard}">
+                        <Grid ColumnDefinitions="Auto,*,Auto"
+                              ColumnSpacing="14"
+                              Padding="{OnIdiom Desktop='20,20,20,20', Phone='16,16,16,16'}">
+
+                            <!-- Large avatar tile (initials, hex colour). -->
+                            <controls:VisitorAvatar Grid.Column="0"
+                                                    Initials="{Binding Visitor.Initials}"
+                                                    AvatarSize="Large"
+                                                    WidthRequest="60"
+                                                    HeightRequest="60" />
+
+                            <!-- Name + host / purpose two-line caption. -->
+                            <VerticalStackLayout Grid.Column="1"
+                                                 Spacing="2"
+                                                 VerticalOptions="Center">
+                                <Label Text="{Binding Visitor.VisitorName}"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="16"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding Visitor.Host}"
+                                       FontFamily="OpenSansRegular"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding Visitor.Purpose}"
+                                       FontFamily="OpenSansRegular"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextMuted}"
+                                       LineBreakMode="TailTruncation" />
+                            </VerticalStackLayout>
+
+                            <!-- Status badge. -->
+                            <controls:VisitorStatusBadge Grid.Column="2"
+                                                          Status="{Binding Visitor.Status}"
+                                                          VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+
+                    <!-- ===============================================
+                         Section C — Pass card
+                         (pass code + 3x2 details grid)
+                         =============================================== -->
+                    <Border Style="{StaticResource PanelCard}">
+                        <VerticalStackLayout Spacing="14"
+                                             Padding="{OnIdiom Desktop='20,20,20,20', Phone='16,16,16,16'}">
+
+                            <!-- Section eyebrow. -->
+                            <Label Text="DIGITAL PASS"
+                                   Style="{StaticResource SectionEyebrow}" />
+
+                            <!-- Pass code rendered as a monospaced pill.
+                                 When Syncfusion.Maui.Barcode is added to
+                                 the csproj this slot becomes an
+                                 SfBarcodeGenerator with Value=PassCode. -->
+                            <Border BackgroundColor="{StaticResource SurfaceAlt}"
+                                    StrokeShape="RoundRectangle 12"
+                                    Stroke="{StaticResource Border}"
+                                    StrokeThickness="1"
+                                    Padding="14,12"
+                                    HorizontalOptions="Center"
+                                    WidthRequest="{OnIdiom Desktop=320, Phone=240}">
+                                <Label Text="{Binding Visitor.PassCode}"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="20"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       HorizontalTextAlignment="Center"
+                                       CharacterSpacing="2" />
+                            </Border>
+
+                            <!-- Details grid:
+                                 Pass Id | Host | Purpose | Date | Time | Duration -->
+                            <Grid ColumnDefinitions="*,*"
+                                  ColumnSpacing="20"
+                                  RowSpacing="14"
+                                  RowDefinitions="Auto,Auto,Auto">
+
+                                <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
+                                    <Label Text="PASS ID"
+                                           Style="{StaticResource SectionEyebrow}" />
+                                    <Label Text="{Binding Visitor.PassId}"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="2">
+                                    <Label Text="CONTACT"
+                                           Style="{StaticResource SectionEyebrow}" />
+                                    <Label Text="{Binding Visitor.ContactNumber}"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="2">
+                                    <Label Text="DATE"
+                                           Style="{StaticResource SectionEyebrow}" />
+                                    <Label Text="{Binding Visitor.VisitDate, StringFormat='{0:ddd, MMM d}'}"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="2">
+                                    <Label Text="TIME"
+                                           Style="{StaticResource SectionEyebrow}" />
+                                    <Label Text="{Binding Visitor.VisitTime, StringFormat='{0:h:mm tt}'}"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Row="2" Grid.Column="0" Spacing="2">
+                                    <Label Text="DURATION"
+                                           Style="{StaticResource SectionEyebrow}" />
+                                    <Label Text="{Binding Visitor.ExpectedDurationMinutes, StringFormat='{0} min'}"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Row="2" Grid.Column="1" Spacing="2">
+                                    <Label Text="VEHICLE"
+                                           Style="{StaticResource SectionEyebrow}" />
+                                    <Label Text="{Binding Visitor.VehicleNumber, FallbackValue='—'}"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- ===============================================
+                         Section D — Timeline (4 step rows)
+                         =============================================== -->
+                    <Border Style="{StaticResource PanelCard}">
+                        <VerticalStackLayout Spacing="12"
+                                             Padding="{OnIdiom Desktop='20,20,20,20', Phone='16,16,16,16'}">
+
+                            <!-- Section eyebrow + live caption. -->
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Grid.Column="0"
+                                       Text="JOURNEY"
+                                       Style="{StaticResource SectionEyebrow}" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding Visitor.StatusDisplayLabel}"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextPrimary}" />
+                            </Grid>
+
+                            <!-- Four timeline rows bound to
+                                 VisitorDetailsViewModel.Timeline. -->
+                            <CollectionView ItemsSource="{Binding Timeline}"
+                                            SelectionMode="None">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:TimelineStep">
+                                        <Grid ColumnDefinitions="32,*,Auto"
+                                              ColumnSpacing="12"
+                                              Padding="0,4">
+
+                                            <!-- Bullet circle on the left. -->
+                                            <Border Grid.Column="0"
+                                                    WidthRequest="22"
+                                                    HeightRequest="22"
+                                                    StrokeShape="RoundRectangle 11"
+                                                    StrokeThickness="0"
+                                                    BackgroundColor="{StaticResource PrimaryLightBrush}"
+                                                    HorizontalOptions="Center"
+                                                    VerticalOptions="Center">
+                                                <Label Text="{Binding Order}"
+                                                       TextColor="{StaticResource Primary}"
+                                                       FontFamily="OpenSansSemibold"
+                                                       FontSize="11"
+                                                       HorizontalTextAlignment="Center"
+                                                       VerticalTextAlignment="Center" />
+                                            </Border>
+
+                                            <!-- Step title + sub-label. -->
+                                            <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                                <Label Text="{Binding Label}"
+                                                       FontFamily="OpenSansSemibold"
+                                                       FontSize="12"
+                                                       TextColor="{StaticResource TextPrimary}" />
+                                                <Label Text="{Binding SubLabel}"
+                                                       FontFamily="OpenSansRegular"
+                                                       FontSize="10"
+                                                       TextColor="{StaticResource TextMuted}" />
+                                            </VerticalStackLayout>
+
+                                            <!-- Right-side "Overdue" badge. -->
+                                            <Label Grid.Column="2"
+                                                   Text="Overdue"
+                                                   FontFamily="OpenSansSemibold"
+                                                   FontSize="10"
+                                                   TextColor="{StaticResource StatusOverdueBrush}"
+                                                   IsVisible="{Binding IsOverdue}"
+                                                   VerticalOptions="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- ===============================================
+                         Section E — Action button row
+                         =============================================== -->
+                    <Grid ColumnDefinitions="*,*,*"
+                          ColumnSpacing="10"
+                          IsVisible="{Binding HasVisitor}">
+
+                        <!-- Check In: visible when Expected / Overdue. -->
+                        <Button Grid.Column="0"
+                                Text="Check In"
+                                Style="{StaticResource ActionPrimaryButton}"
+                                IsVisible="{Binding IsCheckInVisible}"
+                                Command="{Binding CheckInCommand}" />
+
+                        <!-- Check Out: visible when CheckedIn. -->
+                        <Button Grid.Column="1"
+                                Text="Check Out"
+                                Style="{StaticResource ActionSecondaryButton}"
+                                IsVisible="{Binding IsCheckOutVisible}"
+                                Command="{Binding CheckOutCommand}" />
+
+                        <!-- Cancel Visit: visible when Expected / Overdue. -->
+                        <Button Grid.Column="2"
+                                Text="Cancel"
+                                Style="{StaticResource ActionDangerButton}"
+                                IsVisible="{Binding IsCancelVisible}"
+                                Command="{Binding CancelVisitCommand}" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Grid>
+
+            <!-- Empty state when no visitor is loaded. -->
+            <controls:EmptyState Title="No visitor selected"
+                                 Message="Tap any visitor in the directory or today's activity grid to view their digital pass."
+                                 IsVisible="{Binding HasVisitor, Converter={StaticResource InvertBoolConverter}}" />
 
         </VerticalStackLayout>
     </ScrollView>

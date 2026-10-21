@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
@@ -153,6 +153,42 @@
         <Setter Property="HeightRequest" Value="56" />
         <Setter Property="HorizontalOptions" Value="End" />
         <Setter Property="VerticalOptions" Value="End" />
+    </Style>
+
+    <!-- =========================================================
+         10. Action buttons (Phase 6 Digital Pass action row).
+              Used by the Check In / Check Out / Cancel buttons
+              on the VisitorDetailsPage. Three styles so the row
+              reads as primary / secondary / danger at a glance.
+         ========================================================= -->
+    <Style x:Key="ActionPrimaryButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="TextColor" Value="{StaticResource White}" />
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="HeightRequest" Value="44" />
+        <Setter Property="Padding" Value="14,0" />
+    </Style>
+
+    <Style x:Key="ActionSecondaryButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource StatusCheckedIn}" />
+        <Setter Property="TextColor" Value="{StaticResource White}" />
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="HeightRequest" Value="44" />
+        <Setter Property="Padding" Value="14,0" />
+    </Style>
+
+    <Style x:Key="ActionDangerButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource StatusCancelledBg}" />
+        <Setter Property="TextColor" Value="{StaticResource StatusCancelled}" />
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="HeightRequest" Value="44" />
+        <Setter Property="Padding" Value="14,0" />
     </Style>
 
 </ResourceDictionary>
