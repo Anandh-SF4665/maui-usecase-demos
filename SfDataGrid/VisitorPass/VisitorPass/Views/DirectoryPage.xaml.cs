@@ -1,5 +1,7 @@
 using Syncfusion.Maui.DataGrid;
+using VisitorPass.Controls;
 using VisitorPass.Models;
+using VisitorPass.Services;
 using VisitorPass.ViewModels;
 
 namespace VisitorPass.Views;
@@ -7,23 +9,43 @@ namespace VisitorPass.Views;
 /// <summary>
 /// VP-051 / VP-052 — Directory page code-behind.
 ///
-/// The XAML owns all layout. The code-behind handles exactly one
-/// event:
+/// The XAML owns all layout. The code-behind handles two events:
 ///
-///   - <see cref="SfDataGrid.CellTapped"/> on the visitor grid ->
-///     navigates to the Digital Pass page with the tapped visitor's
-///     pass id as a Shell query parameter (see
-///     <see cref="DashboardPage.VisitorIdQueryKey"/>).
+///   - SfDataGrid.CellTapped on the visitor grid -> navigates to
+///     the Digital Pass page with the tapped visitor's pass id as
+///     a Shell query parameter (see <see cref="DashboardPage.VisitorIdQueryKey"/>).
+///   - TopNavBar.ThemeToggleClicked -> forwards to
+///     ThemeService.Toggle(); the nav bar's IsDarkMode is also
+///     bound from the service so the sun/moon glyph flips.
 ///
 /// Per HARNESS §6 rule 2 there is no business logic in this file —
-/// it just routes the row-tap event to the Shell.
+/// it just routes events to the Shell and DI container.
 /// </summary>
 public partial class DirectoryPage : ContentPage
 {
-    public DirectoryPage(DirectoryViewModel viewModel)
+    private readonly ThemeService _theme;
+
+    public DirectoryPage(DirectoryViewModel viewModel, ThemeService theme)
     {
         InitializeComponent();
         BindingContext = viewModel;
+        _theme = theme;
+
+        if (this.FindTopNavBar() is { } navBar)
+        {
+            navBar.ThemeToggleClicked += OnThemeToggleClicked;
+            navBar.IsDarkMode = _theme.IsDarkMode;
+            _theme.PropertyChanged += OnThemePropertyChanged;
+        }
+    }
+
+    private void OnThemeToggleClicked(object? sender, EventArgs e)
+        => _theme.Toggle();
+
+    private void OnThemePropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (this.FindTopNavBar() is { } navBar && e.PropertyName == nameof(ThemeService.IsDarkMode))
+            navBar.IsDarkMode = _theme.IsDarkMode;
     }
 
     private async void OnCellTapped(object? sender, DataGridCellTappedEventArgs e)
@@ -34,11 +56,7 @@ public partial class DirectoryPage : ContentPage
         if (e.RowData is not Visitor visitor)
             return;
 
-        // SelectionController already moves the selection cursor to
-        // the tapped row; we just issue the Shell navigation.
-        // VisitorDetailsPage.Route ("details") is hard-coded here for
-        // now — Phase 6 adds the Route constant on that page.
         await Shell.Current.GoToAsync(
-            $"details?{DashboardPage.VisitorIdQueryKey}={Uri.EscapeDataString(visitor.PassId)}");
+            $"{VisitorDetailsViewModel.Route}?{DashboardPage.VisitorIdQueryKey}={Uri.EscapeDataString(visitor.PassId)}");
     }
 }

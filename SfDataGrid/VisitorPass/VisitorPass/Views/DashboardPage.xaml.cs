@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Syncfusion.Maui.DataGrid;
+using VisitorPass.Controls;
 using VisitorPass.Models;
+using VisitorPass.Services;
 using VisitorPass.ViewModels;
 
 namespace VisitorPass.Views;
@@ -9,14 +11,17 @@ namespace VisitorPass.Views;
 /// VP-041 / VP-042 / VP-043 — Dashboard page code-behind.
 ///
 /// The XAML is the single source of truth for layout; the code-behind
-/// wires up two events:
+/// wires up three events:
 ///
 ///   1. TopNavBar.RegisterClicked -> routes to the registration
 ///      surface. Per VP-073 the container is chosen by idiom:
 ///      a Navigation.PushModalAsync to RegisterVisitorPage (the
 ///      platform renders the modal idiom-appropriate — centred modal
 ///      on desktop / tablet, full-screen slide-up sheet on phone).
-///   2. SfDataGrid.CellTapped on the today's-activity grid ->
+///   2. TopNavBar.ThemeToggleClicked -> forwards to
+///      ThemeService.Toggle(). The page also binds the nav bar's
+///      IsDarkMode from the service so the sun/moon glyph flips.
+///   3. SfDataGrid.CellTapped on the today's-activity grid ->
 ///      navigates to the Digital Pass page with the tapped visitor's
 ///      id.
 ///
@@ -29,18 +34,38 @@ public partial class DashboardPage : ContentPage
     public const string VisitorIdQueryKey = "passId";
 
     private readonly IServiceProvider _services;
+    private readonly ThemeService _theme;
 
-    public DashboardPage(DashboardViewModel viewModel, IServiceProvider services)
+    public DashboardPage(
+        DashboardViewModel viewModel,
+        IServiceProvider services,
+        ThemeService theme)
     {
         InitializeComponent();
         BindingContext = viewModel;
         _services = services;
+        _theme = theme;
 
         // The TopNavBar control lives inside the page's root layout;
-        // walk the visual tree to find it and subscribe to its
-        // RegisterClicked event.
+        // walk the visual tree to find it and subscribe to its events.
         if (this.FindTopNavBar() is { } navBar)
+        {
             navBar.RegisterClicked += OnRegisterClicked;
+            navBar.ThemeToggleClicked += OnThemeToggleClicked;
+            navBar.IsDarkMode = _theme.IsDarkMode;
+            _theme.PropertyChanged += OnThemePropertyChanged;
+        }
+    }
+
+    private void OnThemeToggleClicked(object? sender, EventArgs e)
+        => _theme.Toggle();
+
+    private void OnThemePropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        // Re-bind IsDarkMode so the sun/moon glyph flips on every
+        // theme change. Subscribed in the constructor.
+        if (this.FindTopNavBar() is { } navBar && e.PropertyName == nameof(ThemeService.IsDarkMode))
+            navBar.IsDarkMode = _theme.IsDarkMode;
     }
 
     /// <summary>
@@ -94,45 +119,5 @@ public partial class DashboardPage : ContentPage
 
         await Shell.Current.GoToAsync(
             $"{VisitorDetailsViewModel.Route}?{VisitorIdQueryKey}={Uri.EscapeDataString(visitor.PassId)}");
-    }
-}
-
-/// <summary>
-/// Tiny helper extension to find the single TopNavBar in the page's
-/// visual tree. Keeps the code-behind free of x:Name lookups.
-/// </summary>
-internal static class DashboardPageHelpers
-{
-    public static VisitorPass.Controls.TopNavBar? FindTopNavBar(this ContentPage page)
-    {
-        if (page.Content is Layout layout)
-            return FindInLayout<VisitorPass.Controls.TopNavBar>(layout);
-
-        return null;
-    }
-
-    private static T? FindInLayout<T>(IView view) where T : IView
-    {
-        if (view is T match)
-            return match;
-
-        if (view is Layout layout)
-        {
-            foreach (var child in layout.Children)
-            {
-                var found = FindInLayout<T>(child);
-                if (found is not null)
-                    return found;
-            }
-        }
-
-        if (view is IContentView contentView && contentView.Content is IView nested)
-        {
-            var found = FindInLayout<T>(nested);
-            if (found is not null)
-                return found;
-        }
-
-        return default;
     }
 }

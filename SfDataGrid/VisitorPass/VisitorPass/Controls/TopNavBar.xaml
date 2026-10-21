@@ -4,26 +4,31 @@
              x:Class="VisitorPass.Controls.TopNavBar">
 
     <!--
-        Top navigation bar (VP-022).
+        Top navigation bar (VP-022 + VP-080).
 
         Used at the top of every screen (Dashboard, Directory,
-        Details). Three properties:
+        Details). Properties:
 
-            Title               (string) - shown on every idiom
+            Title               (string)  - shown on every idiom
             Subtitle            (string?) - full label on desktop /
-                                           tablet; truncated on phone
-            ShowRegisterButton  (bool)   - false hides the trigger
-                                           entirely. The button shows
-                                           in the header on desktop /
-                                           tablet; the FAB on phone.
+                                            tablet; truncated on phone
+            ShowRegisterButton  (bool)    - false hides the trigger
+                                            entirely. The button shows
+                                            in the header on desktop /
+                                            tablet; the FAB on phone.
+            ShowThemeToggle     (bool)    - false hides the theme
+                                            toggle button (default true).
+            IsDarkMode          (bool)    - drives the toggle's icon
+                                            (sun vs. moon). Set by the
+                                            page from ThemeService.
 
-        Raises RegisterClicked when the user taps the trigger.
-        The page's code-behind wires that event to
-        Navigation.PushModalAsync(new NavigationPage(new RegisterVisitorPage()))
-        on phone or to SfPopup.IsOpen = true on desktop (see VP-073).
+        Raises:
+            RegisterClicked    - tapped the Register trigger.
+            ThemeToggleClicked - tapped the sun/moon toggle. Page
+                                 forwards this to ThemeService.
     -->
-    <Grid ColumnDefinitions="*,Auto"
-          ColumnSpacing="12"
+    <Grid ColumnDefinitions="*,Auto,Auto"
+          ColumnSpacing="10"
           Padding="0,0,0,12">
 
         <VerticalStackLayout Grid.Column="0"
@@ -40,11 +45,33 @@
                    LineBreakMode="TailTruncation" />
         </VerticalStackLayout>
 
+        <!-- Theme toggle (sun in dark mode = "switch to light";
+             moon in light mode = "switch to dark"). Hidden on phone
+             to keep the trigger cluster readable on narrow widths. -->
+        <Border Grid.Column="1"
+                BackgroundColor="{StaticResource SurfaceAlt}"
+                Stroke="{StaticResource Border}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 16"
+                Padding="10,6"
+                VerticalOptions="Center"
+                IsVisible="{Binding ShowThemeToggle, Source={RelativeSource AncestorType={x:Type ContentView}}}">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer x:Name="ThemeTrigger" />
+            </Border.GestureRecognizers>
+            <Label Text="{Binding ThemeToggleGlyph, Source={RelativeSource AncestorType={x:Type ContentView}}}"
+                   FontFamily="OpenSansSemibold"
+                   FontSize="14"
+                   TextColor="{StaticResource TextPrimary}"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center" />
+        </Border>
+
         <!-- Register trigger.
              Desktop / Tablet: header pill (RegisterVisitorPill style).
              Phone: floating action button anchored bottom-right.
              Both raise the same Tapped event handled in code-behind. -->
-        <Border Grid.Column="1"
+        <Border Grid.Column="2"
                 BackgroundColor="{StaticResource Primary}"
                 StrokeThickness="0"
                 StrokeShape="RoundRectangle 18"

@@ -25,34 +25,24 @@
     <Color x:Key="PrimaryLightTheme">#1E1B4B</Color>
 
     <!-- =========================================================
-         2. Surfaces (VP-080 — AppThemeBinding so the brushes that
-         reference these tokens auto-flip between light and dark)
+         2. Surfaces (light values; dark mode is provided by the
+         SurfaceBrush / SurfaceAltBrush / BorderBrush entries via
+         AppThemeBinding below — VP-080)
          ========================================================= -->
-    <AppThemeColor x:Key="Surface"
-                   Light="#FFFFFF"
-                   Dark="#161B2C" />
-    <AppThemeColor x:Key="SurfaceAlt"
-                   Light="#F6F8FD"
-                   Dark="#0F1322" />
-    <AppThemeColor x:Key="Border"
-                   Light="#E5E9F2"
-                   Dark="#2A3045" />
+    <Color x:Key="Surface">#FFFFFF</Color>
+    <Color x:Key="SurfaceAlt">#F6F8FD</Color>
+    <Color x:Key="Border">#E5E9F2</Color>
     <Color x:Key="SurfaceDark">#161B2C</Color>
     <Color x:Key="SurfaceAltDark">#0F1322</Color>
     <Color x:Key="BorderDark">#2A3045</Color>
 
     <!-- =========================================================
-         3. Text (VP-080 — AppThemeBinding)
+         3. Text (light values; dark mode via AppThemeBinding
+         brushes — VP-080)
          ========================================================= -->
-    <AppThemeColor x:Key="TextPrimary"
-                   Light="#17243A"
-                   Dark="#F1F4FB" />
-    <AppThemeColor x:Key="TextSecondary"
-                   Light="#3A4658"
-                   Dark="#A4ADC2" />
-    <AppThemeColor x:Key="TextMuted"
-                   Light="#6B7589"
-                   Dark="#6E7894" />
+    <Color x:Key="TextPrimary">#17243A</Color>
+    <Color x:Key="TextSecondary">#3A4658</Color>
+    <Color x:Key="TextMuted">#6B7589</Color>
     <Color x:Key="TextPrimaryDark">#F1F4FB</Color>
     <Color x:Key="TextSecondaryDark">#A4ADC2</Color>
     <Color x:Key="TextMutedDark">#6E7894</Color>
@@ -81,15 +71,40 @@
     <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{StaticResource PrimaryDark}" />
     <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLight}" />
 
-    <!-- Surfaces -->
-    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource Surface}" />
-    <SolidColorBrush x:Key="SurfaceAltBrush" Color="{StaticResource SurfaceAlt}" />
-    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource Border}" />
+    <!-- Surfaces (VP-080 — AppThemeBinding wrapper so the brushes
+         auto-flip between light and dark mode without any code). -->
+    <SolidColorBrush x:Key="SurfaceBrush">
+        <SolidColorBrush.Color>
+            <AppThemeBinding Light="#FFFFFF" Dark="#161B2C" />
+        </SolidColorBrush.Color>
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="SurfaceAltBrush">
+        <SolidColorBrush.Color>
+            <AppThemeBinding Light="#F6F8FD" Dark="#0F1322" />
+        </SolidColorBrush.Color>
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="BorderBrush">
+        <SolidColorBrush.Color>
+            <AppThemeBinding Light="#E5E9F2" Dark="#2A3045" />
+        </SolidColorBrush.Color>
+    </SolidColorBrush>
 
-    <!-- Text -->
-    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimary}" />
-    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}" />
-    <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMuted}" />
+    <!-- Text (VP-080 — AppThemeBinding). -->
+    <SolidColorBrush x:Key="TextPrimaryBrush">
+        <SolidColorBrush.Color>
+            <AppThemeBinding Light="#17243A" Dark="#F1F4FB" />
+        </SolidColorBrush.Color>
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="TextSecondaryBrush">
+        <SolidColorBrush.Color>
+            <AppThemeBinding Light="#3A4658" Dark="#A4ADC2" />
+        </SolidColorBrush.Color>
+    </SolidColorBrush>
+    <SolidColorBrush x:Key="TextMutedBrush">
+        <SolidColorBrush.Color>
+            <AppThemeBinding Light="#6B7589" Dark="#6E7894" />
+        </SolidColorBrush.Color>
+    </SolidColorBrush>
 
     <!-- Status foreground + pale backgrounds (used by VisitorStatusBadge) -->
     <SolidColorBrush x:Key="StatusExpectedBrush" Color="{StaticResource StatusExpected}" />

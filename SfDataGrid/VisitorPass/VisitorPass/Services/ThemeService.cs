@@ -8,10 +8,11 @@ namespace VisitorPass.Services;
 /// Wraps MAUI's <see cref="Application.Current"/> request-user-theme
 /// API in an observable view-model-friendly service so pages can
 /// surface a Light/Dark toggle affordance. The actual token swap
-/// happens automatically through <see cref="AppThemeColor"/> in
-/// <c>Colors.xaml</c>: every <see cref="SolidColorBrush"/> that
-/// references the AppTheme-tokens (Surface, SurfaceAlt, Border,
-/// TextPrimary, TextSecondary, TextMuted) flips without code.
+/// happens automatically through AppThemeBinding on the brush
+/// entries in <c>Colors.xaml</c>: SurfaceBrush / SurfaceAltBrush /
+/// BorderBrush / TextPrimaryBrush / TextSecondaryBrush / TextMutedBrush
+/// flip without code when the OS theme changes or the user taps the
+/// toggle.
 ///
 /// Registered as a singleton in <c>MauiProgram.cs</c> so the toggle
 /// state survives page navigations and the same instance backs
