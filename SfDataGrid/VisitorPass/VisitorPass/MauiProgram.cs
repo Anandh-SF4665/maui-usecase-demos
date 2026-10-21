@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
 using VisitorPass.Services;
+using VisitorPass.ViewModels;
+using VisitorPass.Views;
 
 namespace VisitorPass;
 
@@ -45,6 +47,24 @@ public static class MauiProgram
         // codes; singleton ensures every AddVisitor sees the same
         // counter state.
         builder.Services.AddSingleton<PassCodeGenerator>();
+
+        // ----- ViewModels (VP-030 — Phase 3 Shell wiring) -----
+        // Each ViewModel is a singleton so the same instance backs the
+        // page it inflates for and survives any
+        // Navigation.PushAsync / GoToAsync round-trip. The
+        // IVisitorStore dependency is resolved from DI.
+        builder.Services.AddSingleton<DashboardViewModel>();
+        builder.Services.AddSingleton<DirectoryViewModel>();
+        builder.Services.AddSingleton<VisitorDetailsViewModel>();
+
+        // ----- Pages (VP-030) -----
+        // Registered as singletons (HARNESS §6 rule 4: single page,
+        // two form factors). ShellContent.ContentTemplate inflates
+        // each once and keeps it cached. DI resolves the
+        // view-model into the constructor.
+        builder.Services.AddSingleton<DashboardPage>();
+        builder.Services.AddSingleton<DirectoryPage>();
+        builder.Services.AddSingleton<VisitorDetailsPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();

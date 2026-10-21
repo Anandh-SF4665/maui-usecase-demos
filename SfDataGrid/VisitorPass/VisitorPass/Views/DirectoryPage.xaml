@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:VisitorPass.ViewModels;assembly=VisitorPass"
+             xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
+             x:Class="VisitorPass.Views.DirectoryPage"
+             x:DataType="vm:DirectoryViewModel"
+             Title="Visitor Directory"
+             BackgroundColor="{StaticResource SurfaceAlt}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="14">
+
+            <!-- Directory has no "Register Visitor" trigger — that
+                 trigger lives on the Dashboard only. -->
+            <controls:TopNavBar Title="Visitor Directory"
+                                Subtitle="Search and filter every visit"
+                                ShowRegisterButton="False" />
+
+            <!-- Phase 5 will replace this placeholder with the search box,
+                 status filter chips, and SfDataGrid. -->
+            <Label Text="Directory content will be built in VP-051..VP-052."
+                   TextColor="{StaticResource TextMuted}"
+                   FontSize="13"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,40,0,0" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:VisitorPass.ViewModels;assembly=VisitorPass"
+             xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
+             x:Class="VisitorPass.Views.DashboardPage"
+             x:DataType="vm:DashboardViewModel"
+             Title="Visitor Command Center"
+             BackgroundColor="{StaticResource SurfaceAlt}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="14">
+
+            <!-- VP-022 TopNavBar: title + subtitle + register trigger.
+                 Phase 4 fills in the RegisterClicked handler. -->
+            <controls:TopNavBar Title="Visitor Command Center"
+                                Subtitle="Real-time visitor activity overview"
+                                ShowRegisterButton="True" />
+
+            <!-- Phase 4 will replace this placeholder with the KPI grid +
+                 donut + column charts + today's activity SfDataGrid. -->
+            <Label Text="Dashboard content will be built in VP-041..VP-043."
+                   TextColor="{StaticResource TextMuted}"
+                   FontSize="13"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,40,0,0" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

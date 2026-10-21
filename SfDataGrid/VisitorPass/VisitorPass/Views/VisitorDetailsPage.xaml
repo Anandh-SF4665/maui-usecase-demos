@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:VisitorPass.ViewModels;assembly=VisitorPass"
+             xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
+             x:Class="VisitorPass.Views.VisitorDetailsPage"
+             x:DataType="vm:VisitorDetailsViewModel"
+             Title="Digital Pass"
+             BackgroundColor="{StaticResource SurfaceAlt}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="14">
+
+            <!-- Details has no "Register Visitor" trigger either. -->
+            <controls:TopNavBar Title="Digital Pass"
+                                Subtitle="Visitor identity, pass code, and journey"
+                                ShowRegisterButton="False" />
+
+            <!-- Phase 6 will replace this placeholder with the digital
+                 pass card, barcode, timeline, summary, and action buttons. -->
+            <Label Text="Details content will be built in VP-061..VP-064."
+                   TextColor="{StaticResource TextMuted}"
+                   FontSize="13"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,40,0,0" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
