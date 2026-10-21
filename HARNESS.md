@@ -28,10 +28,14 @@ AI agent (or a human) can drive the project end-to-end without guessing.
 | Theme | MaterialLight via `SyncfusionThemeResourceDictionary` |
 | Data Source | Local in-memory seed data (no backend, no auth) |
 
-This project follows the same desktop/mobile split as the in-repo
-**HotelManagerSample** reference (see `SfDataGrid/HotelBookingManagement`). It
-is the canonical pattern for a Syncfusion MAUI showcase with desktop and mobile
-surfaces sharing the same store.
+Every screen has **one shared `ContentPage`** used by desktop and mobile runtimes.
+The same XAML handles both form factors; layout differences (KPI grid columns,
+chart stacking, registration dialog vs bottom sheet, padding, etc.) are expressed
+through MAUI's `OnIdiom`, `OnPlatform`, `OnSizeAllocated`, and value converters
+— **not** by duplicating pages into `DesktopUI/` and `MobileUI/` folders like the
+`HotelManagerSample` reference does. This keeps a single source of truth, avoids
+two-view-model drift, and ensures the desktop and mobile experiences stay in
+lockstep as the design evolves.
 
 ---
 
@@ -45,7 +49,7 @@ SfDataGrid/
         ├── VisitorPass.csproj
         ├── App.xaml / App.xaml.cs             # Theme + DI bootstrap
         ├── MauiProgram.cs                     # Syncfusion + DI registration
-        ├── AppShell.xaml / AppShell.xaml.cs   # Desktop Shell (sidebar nav)
+        ├── AppShell.xaml / AppShell.xaml.cs   # Single Shell (FlyoutBehavior=Disabled, no sidebar)
         │
         ├── Models/                            # POCO records (Visitor, etc.)
         │   ├── Visitor.cs
@@ -71,20 +75,17 @@ SfDataGrid/
         │   ├── VisitorDetailsViewModel.cs     # Selected visitor + actions
         │   └── RegisterVisitorViewModel.cs    # Multi-step registration form
         │
-        ├── Views/
+        ├── Views/                             # One page per screen — desktop AND mobile share these
         │   ├── DashboardPage.xaml(.cs)        # Screen 1 — KPI + donut + column + today's grid + register CTA
         │   ├── DirectoryPage.xaml(.cs)        # Screen 2 — search + filter chips + SfDataGrid
-        │   └── VisitorDetailsPage.xaml(.cs)   # Screen 3 — digital pass + barcode + timeline + actions
+        │   ├── VisitorDetailsPage.xaml(.cs)   # Screen 3 — digital pass + barcode + timeline + actions
+        │   └── RegisterVisitorPage.xaml(.cs)  # Registration surface (renders as SfPopup on desktop, BottomSheet on mobile)
         │
-        ├── Controls/
-        │   ├── AppSidebar.xaml(.cs)           # Desktop sidebar with active tab
+        ├── Controls/                          # Reusable presentation primitives (no Shell/sidebar here)
         │   ├── VisitorStatusBadge.xaml(.cs)   # Shared SfBadgeView wrapper
         │   ├── VisitorAvatar.xaml(.cs)        # Shared SfAvatarView wrapper
+        │   ├── TopNavBar.xaml(.cs)            # Title + "Register Visitor" pill button (uses OnIdiom for sizing)
         │   └── EmptyState.xaml(.cs)           # Used when filters return nothing
-        │
-        ├── Popups/
-        │   ├── RegisterVisitorPopup.xaml(.cs) # Desktop popup (SfPopup)
-        │   └── RegisterVisitorBottomSheet.xaml(.cs) # Mobile bottom sheet
         │
         ├── Converters/
         │   ├── VisitorStatusToColorConverter.cs
@@ -92,7 +93,8 @@ SfDataGrid/
         │   ├── StringNotEmptyToBoolConverter.cs
         │   ├── DateToShortLabelConverter.cs
         │   ├── InitialsConverter.cs
-        │   └── VisitorStatusToBrushConverter.cs
+        │   ├── VisitorStatusToBrushConverter.cs
+        │   └── IdiomToBoolConverter.cs        # Helps XAML branches read idioms (Phone → True)
         │
         ├── Resources/
         │   ├── AppIcon/                       # App icon (SVG)
@@ -100,8 +102,8 @@ SfDataGrid/
         │   ├── Fonts/                         # OpenSansRegular/Semibold + Material icons
         │   ├── Images/                        # PNGs for nav + actions
         │   └── Styles/
-        │       ├── Colors.xaml                # Theme colour palette
-        │       ├── Styles.xaml                # Page/Label/Button base styles
+        │       ├── Colors.xaml                # Theme colour palette + status brushes
+        │       ├── Styles.xaml                # Page/Label/Button base styles + OnIdiom padding/sizing
         │       ├── VisitorPassCard.xaml       # KPI + panel card styles
         │       └── VisitorPassTheme.xaml      # Syncfusion custom palette overrides
         │
@@ -114,8 +116,12 @@ SfDataGrid/
         └── Properties/
 ```
 
-> The folder structure mirrors `SfDataGrid/HotelBookingManagement/HotelManagerSample`
-> so patterns transfer one-for-one.
+> Layout decisions (KPI column counts, chart stacking order, registration
+> surface style, padding) live **inside the page XAML** through `OnIdiom`
+> branches, value converters, and named style resources — not in separate
+> `DesktopUI/` / `MobileUI/` folders. There is exactly **one** `DashboardPage`,
+> exactly **one** `DirectoryPage`, exactly **one** `VisitorDetailsPage`, and
+> exactly **one** `RegisterVisitorPage`.
 
 ---
 
@@ -129,16 +135,16 @@ Pin to the same Syncfusion version family used elsewhere in the repository.
 | `Microsoft.Extensions.Logging.Debug` | `10.0.0` | Debug logging |
 | `CommunityToolkit.Mvvm` | `8.4.0` | `ObservableObject`, `RelayCommand` helpers |
 | `Syncfusion.Maui.Core` | `33.2.15` | SfBadgeView, SfAvatarView, base controls |
-| `Syncfusion.Maui.Toolkit` | `33.2.15` | SfPopup, SfStepProgressBar, popup host |
+| `Syncfusion.Maui.Toolkit` | `33.2.15` | SfPopup (desktop idiom), SfBottomSheet (mobile idiom), SfStepProgressBar |
 | `Syncfusion.Maui.DataGrid` | `33.2.15` | SfDataGrid |
 | `Syncfusion.Maui.Charts` | `33.2.15` | SfCartesianChart + SfCircularChart (donut) |
 | `Syncfusion.Maui.Barcode` | `33.2.15` | SfBarcodeGenerator |
 | `Syncfusion.Maui.Inputs` | `33.2.15` | DateTimePicker, SfEntry |
-| `Syncfusion.Maui.Popup` | `33.2.15` | SfPopup for desktop register dialog |
 
-> `Syncfusion.Maui.Toolkit` already includes the DataForm/StepProgressBar
-> controls. Do **not** add a separate `Syncfusion.Maui.DataForm` package unless
-> the code explicitly fails to resolve `DataForm`.
+> `Syncfusion.Maui.Toolkit` already includes the DataForm, SfPopup, SfBottomSheet
+> and SfStepProgressBar controls. Do **not** add separate `Syncfusion.Maui.Popup`
+> or `Syncfusion.Maui.DataForm` packages unless the code explicitly fails to
+> resolve them.
 
 ---
 
@@ -196,10 +202,12 @@ dotnet build "SfDataGrid/VisitorPass/VisitorPass/VisitorPass.csproj" -f net10.0-
    ViewModel commands. All state transitions happen in the ViewModel.
 3. **MVVM only.** ViewModels inherit `ObservableObject` (CommunityToolkit.Mvvm)
    and use `[ObservableProperty]` / `[RelayCommand]` source generators.
-4. **Desktop vs Mobile split.** `App.CreateWindow` chooses between
-   `NavigationPage(new DesktopShell(...))` and `MobileShell(...)` exactly like
-   `HotelManagerSample`. Do not share XAML between desktop and mobile pages —
-   they live under `Views/DesktopUI/` and `Views/MobileUI/` respectively.
+4. **Single page, two form factors.** Every screen has one `ContentPage`
+   shared by desktop and mobile. Layout differences are expressed in XAML
+   via `OnIdiom`/`OnPlatform` and named style resources (see §7).
+   Do **not** create `Views/DesktopUI/` or `Views/MobileUI/` folders.
+   Do **not** fork pages by `DeviceInfo.Idiom` in code-behind — keep the
+   page tree single-rooted and let MAUI's value providers do the branching.
 5. **Syncfusion hosted in DI.** Call `ConfigureSyncfusionCore()` and
    `ConfigureSyncfusionToolkit()` in `MauiProgram.cs` so every control theme
    resolves correctly.
@@ -219,27 +227,65 @@ dotnet build "SfDataGrid/VisitorPass/VisitorPass/VisitorPass.csproj" -f net10.0-
 
 ---
 
-## 7. Desktop vs Mobile Surfacing
+## 7. Adaptive Layout with `OnIdiom`
 
-| Concern | Desktop | Mobile |
-|---|---|---|
-| Root page | `NavigationPage(new DesktopShell())` | `MobileShell` (single ContentPage with `SfTabView` bottom bar) |
-| Navigation | Sidebar (`AppSidebar` control) + `Shell.FlyoutBehavior=Flyout` is **disabled**; sidebar is in-page | Bottom tab bar |
-| Register dialog | `SfPopup` centered | Bottom sheet slide-up |
-| KPI grid | 4 columns × 1 row | 2 columns × 2 rows |
-| Charts | Two side-by-side panels | Stacked vertically |
-| DataGrid columns | All columns visible | Compressed columns, hidden PassID on narrow widths |
-| Font sizes | Body 13px | Body 12px |
-| Padding | 24 px | 14 px |
+Every screen is a single `ContentPage`. Layout differences between desktop
+(tablet/desktop, Windows, Mac Catalyst) and mobile (Android phones, iOS
+phones) come from `OnIdiom` markup extensions in XAML and a small set of
+style helpers in `Resources/Styles/Styles.xaml`.
 
-`App.IsMobileRuntime()` is the gate (mirrors `HotelManagerSample.App`):
+### Decision matrix
+
+| Concern | Desktop / Tablet | Mobile (Phone) | How it's expressed |
+|---|---|---|---|
+| Page padding | 24 px | 14 px | `Styles.xaml` named styles (`PagePaddingDesktop`, `PagePaddingMobile`) consumed via `Style="{StaticResource …}"` |
+| KPI grid | 4 columns × 1 row | 2 columns × 2 rows | `Grid ColumnDefinitions` set per-idiom with two `x:Double` resources (`KpiGridColumnWidthDesktop`, `KpiGridColumnWidthMobile`) |
+| Charts panel | Two side-by-side panels | Stacked vertically | A `Grid` whose `ColumnDefinitions`/`RowDefinitions` come from `OnIdiom` |
+| DataGrid columns | All columns visible | PassID hidden on narrow widths | `DataGrid.Columns` declaratively selects `IsVisible="{OnIdiom Phone=False, Default=True}"` |
+| Register surface | Centered `SfPopup` | Slide-up bottom sheet (`SfBottomSheet`) | A single `RegisterVisitorPage` opened via `Navigation.PushModalAsync`; the page itself picks popup vs sheet style from `OnIdiom` (see §8) |
+| Status badge width | Full label | Compact (`Checked In` → `In`) | `VisitorStatusBadge` applies a short-label converter when `OnIdiom Phone` |
+| Font sizes | Body 13 px | Body 12 px | Named font-size styles in `Styles.xaml` |
+| Top nav | `TopNavBar` shows full title + subtitle | Same `TopNavBar`, smaller height + shorter subtitle | Styles applied per-idiom |
+
+### `OnIdiom` usage examples
+
+```xml
+<!-- Padding that shrinks on phones -->
+<VerticalStackLayout Padding="{OnIdiom Desktop='24,0,24,28',
+                                    Phone='14,8,14,14'}"
+                     Spacing="14">
+
+<!-- Column count that switches between 4-up and 2-up -->
+<Grid ColumnDefinitions="{OnIdiom Desktop='*,*,*,*',
+                                  Phone='*,*'}">
+
+<!-- Column that hides on phones -->
+<sfDataGrid:DataGridTextColumn HeaderText="Pass ID"
+                               MappingName="PassId"
+                               IsVisible="{OnIdiom Phone=False, Default=True}" />
+```
+
+### Runtime idiom reference in C#
+
+When a code-behind value converter needs the idiom (rare — prefer XAML),
+read it from the bound element:
 
 ```csharp
-if (DeviceInfo.Idiom == DeviceIdiom.Phone) return true;
-if (DeviceInfo.Platform == DevicePlatform.iOS
- || DeviceInfo.Platform == DevicePlatform.Android) return true;
-return false;
+var isPhone = DeviceInfo.Current.Idiom == DeviceIdiom.Phone;
 ```
+
+Do **not** store this in a static flag on `App` and switch root pages on
+it. Use it inside the page-level view-model only when XAML cannot express
+the variation (e.g. data shaping for a chart that needs different ranges).
+
+### Forbidden patterns
+
+| ❌ | Why |
+|---|---|
+| `Views/DesktopUI/...` and `Views/MobileUI/...` folders | Duplicates logic; the spec mandates a single page per screen |
+| `App.IsMobileRuntime()` choosing root page | Same reason — produces two parallel UI trees |
+| `SfTabView` bottom navigation for "mobile shell" | The bottom nav adds nothing here; Shell's tab bar already supports desktop windows; use a single Shell + Flyout disabled |
+| `SfPopup` for desktop and a different `BottomSheet` for mobile as **two different files** | The visual differences are surface-level; one `RegisterVisitorPage` should render the right surface via `OnIdiom` |
 
 ---
 
@@ -253,13 +299,17 @@ return false;
 | `SfCartesianChart` + `ColumnSeries` | Dashboard "Visits by purpose" | Bar visualisation |
 | `SfCircularChart` + `DoughnutSeries` | Dashboard "Visitor status distribution" | Donut visualisation |
 | `SfBarcodeGenerator` | Digital Pass screen | Demonstration pass code |
-| `SfPopup` | Desktop "Register Visitor" | Modal dialog |
+| `SfPopup` | Register Visitor (desktop idiom) | Centered modal dialog |
+| `SfBottomSheet` | Register Visitor (phone idiom) | Slide-up sheet, single source page |
 | `SfStepProgressBar` | Registration popup (3 steps) + Visit Journey timeline | Step / timeline UI |
 | `DataForm` | Registration popup visitor details | Quick form binding (alternative to manual entry) |
 | `DateTimePicker` / `SfDateTimePicker` | Registration popup schedule | Date + time selection |
-| `SfTabView` | Mobile shell bottom navigation | Tab switching |
 
-**Hard rule:** if a control is not in this table, do not introduce it.
+**Hard rule:** if a control is not in this table, do not introduce it. The
+`SfTabView` from the HotelManagerSample reference is **not** used here —
+navigation is handled by a single `AppShell` with `FlyoutBehavior=Disabled`,
+and the three screens are reachable from a `TopNavBar` injected into every
+page.
 
 ---
 
@@ -286,12 +336,15 @@ return false;
 A task is **not done** until:
 
 1. `dotnet build` succeeds for the Android target (fastest check on Linux).
-2. Every screen documented in `SPEC.md` exists under `Views/DesktopUI/` and
-   `Views/MobileUI/`.
-3. Every Syncfusion control listed in `SPEC.md §13` is referenced in XAML.
-4. Status colours match the palette in `Resources/Styles/Colors.xaml`.
-5. Pass ID generator produces a unique code on each `Register`.
-6. Commit message references the task id (e.g. `VP-007: dashboard donut chart`).
+2. Every screen documented in `SPEC.md` exists as **one** page under `Views/`
+   (no `DesktopUI/`/`MobileUI/` split, no `Popups/` split).
+3. Layout differences are expressed via `OnIdiom` in XAML or named style
+   resources — verified by toggling the MAUI designer idiom between
+   `Phone` and `Desktop` (or by changing the device-size override).
+4. Every Syncfusion control listed in `SPEC.md §13` is referenced in XAML.
+5. Status colours match the palette in `Resources/Styles/Colors.xaml`.
+6. Pass ID generator produces a unique code on each `Register`.
+7. Commit message references the task id (e.g. `VP-007: dashboard donut chart`).
 
 The accompanying [`TASKS.md`](./TASKS.md) maps each rule above to a discrete
 task that agents can pick up.
@@ -311,3 +364,18 @@ Out of scope (carried over from `SPEC.md` §4):
 - Host approval workflows
 
 If a feature request falls in this list, refuse and link to the spec.
+
+### Patterns explicitly excluded from this harness
+
+The following patterns from the in-repo `HotelManagerSample` reference are
+**intentionally not** carried over. They make sense for that sample's
+three-tab domain (Dashboard / Bookings / Rooms) but produce double-the-work
+and drift for Visitor Pass's three-screen linear flow.
+
+| Excluded pattern | Reason |
+|---|---|
+| `Views/DesktopUI/` + `Views/MobileUI/` folders | We use `OnIdiom` branches inside a single page |
+| `App.IsMobileRuntime()` choosing root page | Same reason — produces two parallel UI trees |
+| `MobileShell` (`SfTabView` bottom bar) | Shell + `TopNavBar` + in-page navigation is sufficient |
+| Two separate registration files (`RegisterVisitorPopup.xaml` + `RegisterVisitorBottomSheet.xaml`) | One `RegisterVisitorPage` renders as `SfPopup` or `SfBottomSheet` via `OnIdiom` |
+| Sidebar / `AppSidebar` control | The three screens are linear; a horizontal `TopNavBar` covers the navigation surface on both form factors |

@@ -52,7 +52,9 @@ from the existing repo state.
 [ ] I read HARNESS.md and confirmed dependencies / project layout.
 [ ] I read TASKS.md and confirmed my task's prerequisites are completed.
 [ ] I read the existing file(s) I'm about to modify.
-[ ] I checked the closest reference project (SfDataGrid/HotelBookingManagement/HotelManagerSample).
+[ ] I re-read HARNESS.md §7 (Adaptive Layout with OnIdiom) to confirm how
+    layout differences are expressed — never create Views/DesktopUI or
+    Views/MobileUI folders.
 [ ] I confirmed dotnet --list-sdks and dotnet workload list are sane.
 ```
 
@@ -60,22 +62,20 @@ If any check is uncertain, stop and read more — never guess.
 
 ---
 
-## 4. Reference Project
+## 4. Reference Project (single page, both idioms)
 
-**`SfDataGrid/HotelBookingManagement/HotelManagerSample`** is the in-repo
-reference for:
+**`SfDataGrid/HotelBookingManagement/HotelManagerSample`** is the closest
+in-repo reference for Syncfusion theme + DI setup, `SfDataGrid` styling
+with `DataGridStyle`, KPI / panel card styles, and donut + column chart
+wiring. Borrow these patterns freely.
 
-- Desktop vs Mobile shell split (`App.IsMobileRuntime()`)
-- Sidebar navigation pattern (`AppSidebar` control)
-- Syncfusion theme + DI setup
-- `SfDataGrid` styling with `DataGridStyle`
-- KPI / panel card styles
-- Donut + column chart wiring
-
-When in doubt about a pattern, **read the corresponding file in
-`HotelManagerSample` first**. Patterns must transfer one-for-one; if you find
-yourself diverging, double-check you're not re-inventing something that
-already works.
+**However**, that project splits desktop and mobile into two parallel
+surface trees (`Views/DesktopUI/`, `Views/MobileUI/`, two shells, an
+`App.IsMobileRuntime()` switch). **Visitor Pass does NOT follow that
+pattern.** For layout differences we use `OnIdiom` inside a single page
+XAML (see HARNESS §7). Borrow patterns from `HotelManagerSample` but do
+**not** import its folder structure — and if you find yourself creating
+`DesktopUI/` or `MobileUI/` folders, stop and reread HARNESS §7.
 
 ---
 
@@ -89,7 +89,8 @@ For every task (`VP-NNN`):
 2. **Read references.** Open the cited section of `SPEC.md` and `HARNESS.md`.
 3. **Read existing files.** Use `read_file` to inspect every file you plan to
    modify. If the file does not exist yet, scan similar files in
-   `HotelManagerSample` to learn the pattern.
+   `HotelManagerSample` for theme / chart / DataGrid patterns, then
+   apply them inside the unified Visitor Pass page structure.
 4. **Implement.** Use `write_file` for new files, `edit_file` for changes.
    Match indentation, naming, and structure already in the project.
 5. **Build.** Run `dotnet build` for the Android target — fastest on Linux
@@ -115,7 +116,7 @@ For every task (`VP-NNN`):
 
 ### XAML
 
-- Use **two-space indentation** (matches `HotelManagerSample`).
+- Use **two-space indentation** (matches the rest of the repository).
 - Declare XAML namespaces at the top of every file:
   ```xml
   xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
@@ -139,12 +140,19 @@ For every task (`VP-NNN`):
 - No business logic in code-behind. Code-behind wires events to commands.
 - One file per type. Group small related enums in `VisitorStatus.cs` if both
   the enum and its helpers are tiny.
+- Do **not** read `DeviceInfo.Idiom` to switch behaviour between surfaces
+  — let `OnIdiom` in XAML handle the branching. Reading the idiom is only
+  acceptable in value converters (e.g. `IdiomToBoolConverter`).
 
 ### Resources
 
 - Colours, brushes, sizes → `Resources/Styles/*.xaml`
 - Icons → `Resources/Images/*.png` (named `kebab-case.png`)
 - Never inline hex colours outside `Colors.xaml`.
+- Per-idiom named styles (`PagePaddingDesktop`, `PagePaddingMobile`,
+  `SectionSpacingDesktop`, `SectionSpacingMobile`, etc.) live in
+  `Styles.xaml`. Prefer them over inline `OnIdiom` values for anything
+  used in more than one place.
 
 ---
 
@@ -159,12 +167,36 @@ For every task (`VP-NNN`):
 | Column chart | `SfCartesianChart` → `ColumnSeries` | Same; set `XAxes`/`YAxes` |
 | Barcode | `SfBarcodeGenerator` | Set `Value`, `Symbology` |
 | Step progress | `SfStepProgressBar` | Set `ItemsSource` of step labels |
-| Popup | `SfPopup` | Set `ContentTemplate` to your form |
+| Popup (desktop/tablet idiom) | `SfPopup` | Set `ContentTemplate` to your form |
+| Bottom sheet (phone idiom) | `SfBottomSheet` | Set `Content` to a `ContentPage` / `ContentView` |
 | Date+time picker | `SfDateTimePicker` | Configure `Format`, bind `SelectedDateTime` |
 
 Always check the version installed in `SfDataGrid/VisitorPass/VisitorPass/VisitorPass.csproj`
 — use the *exact* control API that matches Syncfusion MAUI `33.2.15`. If you
 need a newer property, read the API reference first.
+
+---
+
+## 7.1 Adaptive Layout Cheat Sheet
+
+When the same XAML needs to look different on desktop/tablet vs phone,
+**always prefer `OnIdiom`** over code-behind switches.
+
+| Need | XAML |
+|---|---|
+| Different padding | `Padding="{OnIdiom Desktop='24,0,24,28', Phone='14,8,14,14'}"` |
+| Different column count | `ColumnDefinitions="{OnIdiom Desktop='*,*,*,*', Phone='*,*'}"` |
+| Different spacing | `Spacing="{OnIdiom Desktop=18, Phone=14}"` |
+| Different font size | `FontSize="{OnIdiom Desktop=13, Phone=12}"` |
+| Hide on phone | `IsVisible="{OnIdiom Phone=False, Default=True}"` |
+| Show only on phone | `IsVisible="{OnIdiom Phone=True, Default=False}"` |
+| Different `SfDataGrid` columns | `IsVisible="{OnIdiom Phone=False, Default=True}"` on each `DataGridTextColumn` |
+| Different label text | Use `StatusToShortLabelConverter` (full vs compact) — usually paired with `OnIdiom` on the wrapping layout |
+| Different container (`SfPopup` vs `SfBottomSheet`) | Place both in the same XAML with `IsVisible="{OnIdiom …}"` on each; only one is open at a time |
+
+For idioms that XAML cannot express (very rare), fall back to
+`IdiomToBoolConverter` from `Converters/`. Never use
+`DeviceInfo.Idiom` checks in code-behind to fork screen behaviour.
 
 ---
 
@@ -181,6 +213,11 @@ need a newer property, read the API reference first.
 | `git reset --hard` / `git push --force` without explicit user approval | Destroys teammate work. |
 | Mark a task complete without a green build | False progress; reviewers lose trust. |
 | Invent new enums / models not in `SPEC.md §5` | The data model is locked. |
+| Create `Views/DesktopUI/` or `Views/MobileUI/` folders | Visitor Pass has **one page per screen**. Layout differences live in `OnIdiom` branches — see HARNESS §7. |
+| Create a separate `RegisterVisitorPopup.xaml` and `RegisterVisitorBottomSheet.xaml` | The registration surface is one `RegisterVisitorPage`; the container chooses `SfPopup` vs `SfBottomSheet` via `OnIdiom`. |
+| Add `App.IsMobileRuntime()` and switch the root page on it | Produces two parallel UI trees. Use a single `AppShell` + per-idiom XAML. |
+| Add an `AppSidebar` / `MobileShell` (SfTabView) | The three screens are linear; a top `TopNavBar` control handles navigation on every platform. |
+| Read `DeviceInfo.Idiom` in code-behind to branch behaviour | Use `OnIdiom` in XAML or `IdiomToBoolConverter` only. |
 
 ---
 
@@ -192,24 +229,29 @@ These notes complement `SPEC.md`. Read both before starting a screen.
 
 - KPI cards use the `KpiCard` style; bound counts refresh when
   `VisitorsChanged` fires.
-- Donut + column charts live in **two `PanelCard`s** side-by-side on desktop,
-  stacked on mobile.
+- Donut + column charts live in **two `PanelCard`s** whose arrangement
+  switches between side-by-side and stacked via `OnIdiom` on the parent
+  `Grid` (see HARNESS §7).
 - The "Today's activity" `SfDataGrid` is capped at the 8 most recent today's
   visitors via a `TodayVisitors` computed property on the ViewModel.
 - The "Register Visitor" CTA is a `Border` (not a `Button`) to match the
   reference design's pill style. It raises a `Clicked`-equivalent
   `TapGestureRecognizer` that opens the registration surface.
 
-### Registration Popup / Bottom Sheet
+### Registration Surface (single page, two idioms)
 
+- One `RegisterVisitorPage`; the container in the Dashboard chooses between
+  `SfPopup` (desktop / tablet) and `SfBottomSheet` (phone) via `OnIdiom`.
 - Step 1 → Step 2: validate visitor name, host, purpose, contact number.
 - Step 2 → Generate Pass: validate date, time, duration.
 - `Generate Pass` command:
   1. Asks `IVisitorStore` for a new pass code via `PassCodeGenerator`.
   2. Creates a `Visitor` with `Status = VisitorStatus.Expected`.
   3. Appends to the store.
-  4. Sets `NavigationParameter` to the new visitor.
-  5. Closes popup / sheet.
+  4. Sets `NavigationParameter` to the new visitor id.
+  5. Dismisses the surface (`SfPopup.IsOpen = false` or
+     `SfBottomSheet.IsOpen = false` depending on the container chosen by
+     `OnIdiom`).
   6. Navigates to `VisitorDetailsPage` for the new visitor.
 
 ### Directory (Screen 2)
@@ -241,6 +283,11 @@ These notes complement `SPEC.md`. Read both before starting a screen.
 [ ] Every Syncfusion control named in the task is referenced in XAML.
 [ ] Colours use StaticResource / theme tokens, not hard-coded hex.
 [ ] Status colours match the palette in Resources/Styles/Colors.xaml.
+[ ] No Views/DesktopUI or Views/MobileUI folders were created.
+[ ] No code-behind reads DeviceInfo.Idiom to switch screen behaviour.
+[ ] Layout differences (padding, grid columns, chart stacking, etc.) are
+    expressed via OnIdiom or per-idiom named styles — verified by toggling
+    the MAUI designer idiom or changing the runtime target.
 [ ] Committed on bc/02a98991-am-going-develop.
 [ ] Pushed to origin/bc/02a98991-am-going-develop.
 ```

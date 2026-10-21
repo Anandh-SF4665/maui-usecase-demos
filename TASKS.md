@@ -11,6 +11,11 @@
 > - **Done when** — verifiable acceptance condition
 > - **Parallel** — yes / no + safety note
 > - **Reference** — section in SPEC.md / HARNESS.md
+>
+> **Architectural rule:** every screen is **one page** shared by desktop
+> and mobile. Layout differences live in `OnIdiom` branches inside that
+> page's XAML — not in separate `Views/DesktopUI/` or `Views/MobileUI/`
+> folders. See `HARNESS.md §7` for the decision matrix.
 
 ---
 
@@ -26,7 +31,7 @@
   - `SfDataGrid/VisitorPass/VisitorPass/App.xaml(.cs)`
   - `SfDataGrid/VisitorPass/VisitorPass/AppShell.xaml(.cs)`
   - `SfDataGrid/VisitorPass/VisitorPass/MainPage.xaml(.cs)`
-  - `SfDataGrid/VisitorPass/VisitorPass/Platforms/*` (copy from HotelManagerSample)
+  - `SfDataGrid/VisitorPass/VisitorPass/Platforms/*` (copy from `EmployeeDirectory`)
   - `SfDataGrid/VisitorPass/VisitorPass/Resources/{AppIcon,Splash,Fonts,Images,Styles}/*`
 - **Done when:** `dotnet build … -f net10.0-android` produces 0 errors.
 - **Parallel:** No — prerequisite for everything else.
@@ -47,16 +52,20 @@
 ### VP-003 — Theme & resource dictionaries
 
 - **Goal:** Colours, status brushes, base styles, KPI card styles live in one
-  place.
+  place, including per-idiom named styles.
 - **Files:**
-  - `Resources/Styles/Colors.xaml` — palette tokens
-  - `Resources/Styles/Styles.xaml` — base page/label/button styles
+  - `Resources/Styles/Colors.xaml` — palette tokens + status brushes
+  - `Resources/Styles/Styles.xaml` — base page/label/button styles + per-idiom
+    padding (`PagePaddingDesktop`, `PagePaddingMobile`), per-idiom spacing
+    (`SectionSpacingDesktop`, `SectionSpacingMobile`), per-idiom font sizes
   - `Resources/Styles/VisitorPassCard.xaml` — `KpiCard`, `PanelCard`,
     `SectionTitle` styles
   - `Resources/Styles/VisitorPassTheme.xaml` — Syncfusion colour overrides
-- **Done when:** Static lookups for `Primary`, `Surface`, `TextPrimary`, and
-  every status brush succeed; new pages pick up `KpiCard` style automatically.
+- **Done when:** Static lookups for `Primary`, `Surface`, `TextPrimary`,
+  `PagePaddingDesktop`, `PagePaddingMobile` and every status brush succeed;
+  new pages pick up `KpiCard` and per-idiom padding styles automatically.
 - **Parallel:** After VP-002.
+- **Reference:** HARNESS §7.
 
 ---
 
@@ -69,7 +78,7 @@
 - **Files:**
   - `Models/Visitor.cs`
   - `Models/VisitorStatus.cs`
-  - `Models/VisitorPurpose.cs`
+  - `Models/VisitPurpose.cs`
   - `Models/Host.cs` (static list of 5 hosts)
   - `Models/VisitorStats.cs`
   - `Models/StatusBreakdownPoint.cs`
@@ -107,12 +116,16 @@
 ### VP-020 — `VisitorStatusBadge` control
 
 - **Goal:** Reusable `SfBadgeView` wrapper that renders a status with the
-  correct colour.
+  correct colour; compact label on phones via `OnIdiom` + label converter.
 - **Files:**
-  - `Controls/VisitorStatusBadge.xaml(.cs)` — accepts `Status` property
+  - `Controls/VisitorStatusBadge.xaml(.cs)` — accepts `Status` property,
+    uses `OnIdiom` on the inner `Label` to switch between full and
+    compact text
 - **Done when:** Dropping the control into a page renders the right brush;
-  status changes are reflected automatically (INotifyPropertyChanged).
+  status changes are reflected automatically (`INotifyPropertyChanged`); on
+  phones the label is shortened (`Checked In` → `In`).
 - **Parallel:** Yes.
+- **Reference:** SPEC §14.
 
 ### VP-021 — `VisitorAvatar` control
 
@@ -123,20 +136,30 @@
   bound.
 - **Parallel:** Yes.
 
-### VP-022 — Empty-state + AppSidebar controls
+### VP-022 — `TopNavBar` control
 
-- **Goal:** `EmptyState` placeholder used by Directory when filters return 0
-  rows; `AppSidebar` desktop navigation.
+- **Goal:** Top navigation bar used by every screen; exposes a screen title,
+  optional subtitle, and a "Register Visitor" trigger whose placement (header
+  pill on desktop / tablet, floating action on phone) is chosen via `OnIdiom`.
 - **Files:**
-  - `Controls/EmptyState.xaml(.cs)`
-  - `Controls/AppSidebar.xaml(.cs)` — accepts `ActiveTab`, raises `TabSelected`
-- **Done when:** Both controls render in isolation; sidebar selection
-  navigates to the requested page on desktop.
+  - `Controls/TopNavBar.xaml(.cs)` — accepts `Title`, `Subtitle`,
+    `ShowRegisterButton`; raises `RegisterClicked`
+- **Done when:** The bar renders identically on both idioms except for the
+  register-trigger placement; tapping the trigger raises the event.
+- **Parallel:** Yes.
+- **Reference:** HARNESS §7, SPEC §3.
+
+### VP-023 — `EmptyState` control
+
+- **Goal:** Placeholder shown when Directory filters return 0 rows.
+- **Files:** `Controls/EmptyState.xaml(.cs)`
+- **Done when:** Control renders in isolation with title + body text.
 - **Parallel:** Yes.
 
-### VP-023 — Converters
+### VP-024 — Converters (incl. idiom helpers)
 
-- **Goal:** All XAML converters live in one folder.
+- **Goal:** All XAML converters live in one folder, including idiom-aware
+  helpers used by `OnIdiom` fallbacks in code-behind.
 - **Files:**
   - `Converters/VisitorStatusToColorConverter.cs`
   - `Converters/VisitorStatusToBackgroundConverter.cs`
@@ -144,38 +167,39 @@
   - `Converters/DateToShortLabelConverter.cs`
   - `Converters/InitialsConverter.cs`
   - `Converters/VisitorStatusToBrushConverter.cs`
+  - `Converters/StatusToShortLabelConverter.cs` (returns compact label
+    used by `VisitorStatusBadge` on phone)
+  - `Converters/IdiomToBoolConverter.cs` (rare — used only when XAML
+    cannot express an idiom branch)
 - **Done when:** Converters compile and are reusable across pages.
 - **Parallel:** Yes.
 
 ---
 
-## Phase 3 — Desktop Shell & Navigation
+## Phase 3 — App Shell & Navigation
 
-### VP-030 — Desktop `AppShell` + sidebar wiring
+### VP-030 — Single `AppShell` + `TopNavBar` wiring
 
-- **Goal:** Desktop Shell with sidebar navigation across the 3 pages.
+- **Goal:** One `AppShell` (Flyout disabled) hosts the three screens; every
+  screen hosts a `TopNavBar` that drives navigation and exposes the
+  Register Visitor trigger.
 - **Files:**
-  - `App.xaml.cs` — pick `DesktopShell` on non-mobile
-  - `Views/DesktopUI/DesktopShell.xaml(.cs)` — hosts `AppSidebar` + current
-    page area
-  - Update `Controls/AppSidebar.xaml` — add Commands for navigation
-- **Done when:** Sidebar tabs navigate between Dashboard / Directory /
-  Details-placeholder; current tab is highlighted.
-- **Parallel:** After VP-022.
-- **Reference:** SPEC §3, HARNESS §7.
-
-### VP-031 — Mobile shell with `SfTabView`
-
-- **Goal:** Mobile bottom tab shell hosting the three mobile pages.
-- **Files:**
-  - `Views/MobileUI/MobileShell.xaml(.cs)` — `SfTabView` with TabBarPlacement=Bottom
-  - `Views/MobileUI/MobileShellViewModel.cs`
-- **Done when:** Tabs switch content; tab icons render; bottom bar visible.
-- **Parallel:** Yes (after VP-002).
+  - `App.xaml.cs` — `CreateWindow` returns `new Window(new AppShell())`
+    (no `IsMobileRuntime()` switch)
+  - `AppShell.xaml` — declares the three routes:
+    - `dashboard` → `DashboardPage`
+    - `directory` → `DirectoryPage`
+    - `details` → `VisitorDetailsPage`
+  - `MauiProgram.cs` — register `DashboardPage`, `DirectoryPage`,
+    `VisitorDetailsPage` (singletons) + their view-models
+- **Done when:** `Shell.Current.GoToAsync("dashboard")` etc. works on every
+  platform; the three pages inflate without errors.
+- **Parallel:** After VP-022, VP-040/050/060 view-models.
+- **Reference:** SPEC §3, HARNESS §2, §7.
 
 ---
 
-## Phase 4 — Dashboard (Screen 1)
+## Phase 4 — Dashboard (Screen 1, single page)
 
 ### VP-040 — `DashboardViewModel` + KPI computation
 
@@ -183,259 +207,240 @@
   visitor list.
 - **Files:** `ViewModels/DashboardViewModel.cs`
 - **Done when:** Setting `DashboardViewModel` as BindingContext shows correct
-  values for a sample dataset.
+  values for a sample dataset; subscribing to `IVisitorStore.VisitorsChanged`
+  refreshes all derived collections.
 - **Parallel:** After VP-011.
 
-### VP-041 — Desktop dashboard XAML — KPI cards + CTA
+### VP-041 — Dashboard XAML — `TopNavBar` + KPI grid + register trigger
 
-- **Goal:** Desktop dashboard with KPI cards + "Register Visitor" button.
-- **Files:** `Views/DesktopUI/DashboardPage.xaml(.cs)`
-- **Done when:** KPI cards render with correct counts; CTA opens register
-  popup (wired in VP-060).
-- **Parallel:** After VP-040, VP-020.
+- **Goal:** Single `DashboardPage` with `TopNavBar` (title "Visitor Command
+  Center", register button) and KPI cards. KPI grid uses `OnIdiom` to switch
+  between 4-up (desktop/tablet) and 2×2 (phone).
+- **Files:** `Views/DashboardPage.xaml(.cs)`
+- **Done when:**
+  - Toggling the MAUI designer idiom between `Phone` and `Desktop` switches
+    the KPI layout without changing anything else.
+  - The "Register Visitor" trigger raises a page event the code-behind
+    routes to `Navigation.PushModalAsync(new NavigationPage(new RegisterVisitorPage()))`.
+- **Parallel:** After VP-020, VP-022, VP-040.
 
-### VP-042 — Desktop dashboard XAML — donut + column charts
+### VP-042 — Dashboard XAML — donut + column chart panels
 
-- **Goal:** Side-by-side donut + column chart panels.
-- **Files:** `Views/DesktopUI/DashboardPage.xaml`
-- **Done when:** Charts render with correct legend; both bound to
-  `DashboardViewModel`.
+- **Goal:** Add a donut + column chart row to the same `DashboardPage`. The
+  panels sit side-by-side on desktop/tablet and stack on phone (via
+  `OnIdiom` on the parent `Grid`).
+- **Files:** `Views/DashboardPage.xaml`
+- **Done when:** Both charts render with the correct legend; toggling idiom
+  reorders the panels; `DashboardViewModel` series properties drive them.
 - **Parallel:** After VP-041.
 
-### VP-043 — Desktop dashboard XAML — today's activity grid + status badge
+### VP-043 — Dashboard XAML — today's activity grid + status badge
 
 - **Goal:** Compact `SfDataGrid` of today's visitors using `VisitorStatusBadge`
-  in status column.
-- **Files:** `Views/DesktopUI/DashboardPage.xaml`
-- **Done when:** Tapping a row navigates to `VisitorDetailsPage`.
-- **Parallel:** After VP-020.
-
-### VP-044 — Mobile dashboard XAML
-
-- **Goal:** Mobile-friendly dashboard with 2×2 KPI grid, stacked charts, today's
-  list, and floating action button.
-- **Files:** `Views/MobileUI/DashboardPage.xaml(.cs)`,
-  `Views/MobileUI/DashboardViewModel.cs`
-- **Done when:** Page renders inside `MobileShell`; CTA opens bottom sheet.
-- **Parallel:** Yes (after VP-040).
+  in the status column. The `Pass ID` column hides on phone via
+  `IsVisible="{OnIdiom Phone=False, Default=True}"`.
+- **Files:** `Views/DashboardPage.xaml`
+- **Done when:** Tapping a row navigates to `VisitorDetailsPage` with the
+  right visitor id; the badge updates when status changes.
+- **Parallel:** After VP-020, VP-041.
 
 ---
 
-## Phase 5 — Directory (Screen 2)
+## Phase 5 — Directory (Screen 2, single page)
 
 ### VP-050 — `DirectoryViewModel` (search + status filter)
 
 - **Goal:** Live search + status chip filtering.
 - **Files:** `ViewModels/DirectoryViewModel.cs`
-- **Done when:** Setting `SearchText` filters in < 50 ms for 20-row dataset;
-  chip selection filters by status.
+- **Done when:** Setting `SearchText` filters in < 50 ms for the 20-row
+  dataset; chip selection filters by status; `VisitorsChanged` resets the
+  filtered list.
 - **Parallel:** After VP-011.
 
-### VP-051 — Desktop directory page — toolbar, filter chips, SfDataGrid
+### VP-051 — Directory XAML — `TopNavBar`, search box, status chips
 
-- **Goal:** Search box, status chips, `SfDataGrid` with all columns + row
-  template (avatar + name + status badge).
-- **Files:** `Views/DesktopUI/DirectoryPage.xaml(.cs)`
-- **Done when:** Search filters grid live; chip selection filters; row tap
-  navigates to `VisitorDetailsPage`.
-- **Parallel:** After VP-050, VP-020, VP-021.
+- **Goal:** Single `DirectoryPage` with `TopNavBar` (title "Visitor Directory"),
+  search entry, and status filter chips (`All / Expected / Checked In /
+  Checked Out / Cancelled / Overdue`). The chip row's font size + spacing use
+  per-idiom named styles; the search entry is full-width on phone.
+- **Files:** `Views/DirectoryPage.xaml(.cs)`
+- **Done when:** Search filters grid live (debounced 250 ms); chip
+  selection filters; chips highlight the active selection.
+- **Parallel:** After VP-050, VP-022.
 
-### VP-052 — Mobile directory page
+### VP-052 — Directory XAML — `SfDataGrid` with row template
 
-- **Goal:** Mobile directory with compressed grid columns.
-- **Files:** `Views/MobileUI/DirectoryPage.xaml(.cs)`
-- **Done when:** Renders inside mobile shell; same interactions as desktop.
-- **Parallel:** Yes (after VP-050).
+- **Goal:** Add `SfDataGrid` to the same `DirectoryPage` with custom
+  `DataGridTemplateColumn` for the Visitor column (`VisitorAvatar` + name +
+  contact) and Status column (`VisitorStatusBadge`).
+- **Files:** `Views/DirectoryPage.xaml`
+- **Done when:** Row tap navigates to `VisitorDetailsPage`; avatar initials
+  and colours render; Pass ID column hides on phone.
+- **Parallel:** After VP-020, VP-021, VP-051.
 
 ---
 
-## Phase 6 — Digital Pass & Details (Screen 3)
+## Phase 6 — Digital Pass & Visit Details (Screen 3, single page)
 
-### VP-060 — `VisitorDetailsViewModel` (with check-in / check-out actions)
+### VP-060 — `VisitorDetailsViewModel` (check-in / check-out / cancel)
 
 - **Goal:** Exposes selected visitor + commands for `CheckIn`, `CheckOut`,
   `CancelVisit`.
 - **Files:** `ViewModels/VisitorDetailsViewModel.cs`
-- **Done when:** Commands transition the visitor's status correctly and update
-  derived collections (timeline step index, action button visibility).
+- **Done when:** Commands transition the visitor's status correctly and
+  update derived state (timeline step index, action button visibility,
+  summary fields).
 - **Parallel:** After VP-011.
 
-### VP-061 — Desktop Digital Pass — identity card + status badge
+### VP-061 — Details XAML — identity card + status badge
 
-- **Goal:** Large `SfAvatarView` + visitor details + status badge.
-- **Files:** `Views/DesktopUI/VisitorDetailsPage.xaml(.cs)`
-- **Done when:** Card renders all 8 visitor fields; status badge colour
-  matches `VisitorStatus`.
-- **Parallel:** After VP-060.
+- **Goal:** Add Section 1 (digital visitor pass) to the single
+  `VisitorDetailsPage`: large `SfAvatarView`, name, Pass ID, host/purpose/
+  date/time/duration, status badge. Identity column on left + info column on
+  right (desktop/tablet); stacked on phone (via `OnIdiom` on `Grid
+  ColumnDefinitions`).
+- **Files:** `Views/VisitorDetailsPage.xaml(.cs)`
+- **Done when:** All 8 visitor fields render; status badge colour matches
+  `VisitorStatus`; toggling idiom switches layout between two-column and
+  stacked.
+- **Parallel:** After VP-060, VP-020, VP-021.
 
-### VP-062 — Desktop Digital Pass — barcode + label
+### VP-062 — Details XAML — barcode + label
 
-- **Goal:** `SfBarcodeGenerator` rendering `PassCode` with correct label.
-- **Files:** `Views/DesktopUI/VisitorDetailsPage.xaml`
-- **Done when:** Barcode renders; label reads "Visitor Pass Identifier".
+- **Goal:** Add Section 2 (`SfBarcodeGenerator` rendering `PassCode`) +
+  label "Visitor Pass Identifier" (or "Demonstration Pass Code").
+- **Files:** `Views/VisitorDetailsPage.xaml`
+- **Done when:** Barcode renders; label is correct; `PassCode` updates when
+  visitor changes.
 - **Parallel:** After VP-061.
 
-### VP-063 — Desktop Digital Pass — visit journey timeline
+### VP-063 — Details XAML — visit journey timeline
 
-- **Goal:** `SfStepProgressBar` reflecting `Visitor.Status` (Registered →
-  Expected → Checked In → Checked Out) with cancelled/overdone terminators.
-- **Files:** `Views/DesktopUI/VisitorDetailsPage.xaml`
-- **Done when:** Current stage highlighted; subsequent stages de-emphasised.
-- **Parallel:** After VP-061.
+- **Goal:** Add Section 3 (`SfStepProgressBar` Registered → Expected →
+  Checked In → Checked Out) with Cancelled / Overdue terminators.
+- **Files:** `Views/VisitorDetailsPage.xaml`
+- **Done when:** Current stage highlighted; subsequent stages de-emphasised;
+  Cancelled and Overdue display correctly.
+- **Parallel:** After VP-060, VP-061.
 
-### VP-064 — Desktop Digital Pass — visit summary + action buttons
+### VP-064 — Details XAML — summary panel + action buttons
 
-- **Goal:** Summary facts panel + action buttons whose visibility follows
-  status.
-- **Files:** `Views/DesktopUI/VisitorDetailsPage.xaml`
-- **Done when:** Buttons appear/hide correctly; pressing them updates status
-  and re-renders the page.
+- **Goal:** Add Section 4 (summary facts) + Section 5 (action buttons whose
+  visibility follows status). Buttons use the same label / colour on both
+  idioms; their row layout (horizontal vs stacked) is chosen via `OnIdiom`
+  on the action container's `Grid`.
+- **Files:** `Views/VisitorDetailsPage.xaml`
+- **Done when:** Buttons appear / hide correctly; pressing them updates
+  status and re-renders the page (badge, timeline, summary all refresh).
 - **Parallel:** After VP-060, VP-063.
 
-### VP-065 — Mobile Digital Pass page
-
-- **Goal:** Mobile-friendly layout with stacked sections.
-- **Files:** `Views/MobileUI/VisitorDetailsPage.xaml(.cs)`
-- **Done when:** Same content + behaviour as desktop; one column on small
-  widths.
-- **Parallel:** Yes (after VP-060).
-
 ---
 
-## Phase 7 — Registration
+## Phase 7 — Registration Surface (single page, two idioms)
 
-### VP-070 — `RegisterVisitorViewModel` (multi-step + validation)
+### VP-070 — `RegisterVisitorViewModel` (multi-step form)
 
-- **Goal:** Two-step form with step progress + validation + `GeneratePass`
-  command.
+- **Goal:** ViewModel for the registration form: validates required fields,
+  drives the 3-step progress, and on submit creates the new `Visitor`.
 - **Files:** `ViewModels/RegisterVisitorViewModel.cs`
-- **Done when:** Step transitions work; validation blocks `GeneratePass` if
-  required fields empty; command creates a `Visitor` with status `Expected`
-  and a unique pass code.
+- **Done when:** Step 1 → Step 2 requires visitor name + host + purpose +
+  contact; Step 2 → submit requires date + time + duration; submit generates
+  a unique `PassCode` and appends to `IVisitorStore`.
 - **Parallel:** After VP-011.
 
-### VP-071 — Desktop `SfPopup` registration surface
+### VP-071 — Register page XAML — `SfStepProgressBar` + Step 1 fields
 
-- **Goal:** Centred popup with two-column form layout + step progress + CTA
-  buttons.
-- **Files:**
-  - `Popups/RegisterVisitorPopup.xaml(.cs)`
-- **Done when:** Popup opens/closes via dashboard CTA; form binds to
-  `RegisterVisitorViewModel`; `GeneratePass` navigates to Digital Pass.
+- **Goal:** Single `RegisterVisitorPage` with `SfStepProgressBar` (3 steps)
+  and Step 1 (visitor info: name, host `SfComboBox`, purpose `SfComboBox`,
+  contact, vehicle number).
+- **Files:** `Views/RegisterVisitorPage.xaml(.cs)`
+- **Done when:** Step 1 renders; "Next" validates required fields and
+  advances the step.
 - **Parallel:** After VP-070.
 
-### VP-072 — Mobile bottom sheet registration surface
+### VP-072 — Register page XAML — Step 2 schedule fields + actions
 
-- **Goal:** Slide-up bottom sheet with same form, responsive to small screens.
+- **Goal:** Add Step 2 (schedule: date `SfDateTimePicker`, time
+  `SfDateTimePicker`, duration `SfComboBox`) plus the "Generate Pass" and
+  "Cancel" action buttons.
+- **Files:** `Views/RegisterVisitorPage.xaml`
+- **Done when:** "Generate Pass" creates a visitor with status `Expected`;
+  "Cancel" dismisses the surface without saving.
+- **Parallel:** After VP-071.
+
+### VP-073 — Register page — idiom-aware host (`SfPopup` vs `SfBottomSheet`)
+
+- **Goal:** Same `RegisterVisitorPage` is wrapped by `SfPopup` on
+  desktop/tablet and by `SfBottomSheet` on phone. The wrapping is chosen by
+  an `OnIdiom` branch in the **container** that opens the page (the
+  Dashboard's register trigger). The page itself is identical on both
+  idioms; only the outer surface differs.
 - **Files:**
-  - `Popups/RegisterVisitorBottomSheet.xaml(.cs)`
-- **Done when:** Sheet opens from mobile dashboard FAB; same `GeneratePass`
-  behaviour.
-- **Parallel:** Yes (after VP-070).
+  - `Views/DashboardPage.xaml` / code-behind — branch on idiom:
+    - Desktop / Tablet → `SfPopup` whose `ContentTemplate` inflates
+      `RegisterVisitorPage`
+    - Phone → `SfBottomSheet` whose content is `RegisterVisitorPage`
+- **Done when:** Toggling the designer idiom switches the registration
+  trigger between popup and bottom-sheet without duplicating XAML or
+  view-model.
+- **Parallel:** After VP-072.
+
+### VP-074 — Registration → Digital Pass navigation
+
+- **Goal:** After "Generate Pass", the registration surface dismisses and
+  the app navigates to `VisitorDetailsPage` for the new visitor.
+- **Files:** `Views/RegisterVisitorPage.xaml.cs`,
+  `MauiProgram.cs` (route registration if needed)
+- **Done when:** Submitting a valid form lands the user on the new
+  visitor's Digital Pass screen.
+- **Parallel:** After VP-073.
 
 ---
 
-## Phase 8 — Polish & Verification
+## Phase 8 — Polish
 
-### VP-080 — Status-aware KPIs refresh
+### VP-080 — Theme toggle (light / dark)
 
-- **Goal:** Dashboard refreshes KPIs/charts after a registration or status
-  change.
-- **Files:** `DashboardViewModel.cs`, `DirectoryViewModel.cs` (subscribe to
-  `VisitorsChanged`)
-- **Done when:** Registering or checking-in/out a visitor updates dashboard
-  counts and charts without a manual refresh.
-- **Parallel:** Yes.
+- **Goal:** Light / dark mode toggle exposed via `ThemeService`; resources
+  re-resolve through `AppThemeBinding`.
+- **Files:** `Services/ThemeService.cs`, `Resources/Styles/Colors.xaml`
+  (add dark-mode tokens)
+- **Done when:** Toggling theme updates every page without rebuild.
+- **Parallel:** After VP-003.
 
-### VP-081 — Light / Dark theme toggle
+### VP-081 — Sample data refresh
 
-- **Goal:** ThemeService toggle wired into AppShell toolbar (desktop) and
-  mobile header overflow.
-- **Files:** `Services/ThemeService.cs`, `AppShell.xaml(.cs)`,
-  `MobileShell.xaml(.cs)`
-- **Done when:** Toggle switches the active `UserAppTheme`; palette brushes
-  swap via `AppThemeBinding`.
-- **Parallel:** Yes.
+- **Goal:** Final pass on `VisitorData.BuildVisitors()` so the dashboard's
+  every chart category is populated, today's list has 5–8 rows, and status
+  colours cover all five states.
+- **Files:** `Services/VisitorData.cs`
+- **Parallel:** After VP-011.
 
-### VP-082 — Build verification (Android target)
+### VP-082 — Empty / edge states
 
-- **Goal:** Final build is green for Android.
-- **Files:** none
-- **Done when:** `dotnet build … -f net10.0-android` succeeds with 0 errors
-  and 0 warnings related to project code (third-party warnings ignored).
-- **Parallel:** No — final gate.
+- **Goal:** `EmptyState` wired into Directory when filters return 0 rows;
+  friendly copy on Digital Pass when no visitor is selected (route guard
+  redirects to Dashboard).
+- **Files:** `Views/DirectoryPage.xaml.cs`, `Views/VisitorDetailsPage.xaml.cs`
+- **Parallel:** After VP-023, VP-051.
+
+---
+
+## Phase 9 — Documentation & Final Verification
+
+### VP-090 — Build verification on all targets
+
+- **Goal:** `dotnet build` succeeds for `net10.0-android`, `net10.0-ios`,
+  `net10.0-maccatalyst`, and `net10.0-windows10.0.19041.0` (Windows only).
+- **Files:** none — verification only.
+- **Done when:** Each target produces 0 errors and 0 new warnings introduced
+  by VisitorPass code.
 - **Reference:** HARNESS §5, §10.
 
-### VP-083 — Visual smoke test screenshot list
+### VP-091 — Update README with VisitorPass entry
 
-- **Goal:** Document the exact screens + states a reviewer must see.
-- **Files:** `docs/screens.md` (new)
-- **Done when:** File lists every screen × device-form-factor × critical state
-  (e.g. "Dashboard desktop — empty today's list", "Mobile registration — step
-  2").
-- **Parallel:** Yes.
-
----
-
-## Phase 9 — Documentation
-
-### VP-090 — VisitorPass README
-
-- **Goal:** Standalone README for the new app describing build, run, controls
-  demonstrated.
-- **Files:** `SfDataGrid/VisitorPass/README.md`
-- **Done when:** A reviewer can follow the README to build the project from a
-  clean clone.
-- **Parallel:** Yes.
-
-### VP-091 — Top-level README link update
-
-- **Goal:** Reference the new app + governance files from the repo root.
+- **Goal:** README points to `SPEC.md`, `HARNESS.md`, `TASKS.md`, and
+  `AGENTS.md`, and notes the unified-page / `OnIdiom` pattern.
 - **Files:** `README.md`
-- **Done when:** README mentions `VisitorPass` and links to
-  `SPEC.md` / `HARNESS.md` / `TASKS.md` / `AGENTS.md`.
-- **Parallel:** Yes (after VP-090).
-
----
-
-## Dependency Graph (high-level)
-
-```
-VP-001 → VP-002 → VP-003 ─┐
-                            ↓
-       VP-010 → VP-011 → VP-012 ─┐
-                                  ↓
-       VP-020, VP-021, VP-022, VP-023 (independent)
-                                  ↓
-       VP-040 → VP-041 → VP-042 → VP-043 (desktop dashboard)
-                ↓
-                VP-044 (mobile dashboard, parallel)
-
-       VP-050 → VP-051 → VP-052 (directory)
-
-       VP-060 → VP-061 → VP-062 → VP-063 → VP-064 (desktop details)
-                ↓
-                VP-065 (mobile details, parallel)
-
-       VP-070 → VP-071 (desktop popup)
-                ↓
-                VP-072 (mobile bottom sheet, parallel)
-
-       VP-080, VP-081, VP-082, VP-083 (polish)
-       VP-090, VP-091 (docs)
-```
-
-Agents may claim parallel tasks as long as the dependency arrows above are
-respected.
-
----
-
-## How an Agent Picks a Task
-
-1. Open `TASKS.md`; find the lowest-numbered task with status `pending`
-   whose dependencies are `completed`.
-2. Read every `Reference:` link — open the cited section in `SPEC.md` or
-   `HARNESS.md` before writing code.
-3. Follow `AGENTS.md` (worktree, commit cadence, evidence of completion).
-4. On completion, mark the task `completed` in `TASKS.md` (agent updates the
-   checkbox) and commit with message `VP-NNN: short summary`.
+- **Done when:** README renders the application table + governance
+  documentation links clearly.

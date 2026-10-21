@@ -51,7 +51,8 @@ structured way to:
 
 **Technical**
 - Demonstrate Syncfusion controls
-- Support desktop and mobile layouts
+- Support both desktop and mobile runtimes from a **single** page per
+  screen, using `OnIdiom` to express layout differences
 - Use local sample data
 - Follow AI Harness development practices
 - Generate clean Stitch AI designs
@@ -78,19 +79,28 @@ The following features are **intentionally excluded**:
 
 ## 3. Application Navigation Structure
 
-### Desktop
+The application uses **one page per screen**, shared across desktop and
+mobile. There are no separate `DesktopUI/` / `MobileUI/` folders; the same
+`DashboardPage`, `DirectoryPage`, and `VisitorDetailsPage` are inflated on
+every platform. Layout differences are expressed through MAUI's `OnIdiom`
+markup extension and named style resources (see `HARNESS.md §7`).
 
-| Surface | Type | Pages / Popups |
-|---|---|---|
-| Pages | In-page navigation via sidebar | 1. Visitor Command Center<br>2. Visitor Directory<br>3. Digital Pass & Visit Details |
-| Popup | Centered modal | Register Visitor |
+A single `AppShell` (with `FlyoutBehavior=Disabled`) hosts the three screens
+and surfaces them via a top navigation bar injected into every page.
 
-### Mobile
+| Surface | Form factor | Type | Screen / Action |
+|---|---|---|---|
+| Dashboard | All | `ContentPage` | Visitor Command Center |
+| Directory | All | `ContentPage` | Visitor Directory |
+| Details | All | `ContentPage` | Digital Pass & Visit Details |
+| Register Visitor | Desktop / Tablet | `SfPopup` opened over Dashboard | Step 1 → Step 2 → Generate Pass |
+| Register Visitor | Phone | `SfBottomSheet` opened over Dashboard | Step 1 → Step 2 → Generate Pass |
 
-| Surface | Type | Pages / Popups |
-|---|---|---|
-| Pages | Bottom tab navigation | 1. Visitor Command Center<br>2. Visitor Directory<br>3. Digital Pass & Visit Details |
-| Bottom Sheet | Slide-up sheet | Register Visitor |
+Navigation between Dashboard → Directory → Details uses Shell
+`GoToAsync`. From Details, the user returns with `GoToAsync("..")`. The
+**Register Visitor** surface is a single `RegisterVisitorPage` rendered
+as `SfPopup` on desktop/tablet or as `SfBottomSheet` on phone — selected
+by `OnIdiom` inside the page XAML.
 
 ---
 
@@ -189,10 +199,16 @@ Visual elements:
 - Count display (large number)
 - Status icon / badge
 
-Layout:
+Layout (responsive via `OnIdiom`):
 
-- **Desktop:** 4 cards in one row
-- **Mobile:** 2 × 2 grid
+- **Desktop / Tablet:** 4 cards in one row — `ColumnDefinitions="*,*,*,*"`,
+  `RowDefinitions="Auto"`
+- **Phone:** 2 × 2 grid — `ColumnDefinitions="*,*"`, `RowDefinitions="Auto,Auto"`
+
+Both layouts come from a single `DashboardPage` XAML whose KPI `Grid`
+declares both sets of column / row definitions under `OnIdiom`. The four
+cards are placed in cells using a uniform `Grid.Row` / `Grid.Column`
+mapping; only the column widths and row counts change between idioms.
 
 #### Section 2 — Visitor Status Distribution (Donut)
 
@@ -206,8 +222,11 @@ Displays count of each status:
 
 Visualization: `SfCircularChart` with `DoughnutSeries`.
 
-Legend with category + count + percentage on the right (desktop) or below
-(mobile).
+Legend layout (responsive via `OnIdiom`):
+
+- **Desktop / Tablet:** legend on the right of the donut (two-column: chart
+  + legend)
+- **Phone:** legend below the donut (stacked: chart then legend)
 
 #### Section 3 — Visits by Purpose (Column)
 
@@ -219,6 +238,13 @@ Displays:
 - Maintenance Visits
 
 Visualization: `SfCartesianChart` with `ColumnSeries`.
+
+Panel layout (responsive via `OnIdiom`):
+
+- **Desktop / Tablet:** donut and column charts sit in two `PanelCard`s
+  side-by-side (`Grid ColumnDefinitions="*,*" ColumnSpacing="14"`)
+- **Phone:** the same cards stack vertically
+  (`Grid RowDefinitions="Auto,Auto" RowSpacing="14"`)
 
 #### Section 4 — Today's Visitor Activity
 
@@ -236,11 +262,16 @@ Selecting a row navigates to Screen 3 (Digital Pass).
 
 #### Quick Action
 
-Prominent "Register Visitor" button (top-right on desktop, floating action on
-mobile). Opens the registration surface:
+Prominent "Register Visitor" pill button. Placement (responsive via
+`OnIdiom`):
 
-- Desktop → `SfPopup` centred on screen
-- Mobile → bottom sheet slide-up
+- **Desktop / Tablet:** in the page header (top-right)
+- **Phone:** as a floating action button anchored bottom-right above
+  the page content
+
+Tapping it opens a single `RegisterVisitorPage` that renders as either
+`SfPopup` (desktop / tablet) or `SfBottomSheet` (phone) — chosen inside
+the page XAML via `OnIdiom`, **not** via two different XAML files.
 
 ### Syncfusion Controls Used
 
@@ -251,11 +282,14 @@ mobile). Opens the registration surface:
 
 ---
 
-## 7. Register Visitor Popup / Bottom Sheet
+## 7. Register Visitor Surface (single page, two idioms)
 
 ### Purpose
 
-Create a visitor registration without leaving the current screen.
+Create a visitor registration without leaving the current screen. There is
+**one** `RegisterVisitorPage`; it renders as `SfPopup` on desktop/tablet and
+as `SfBottomSheet` on phone. The page itself is opened by the Dashboard
+quick-action button via `Navigation.PushModalAsync`.
 
 ### Form Fields
 
@@ -291,16 +325,17 @@ Visitor Details → Schedule → Generate Pass
   - Validates required fields
   - Creates a `Visitor` with status `Expected` and a unique `PassCode`
   - Adds to `IVisitorStore`
-  - Closes popup, navigates to **Digital Pass & Visit Details** for the new
-    visitor
-- **Cancel** — closes popup, discards the form
+  - Dismisses the surface (`SfPopup.Dismiss` on desktop, `SfBottomSheet.Dismiss` on phone) and
+    navigates to **Digital Pass & Visit Details** for the new visitor
+- **Cancel** — dismisses the surface and discards the form
 
 ### Syncfusion Controls Used
 
 - `DataForm` (alt) **or** manual `SfEntry` + `SfComboBox` grid
 - `SfDateTimePicker`
 - `SfStepProgressBar`
-- `SfPopup` (desktop) / custom bottom sheet (mobile)
+- `SfPopup` on desktop / tablet idiom, `SfBottomSheet` on phone idiom
+  (selected by `OnIdiom` inside the same `RegisterVisitorPage`)
 
 ---
 
@@ -366,13 +401,14 @@ Selecting a row navigates to Screen 3 (Digital Pass) for that visitor.
 
 ### Section 1 — Digital Visitor Pass
 
-Visitor identity (left column):
+Visitor identity (left column on desktop / tablet, top on phone):
 
 - `SfAvatarView` (large, 96 dp)
 - Visitor Name (large heading)
 - Pass ID (mono, muted)
 
-Visit information (right column):
+Visit information (right column on desktop / tablet, below identity on
+phone):
 
 - Host Name
 - Visit Purpose
@@ -381,6 +417,11 @@ Visit information (right column):
 - Duration
 
 Status badge displayed prominently at top-right of the card.
+
+The two-column / stacked split is expressed in the single
+`VisitorDetailsPage` XAML via `OnIdiom` on a `Grid ColumnDefinitions` —
+identity in column 0, visit info in column 1, both spanning the full
+width on phone.
 
 ### Section 2 — Visitor Pass Identifier
 
@@ -461,15 +502,16 @@ Benefits:
 
 | Control | Usage |
 |---|---|
-| `DataForm` | Visitor Registration |
-| `DataGrid` | Dashboard & Directory |
-| `BarcodeGenerator` | Digital Pass |
-| `DateTimePicker` | Schedule Selection |
-| `AvatarView` | Visitor Identity |
-| `StepProgressBar` | Registration & Visit Timeline |
-| `Charts` (Cartesian / Circular) | Dashboard Analytics |
-| `BadgeView` | Status Indicators |
-| `SfPopup` | Desktop Register Visitor dialog |
+| `DataForm` | Visitor Registration (alternative to manual `SfEntry` grid) |
+| `DataGrid` | Dashboard "Today's activity" + Directory |
+| `BarcodeGenerator` | Digital Pass — visual demonstration only |
+| `DateTimePicker` | Schedule selection in Registration surface |
+| `AvatarView` | Visitor identity in Directory rows + Digital Pass |
+| `StepProgressBar` | Registration progress + Visit Journey timeline |
+| `Charts` (Cartesian / Circular) | Dashboard analytics (column + donut) |
+| `BadgeView` | Status indicators across all screens |
+| `SfPopup` | Register Visitor dialog on desktop / tablet idiom |
+| `SfBottomSheet` | Register Visitor sheet on phone idiom |
 
 ---
 
@@ -523,26 +565,43 @@ Benefits:
 
 ### Spacing Scale
 
-- Card padding: 16 px
-- Section spacing: 18 px (desktop), 14 px (mobile)
-- Page padding: 24 px (desktop), 14 px (mobile)
+- Card padding: 16 px (all idioms)
+- Section spacing: 18 px desktop / tablet, 14 px phone (via `OnIdiom` on
+  parent `VerticalStackLayout`)
+- Page padding: 24 px desktop / tablet, 14 px phone (via named style
+  `PagePaddingDesktop` / `PagePaddingMobile`)
 - Border radius: 12 px (cards), 8 px (badges), 24 px (chart panels)
 
 ---
 
-## 14. Desktop Experience
+## 14. Form Factor Differences
 
-- Pages: Visitor Command Center, Visitor Directory, Digital Pass & Visit
-  Details
-- Register Visitor popup: centred `SfPopup`
-- Benefits: minimal navigation, modern enterprise appearance, strong desktop
-  workflow, better use of screen space
+The application uses **one page per screen**. The following layout
+differences between desktop / tablet and phone idioms are produced
+inside the same XAML through `OnIdiom`, named style resources, and
+named font/spacing values.
 
-## 15. Mobile Experience
+| Concern | Desktop / Tablet | Phone | How |
+|---|---|---|---|
+| Page padding | 24 px | 14 px | Named style |
+| KPI grid | 4 cols × 1 row | 2 cols × 2 rows | `OnIdiom` on `Grid ColumnDefinitions` |
+| Donut + column panels | Side-by-side | Stacked | `OnIdiom` on parent `Grid` |
+| Donut legend | Right of chart | Below chart | `OnIdiom` on legend container |
+| Register Visitor | `SfPopup` centred | `SfBottomSheet` slide-up | `OnIdiom` on the registration root |
+| Register Visitor trigger | Header pill | Floating action button | `OnIdiom` visibility / position on the trigger |
+| DataGrid columns | All columns visible | Pass ID hidden on narrow widths | `OnIdiom` on `DataGridTextColumn.IsVisible` |
+| Status badge label | Full label | Compact (`Checked In` → `In`) | Converter + `OnIdiom` |
+| Body font size | 13 px | 12 px | Named font-size style |
+| Section spacing | 18 px | 14 px | `OnIdiom` on `VerticalStackLayout.Spacing` |
 
-- Pages: same three, presented inside `SfTabView` bottom bar
-- Register Visitor bottom sheet
-- Benefits: mobile-friendly workflow, reduced page transitions, modern app feel
+Benefits of this approach:
+
+- ✅ Minimal navigation (no separate mobile/desktop shells)
+- ✅ Modern enterprise appearance on desktop, modern app feel on mobile
+- ✅ Strong desktop workflow with better use of screen space
+- ✅ Mobile-friendly workflow with reduced page transitions
+- ✅ Single source of truth — changes to a screen update both form
+  factors simultaneously
 
 ---
 
@@ -551,7 +610,8 @@ Benefits:
 - ✅ Clear business workflow
 - ✅ Only 3 primary screens
 - ✅ Minimal navigation complexity
-- ✅ Popup / Bottom Sheet driven interactions
+- ✅ `SfPopup` / `SfBottomSheet` driven registration — a single page
+  that picks the right surface per idiom
 - ✅ Strong visual showcase through Digital Pass
 - ✅ Demonstrates forms, grids, charts and workflow states
 - ✅ Covers most commonly used Syncfusion controls

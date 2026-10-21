@@ -19,7 +19,7 @@ This repository contains Syncfusion .NET MAUI use case demos that showcase pract
 | StudentGradesDashboard | `SfDataGrid/StudentGradesDashboard` | Student grades dashboard. |
 | TaskManagement | `SfDataGrid/TaskManagement` | Task list with charts. |
 | WeatherForecast | `WeatherForecast` | Weather forecast sample. |
-| **VisitorPass** | `SfDataGrid/VisitorPass` *(planned)* | Visitor pass management with KPI dashboard, directory, and digital pass details. |
+| **VisitorPass** | `SfDataGrid/VisitorPass` *(planned)* | Visitor pass management with KPI dashboard, directory, and digital pass details. **One page per screen**, shared across desktop and mobile via `OnIdiom` — no `DesktopUI/` / `MobileUI/` folder split. |
 
 ## Governance Files
 
@@ -28,8 +28,20 @@ The Visitor Pass application is driven by four governance documents at the repo 
 | File | Purpose |
 |---|---|
 | [`SPEC.md`](./SPEC.md) | What to build — business scenario, screens, data model, control mapping. |
-| [`HARNESS.md`](./HARNESS.md) | Engineering harness — project skeleton, dependencies, build/run, conventions. |
+| [`HARNESS.md`](./HARNESS.md) | Engineering harness — project skeleton, dependencies, build/run, conventions, adaptive-layout rules. |
 | [`TASKS.md`](./TASKS.md) | Ordered backlog (`VP-NNN` tasks) with goal, files, done-when, dependencies. |
 | [`AGENTS.md`](./AGENTS.md) | AI agent workflow — claim → implement → verify → commit, plus conventions. |
 
 Read these four files in order before working on the Visitor Pass application.
+
+### Architectural rule of thumb
+
+> **One page per screen, two form factors.** Every screen has a single
+> `ContentPage` shared by desktop and mobile runtimes. Layout
+> differences — padding, grid columns, chart stacking, registration
+> surface (`SfPopup` vs `SfBottomSheet`), status-badge compactness, and
+> column visibility — are expressed through MAUI's `OnIdiom` markup
+> extension and per-idiom named styles in `Resources/Styles/Styles.xaml`.
+> There are **no** `Views/DesktopUI/` or `Views/MobileUI/` folders, no
+> `App.IsMobileRuntime()` switch, and no `AppSidebar` / `MobileShell`
+> (`SfTabView`) components. See `HARNESS.md §7` for the decision matrix.
