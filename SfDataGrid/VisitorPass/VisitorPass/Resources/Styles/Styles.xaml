@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- ============================================================
+         Base / per-idiom styles.
+         VP-001 ships only the skeleton needed to compile MainPage.
+         VP-003 will expand this file with KpiCard, PanelCard,
+         SectionTitle, and the rest of the per-idiom style catalogue
+         (PagePaddingDesktop/Mobile, SectionSpacingDesktop/Mobile,
+          etc.) per HARNESS §7.
+         ============================================================ -->
+
+    <!-- Headline used by the skeleton MainPage -->
+    <Style x:Key="Headline" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="32" />
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+    </Style>
+
+    <Style x:Key="SubHeadline" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansRegular" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+    </Style>
+
+    <!-- Page label defaults -->
+    <Style TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansRegular" />
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+    </Style>
+
+    <Style TargetType="Page" ApplyToDerivedTypes="True">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BackgroundColor" Value="{StaticResource SurfaceAlt}" />
+    </Style>
+
+    <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+        <Setter Property="Shell.NavBarIsVisible" Value="False" />
+    </Style>
+
+</ResourceDictionary>
