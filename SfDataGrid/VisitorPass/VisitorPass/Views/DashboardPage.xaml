@@ -1,29 +1,346 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Phase 4 — Dashboard (Screen 1, single page).
+
+    This single ContentPage hosts everything the Visitor Command
+    Center shows: TopNavBar (with the Register trigger), a four-card
+    KPI grid, a donut + column chart pair, and the today's-activity
+    SfDataGrid. Per HARNESS §7, every layout difference between
+    desktop / tablet and phone is expressed inside the same XAML via
+    OnIdiom markup — no separate DesktopUI/MobileUI folders.
+
+      Section 1 — KPI grid
+        ColumnDefinitions="{OnIdiom Desktop='*,*,*,*', Phone='*,*'}"
+        so on desktop/tablet the four cards sit in one row and on phone
+        they wrap into a 2x2.
+
+      Section 2 + 3 — Chart panels
+        RowDefinitions + ColumnDefinitions swapped via OnIdiom so the
+        donut and column charts sit side-by-side on desktop/tablet and
+        stack on phone.
+
+      Section 4 — Today's activity grid
+        SfDataGrid with explicit DataGridTemplateColumn entries (one
+        per column) so we can mix status pill rendering with text,
+        and apply per-cell styling via the CellTemplate. The Pass ID
+        column hides on phone via IsVisible="{OnIdiom ...}".
+-->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:VisitorPass.ViewModels;assembly=VisitorPass"
+             xmlns:models="clr-namespace:VisitorPass.Models;assembly=VisitorPass"
              xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
+             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+             xmlns:sfgrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
              x:Class="VisitorPass.Views.DashboardPage"
              x:DataType="vm:DashboardViewModel"
              Title="Visitor Command Center"
              BackgroundColor="{StaticResource SurfaceAlt}">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- DataGrid style — header / row colours + typography. -->
+            <sfgrid:DataGridStyle x:Key="TodayGridStyle"
+                                  RowBackground="{StaticResource Surface}"
+                                  AlternateRowBackground="{StaticResource SurfaceAlt}"
+                                  HeaderRowBackground="{StaticResource PrimaryLight}"
+                                  HeaderRowTextColor="{StaticResource TextPrimary}"
+                                  HeaderRowFontSize="11"
+                                  HeaderRowFontFamily="OpenSansSemibold"
+                                  RowTextColor="{StaticResource TextPrimary}"
+                                  RowFontSize="11"
+                                  RowFontFamily="OpenSansRegular"
+                                  GridLineColor="{StaticResource Border}"
+                                  GridLineStrokeThickness="0.5" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <ScrollView>
-        <VerticalStackLayout Spacing="14">
+        <VerticalStackLayout Padding="{OnIdiom Desktop='24,0,24,28', Phone='14,8,14,14'}"
+                             Spacing="{OnIdiom Desktop=18, Phone=14}">
 
             <!-- VP-022 TopNavBar: title + subtitle + register trigger.
-                 Phase 4 fills in the RegisterClicked handler. -->
+                 The page code-behind subscribes to RegisterClicked and
+                 routes to SfPopup / modal slide-up page (VP-073). -->
             <controls:TopNavBar Title="Visitor Command Center"
                                 Subtitle="Real-time visitor activity overview"
                                 ShowRegisterButton="True" />
 
-            <!-- Phase 4 will replace this placeholder with the KPI grid +
-                 donut + column charts + today's activity SfDataGrid. -->
-            <Label Text="Dashboard content will be built in VP-041..VP-043."
-                   TextColor="{StaticResource TextMuted}"
-                   FontSize="13"
-                   HorizontalTextAlignment="Center"
-                   Margin="0,40,0,0" />
+            <!-- =========================================================
+                 Section 1 — KPI cards
+                 ========================================================= -->
+            <Grid ColumnDefinitions="{OnIdiom Desktop='*,*,*,*', Phone='*,*'}"
+                  ColumnSpacing="14"
+                  RowSpacing="14">
+
+                <!-- Expected Visitors -->
+                <Border Style="{StaticResource KpiCard}">
+                    <VerticalStackLayout Spacing="6">
+                        <HorizontalStackLayout Spacing="6">
+                            <Ellipse WidthRequest="8" HeightRequest="8"
+                                     Fill="{StaticResource StatusExpectedBrush}"
+                                     VerticalOptions="Center" />
+                            <Label Text="EXPECTED VISITORS"
+                                   Style="{StaticResource SectionEyebrow}" />
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding Stats.ExpectedVisitors}"
+                               Style="{StaticResource KpiValue}"
+                               TextColor="{StaticResource StatusExpectedBrush}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Checked In -->
+                <Border Grid.Column="{OnIdiom Desktop=1, Phone=1}"
+                        Grid.Row="{OnIdiom Desktop=0, Phone=0}"
+                        Style="{StaticResource KpiCard}">
+                    <VerticalStackLayout Spacing="6">
+                        <HorizontalStackLayout Spacing="6">
+                            <Ellipse WidthRequest="8" HeightRequest="8"
+                                     Fill="{StaticResource StatusCheckedInBrush}"
+                                     VerticalOptions="Center" />
+                            <Label Text="CHECKED IN"
+                                   Style="{StaticResource SectionEyebrow}" />
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding Stats.CheckedIn}"
+                               Style="{StaticResource KpiValue}"
+                               TextColor="{StaticResource StatusCheckedInBrush}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Checked Out -->
+                <Border Grid.Column="{OnIdiom Desktop=2, Phone=0}"
+                        Grid.Row="{OnIdiom Desktop=0, Phone=1}"
+                        Style="{StaticResource KpiCard}">
+                    <VerticalStackLayout Spacing="6">
+                        <HorizontalStackLayout Spacing="6">
+                            <Ellipse WidthRequest="8" HeightRequest="8"
+                                     Fill="{StaticResource StatusCheckedOutBrush}"
+                                     VerticalOptions="Center" />
+                            <Label Text="CHECKED OUT"
+                                   Style="{StaticResource SectionEyebrow}" />
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding Stats.CheckedOut}"
+                               Style="{StaticResource KpiValue}"
+                               TextColor="{StaticResource StatusCheckedOutBrush}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Overdue -->
+                <Border Grid.Column="{OnIdiom Desktop=3, Phone=1}"
+                        Grid.Row="{OnIdiom Desktop=0, Phone=1}"
+                        Style="{StaticResource KpiCard}">
+                    <VerticalStackLayout Spacing="6">
+                        <HorizontalStackLayout Spacing="6">
+                            <Ellipse WidthRequest="8" HeightRequest="8"
+                                     Fill="{StaticResource StatusOverdueBrush}"
+                                     VerticalOptions="Center" />
+                            <Label Text="OVERDUE"
+                                   Style="{StaticResource SectionEyebrow}" />
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding Stats.OverdueVisitors}"
+                               Style="{StaticResource KpiValue}"
+                               TextColor="{StaticResource StatusOverdueBrush}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- =========================================================
+                 Section 2 + 3 — Status donut + Purpose column charts.
+                 Side-by-side on desktop/tablet, stacked on phone.
+                 The parent Grid's Row/Column definitions come from
+                 OnIdiom; the two Border panels stay the same.
+                 ========================================================= -->
+            <Grid ColumnSpacing="14"
+                  RowSpacing="14"
+                  ColumnDefinitions="{OnIdiom Desktop='*,*', Phone='*'}"
+                  RowDefinitions="{OnIdiom Desktop='Auto', Phone='Auto,Auto'}">
+
+                <!-- Status distribution donut -->
+                <Border Style="{StaticResource PanelCard}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="VISITOR STATUS DISTRIBUTION"
+                               Style="{StaticResource SectionEyebrow}" />
+                        <chart:SfCircularChart HeightRequest="220">
+                            <chart:SfCircularChart.Legend>
+                                <chart:ChartLegend />
+                            </chart:SfCircularChart.Legend>
+                            <chart:DoughnutSeries ItemsSource="{Binding StatusBreakdown}"
+                                                   XBindingPath="Label"
+                                                   YBindingPath="Count"
+                                                   EnableTooltip="True">
+                                <chart:DoughnutSeries.PaletteBrushes>
+                                    <x:Array Type="{x:Type Brush}">
+                                        <SolidColorBrush Color="#3B82F6" />
+                                        <SolidColorBrush Color="#10B981" />
+                                        <SolidColorBrush Color="#6B7280" />
+                                        <SolidColorBrush Color="#EF4444" />
+                                        <SolidColorBrush Color="#F59E0B" />
+                                    </x:Array>
+                                </chart:DoughnutSeries.PaletteBrushes>
+                            </chart:DoughnutSeries>
+                        </chart:SfCircularChart>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Visits by purpose column chart -->
+                <Border Grid.Column="{OnIdiom Desktop=1, Phone=0}"
+                        Grid.Row="{OnIdiom Desktop=0, Phone=1}"
+                        Style="{StaticResource PanelCard}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="VISITS BY PURPOSE"
+                               Style="{StaticResource SectionEyebrow}" />
+                        <chart:SfCartesianChart HeightRequest="220">
+                            <chart:SfCartesianChart.XAxes>
+                                <chart:CategoryAxis />
+                            </chart:SfCartesianChart.XAxes>
+                            <chart:SfCartesianChart.YAxes>
+                                <chart:NumericalAxis />
+                            </chart:SfCartesianChart.YAxes>
+                            <chart:ColumnSeries ItemsSource="{Binding PurposeBreakdown}"
+                                                 XBindingPath="Label"
+                                                 YBindingPath="Count"
+                                                 EnableTooltip="True">
+                                <chart:ColumnSeries.PaletteBrushes>
+                                    <x:Array Type="{x:Type Brush}">
+                                        <SolidColorBrush Color="#5146E5" />
+                                        <SolidColorBrush Color="#7C77FF" />
+                                        <SolidColorBrush Color="#3F38B8" />
+                                        <SolidColorBrush Color="#1E1B4B" />
+                                    </x:Array>
+                                </chart:ColumnSeries.PaletteBrushes>
+                            </chart:ColumnSeries>
+                        </chart:SfCartesianChart>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- =========================================================
+                 Section 4 — Today's visitor activity grid.
+                 All six columns use DataGridTemplateColumn so per-cell
+                 styling (font, colour, badge) lives in the CellTemplate.
+                 The Pass ID column hides on phone via IsVisible on the
+                 column itself.
+                 ========================================================= -->
+            <Border Style="{StaticResource PanelCard}">
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0"
+                               Text="TODAY'S ACTIVITY"
+                               Style="{StaticResource SectionEyebrow}"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="{Binding TodayVisitorsCount, StringFormat='{0} visitors today'}"
+                               Style="{StaticResource SectionEyebrow}"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <sfgrid:SfDataGrid x:Name="TodayGrid"
+                                       ItemsSource="{Binding TodayVisitors}"
+                                       AutoGenerateColumnsMode="None"
+                                       SelectionMode="Single"
+                                       Style="{StaticResource TodayGridStyle}"
+                                       HeaderRowHeight="36"
+                                       RowHeight="48"
+                                       ColumnWidthMode="Auto"
+                                       ShowRowHeader="False"
+                                       GridLinesVisibility="Horizontal"
+                                       CellTapped="OnTodayGridCellTapped">
+                        <sfgrid:SfDataGrid.Columns>
+                            <!-- Pass ID: hidden on phone via OnIdiom. -->
+                            <sfgrid:DataGridTemplateColumn HeaderText="PASS ID"
+                                                          MappingName="PassId"
+                                                          Width="110"
+                                                          Visible="{OnIdiom Phone=False, Default=True}">
+                                <sfgrid:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:Visitor">
+                                        <Label Text="{Binding PassId}"
+                                               TextColor="{StaticResource TextSecondary}"
+                                               FontFamily="OpenSansSemibold"
+                                               FontSize="11"
+                                               Padding="12,0,0,0"
+                                               VerticalOptions="Center" />
+                                    </DataTemplate>
+                                </sfgrid:DataGridTemplateColumn.CellTemplate>
+                            </sfgrid:DataGridTemplateColumn>
+
+                            <!-- Visitor name. -->
+                            <sfgrid:DataGridTemplateColumn HeaderText="VISITOR"
+                                                          MappingName="VisitorName"
+                                                          Width="160">
+                                <sfgrid:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:Visitor">
+                                        <Label Text="{Binding VisitorName}"
+                                               TextColor="{StaticResource TextPrimary}"
+                                               FontFamily="OpenSansSemibold"
+                                               FontSize="11"
+                                               Padding="12,0,0,0"
+                                               VerticalOptions="Center" />
+                                    </DataTemplate>
+                                </sfgrid:DataGridTemplateColumn.CellTemplate>
+                            </sfgrid:DataGridTemplateColumn>
+
+                            <!-- Host. -->
+                            <sfgrid:DataGridTemplateColumn HeaderText="HOST"
+                                                          MappingName="Host"
+                                                          Width="140">
+                                <sfgrid:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:Visitor">
+                                        <Label Text="{Binding Host}"
+                                               TextColor="{StaticResource TextSecondary}"
+                                               FontFamily="OpenSansRegular"
+                                               FontSize="11"
+                                               Padding="12,0,0,0"
+                                               VerticalOptions="Center" />
+                                    </DataTemplate>
+                                </sfgrid:DataGridTemplateColumn.CellTemplate>
+                            </sfgrid:DataGridTemplateColumn>
+
+                            <!-- Purpose. -->
+                            <sfgrid:DataGridTemplateColumn HeaderText="PURPOSE"
+                                                          MappingName="Purpose"
+                                                          Width="150">
+                                <sfgrid:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:Visitor">
+                                        <Label Text="{Binding Purpose}"
+                                               TextColor="{StaticResource TextSecondary}"
+                                               FontFamily="OpenSansRegular"
+                                               FontSize="11"
+                                               Padding="12,0,0,0"
+                                               VerticalOptions="Center" />
+                                    </DataTemplate>
+                                </sfgrid:DataGridTemplateColumn.CellTemplate>
+                            </sfgrid:DataGridTemplateColumn>
+
+                            <!-- Visit time (hh:mm). -->
+                            <sfgrid:DataGridTemplateColumn HeaderText="TIME"
+                                                          MappingName="VisitTime"
+                                                          Width="80">
+                                <sfgrid:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:Visitor">
+                                        <Label Text="{Binding VisitTime, StringFormat='{0:hh\\:mm}'}"
+                                               TextColor="{StaticResource TextSecondary}"
+                                               FontFamily="OpenSansRegular"
+                                               FontSize="11"
+                                               Padding="12,0,0,0"
+                                               VerticalOptions="Center" />
+                                    </DataTemplate>
+                                </sfgrid:DataGridTemplateColumn.CellTemplate>
+                            </sfgrid:DataGridTemplateColumn>
+
+                            <!-- Status — rendered through the VP-020 badge. -->
+                            <sfgrid:DataGridTemplateColumn HeaderText="STATUS"
+                                                          MappingName="Status"
+                                                          Width="120">
+                                <sfgrid:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="models:Visitor">
+                                        <controls:VisitorStatusBadge Status="{Binding Status}" />
+                                    </DataTemplate>
+                                </sfgrid:DataGridTemplateColumn.CellTemplate>
+                            </sfgrid:DataGridTemplateColumn>
+                        </sfgrid:SfDataGrid.Columns>
+                    </sfgrid:SfDataGrid>
+                </VerticalStackLayout>
+            </Border>
 
         </VerticalStackLayout>
     </ScrollView>
