@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
+using VisitorPass.Services;
 
 namespace VisitorPass;
 
@@ -29,6 +30,21 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
+
+        // ----- Services (HARNESS §6 rule 1 — single source of truth) -----
+        // IVisitorStore is the single source of truth for visitor records.
+        // Registered as a SINGLETON so every page + ViewModel that resolves
+        // it gets the same instance — mutations on one screen (e.g. a
+        // Check In on the Digital Pass page) are immediately visible to
+        // every other screen bound to the same collection.
+        builder.Services.AddSingleton<IVisitorStore, VisitorStore>();
+
+        // PassCodeGenerator is also a SINGLETON. It holds the per-day
+        // running counter that hands out distinct VP-yyyyMMdd-#### codes.
+        // A second instance would race the first one and mint duplicate
+        // codes; singleton ensures every AddVisitor sees the same
+        // counter state.
+        builder.Services.AddSingleton<PassCodeGenerator>();
 
 #if DEBUG
         builder.Logging.AddDebug();
