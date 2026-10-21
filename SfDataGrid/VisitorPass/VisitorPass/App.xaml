@@ -1,7 +1,8 @@
-﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<?xml version = "1.0" encoding = "UTF-8" ?>
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:VisitorPass"
+             xmlns:conv="clr-namespace:VisitorPass.Converters;assembly=VisitorPass"
              xmlns:syncTheme="clr-namespace:Syncfusion.Maui.Themes;assembly=Syncfusion.Maui.Core"
              UserAppTheme="Light"
              x:Class="VisitorPass.App">
@@ -36,6 +37,21 @@
                 <ResourceDictionary Source="Resources/Styles/VisitorPassTheme.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- ===== Value converters (VP-024) =====
+                 Registered inline in App.xaml so every page reaches
+                 them via {StaticResource …}. New converters should be
+                 added here too. -->
+            <conv:VisitorStatusToColorConverter           x:Key="VisitorStatusToColorConverter" />
+            <conv:VisitorStatusToBackgroundConverter      x:Key="VisitorStatusToBackgroundConverter" />
+            <conv:VisitorStatusToBrushConverter            x:Key="VisitorStatusToBrushConverter" />
+            <conv:VisitorStatusToDisplayLabelConverter    x:Key="VisitorStatusToDisplayLabelConverter" />
+            <conv:VisitorStatusToShortLabelConverter      x:Key="VisitorStatusToShortLabelConverter" />
+            <conv:StringNotEmptyToBoolConverter           x:Key="StringNotEmptyToBoolConverter" />
+            <conv:DateToShortLabelConverter               x:Key="DateToShortLabelConverter" />
+            <conv:InitialsConverter                        x:Key="InitialsConverter" />
+            <conv:IdiomToBoolConverter                     x:Key="IdiomToBoolConverter" />
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

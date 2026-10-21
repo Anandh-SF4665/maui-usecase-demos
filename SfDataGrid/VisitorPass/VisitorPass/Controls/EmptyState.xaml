@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VisitorPass.Controls.EmptyState">
+
+    <!--
+        Placeholder shown when a filter or list has 0 rows (VP-023).
+
+        Used by Directory when a status filter or search term returns
+        no matching visitors, and by Dashboard "Today's Activity"
+        when no visits are scheduled for today.
+
+        Two properties:
+
+            Title   (string) - bold heading, e.g. "No matching visitors".
+            Message (string) - body text, e.g. "Try a different status
+                                 filter or clear the search box."
+    -->
+    <VerticalStackLayout Spacing="8"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center"
+                         Padding="20">
+        <Border BackgroundColor="{StaticResource PrimaryLight}"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 36"
+                WidthRequest="72"
+                HeightRequest="72"
+                HorizontalOptions="Center">
+            <Label Text="?"
+                   TextColor="{StaticResource Primary}"
+                   FontFamily="OpenSansSemibold"
+                   FontSize="28"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" />
+        </Border>
+        <Label Text="{Binding Title, Source={RelativeSource AncestorType={x:Type ContentView}}}"
+               Style="{StaticResource SectionTitle}"
+               HorizontalTextAlignment="Center"
+               Margin="0,4,0,0" />
+        <Label Text="{Binding Message, Source={RelativeSource AncestorType={x:Type ContentView}}}"
+               Style="{StaticResource SectionEyebrow}"
+               HorizontalTextAlignment="Center"
+               MaxLines="2" />
+    </VerticalStackLayout>
+</ContentView>
