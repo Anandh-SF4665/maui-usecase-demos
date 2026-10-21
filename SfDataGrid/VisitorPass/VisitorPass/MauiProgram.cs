@@ -57,6 +57,12 @@ public static class MauiProgram
         builder.Services.AddSingleton<DirectoryViewModel>();
         builder.Services.AddSingleton<VisitorDetailsViewModel>();
 
+        // RegisterVisitorViewModel (VP-070 — Phase 7). NOT a singleton
+        // — each opening of the registration surface gets a fresh
+        // VM so the wizard's fields reset between consecutive
+        // registrations.
+        builder.Services.AddTransient<RegisterVisitorViewModel>();
+
         // ----- Pages (VP-030) -----
         // Registered as singletons (HARNESS §6 rule 4: single page,
         // two form factors). ShellContent.ContentTemplate inflates
@@ -65,6 +71,11 @@ public static class MauiProgram
         builder.Services.AddSingleton<DashboardPage>();
         builder.Services.AddSingleton<DirectoryPage>();
         builder.Services.AddSingleton<VisitorDetailsPage>();
+
+        // RegisterVisitorPage (VP-071 — Phase 7). Transient because
+        // it inflates inside SfPopup / Navigation.PushModalAsync on
+        // every "Register Visitor" tap.
+        builder.Services.AddTransient<RegisterVisitorPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();

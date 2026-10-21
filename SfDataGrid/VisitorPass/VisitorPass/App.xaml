@@ -52,6 +52,9 @@
             <conv:InitialsConverter                        x:Key="InitialsConverter" />
             <conv:IdiomToBoolConverter                     x:Key="IdiomToBoolConverter" />
             <conv:InvertBoolConverter                      x:Key="InvertBoolConverter" />
+            <conv:IntToBoolConverter                       x:Key="IntToBoolConverter" />
+            <conv:IntEqualsConverter                       x:Key="IntEqualsConverter" />
+            <conv:IntGreaterThanConverter                  x:Key="IntGreaterThanConverter" />
 
         </ResourceDictionary>
     </Application.Resources>
