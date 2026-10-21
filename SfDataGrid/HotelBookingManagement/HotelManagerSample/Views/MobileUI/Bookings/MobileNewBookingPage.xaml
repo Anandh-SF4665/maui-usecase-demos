@@ -399,7 +399,7 @@
                                                    ChipStrokeThickness="2"
                                                    ChoiceMode="Single"
                                                    ChipTextSize="14"
-                                                   ChipFontFamily="OpenSansSemiBold"
+                                                   ChipFontFamily="OpenSansSemibold"
                                                    ItemHeight="32"
                                                    SelectionChanged="OnFloorChipSelectionChanged" />
                             </VerticalStackLayout>
