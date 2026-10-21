@@ -148,22 +148,19 @@ Minimum OS versions: Android 21, iOS 15, MacCatalyst 15, Windows 10.0.17763.
 
 ### NuGet dependencies (pinned)
 
-| Package | Version |
-|---|---|
-| `Syncfusion.Maui.Toolkit` | 1.0.11 |
-| `Syncfusion.Maui.DataGrid` | 33.2.15 |
-| `Syncfusion.Maui.ListView` | 33.2.15 |
-| `Syncfusion.Maui.Charts` | 33.2.15 |
-| `Syncfusion.Maui.Buttons` | 33.2.15 |
-| `Syncfusion.Maui.Gauges` | 33.2.15 |
-| `Syncfusion.Maui.Inputs` | 33.2.15 |
-| `Syncfusion.Maui.Calendar` | 33.2.15 |
-| `Syncfusion.Maui.Popup` | 33.2.15 |
-| `Syncfusion.Maui.Expander` | 33.2.15 |
-| `Syncfusion.Maui.TabView` | 33.2.15 |
-
-> `Syncfusion.Maui.Toolkit` ships only on a `1.0.x` line — it is versioned
-> independently of the other Syncfusion MAUI packages.
+| Package |
+|---|
+| `Syncfusion.Maui.Toolkit` |
+| `Syncfusion.Maui.DataGrid` |
+| `Syncfusion.Maui.ListView` |
+| `Syncfusion.Maui.Charts` |
+| `Syncfusion.Maui.Buttons` |
+| `Syncfusion.Maui.Gauges` |
+| `Syncfusion.Maui.Inputs` |
+| `Syncfusion.Maui.Calendar` |
+| `Syncfusion.Maui.Popup` |
+| `Syncfusion.Maui.Expander` |
+| `Syncfusion.Maui.TabView` |
 
 ---
 
