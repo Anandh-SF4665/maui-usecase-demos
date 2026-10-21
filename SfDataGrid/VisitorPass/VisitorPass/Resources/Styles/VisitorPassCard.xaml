@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- ============================================================
+         Reusable card / panel / badge styles for Visitor Pass.
+         Each style is a thin wrapper that combines palette tokens
+         from Colors.xaml with geometric properties (radius, stroke,
+         padding). Pages consume them by `Style="{StaticResource …}"`.
+
+         Per HARNESS §6 rule 6 every colour used here resolves to a
+         StaticResource; nothing is hard-coded.
+         ============================================================ -->
+
+    <!-- =========================================================
+         1. KPI card (Dashboard Section 1)
+            Pill-shaped card with status colour stripe + count.
+         ========================================================= -->
+    <Style x:Key="KpiCard" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
+        <Setter Property="Stroke" Value="{StaticResource Border}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="12" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Padding" Value="16,14,16,14" />
+        <Setter Property="VerticalOptions" Value="Fill" />
+    </Style>
+
+    <!-- =========================================================
+         2. Panel card (Donut + Column chart containers, Visit
+            Summary, Today grid wrapper).
+         ========================================================= -->
+    <Style x:Key="PanelCard" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
+        <Setter Property="Stroke" Value="{StaticResource Border}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="16" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Padding" Value="16" />
+    </Style>
+
+    <!-- =========================================================
+         3. Chart-panel card (used for donut + column chart frames
+            on the Dashboard).
+         ========================================================= -->
+    <Style x:Key="ChartPanelCard" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
+        <Setter Property="Stroke" Value="{StaticResource Border}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="24" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Padding" Value="16" />
+    </Style>
+
+    <!-- =========================================================
+         4. Section title (Dashboard / Directory / Details screen
+            section labels).
+         ========================================================= -->
+    <Style x:Key="SectionTitle" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+    </Style>
+
+    <!-- =========================================================
+         5. Section eyebrow (small UPPERCASE-ish muted caption
+            above a section title).
+         ========================================================= -->
+    <Style x:Key="SectionEyebrow" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="TextColor" Value="{StaticResource TextMuted}" />
+        <Setter Property="CharacterSpacing" Value="1.0" />
+    </Style>
+
+    <!-- =========================================================
+         6. Status badge pill — used by VisitorStatusBadge and as
+            a generic pill style for any badge that wants status
+            palette semantics. Brushes are wired up at use-site
+            via the VisitorStatusToBackgroundConverter /
+            VisitorStatusToForegroundConverter.
+         ========================================================= -->
+    <Style x:Key="StatusBadgePill" TargetType="Border">
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="8" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Padding" Value="8,4" />
+        <Setter Property="HorizontalOptions" Value="Start" />
+        <Setter Property="VerticalOptions" Value="Start" />
+    </Style>
+
+    <!-- =========================================================
+         7. Filter chip (Directory status filter row).
+         ========================================================= -->
+    <Style x:Key="FilterChip" TargetType="Border">
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Stroke" Value="{StaticResource Border}" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="16" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
+    </Style>
+
+    <Style x:Key="FilterChipLabel" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <!-- =========================================================
+         8. Register Visitor pill (CTA on the Dashboard header).
+         ========================================================= -->
+    <Style x:Key="RegisterVisitorPill" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="20" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Padding" Value="14,8" />
+    </Style>
+
+    <!-- =========================================================
+         9. Floating action button (phone idiom trigger).
+         ========================================================= -->
+    <Style x:Key="Fab" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="28" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="WidthRequest" Value="56" />
+        <Setter Property="HeightRequest" Value="56" />
+        <Setter Property="HorizontalOptions" Value="End" />
+        <Setter Property="VerticalOptions" Value="End" />
+    </Style>
+
+</ResourceDictionary>

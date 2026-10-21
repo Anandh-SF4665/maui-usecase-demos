@@ -8,17 +8,33 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!-- Syncfusion MaterialLight palette + control brushes.
-                     Loaded BEFORE our local Colors.xaml / Styles.xaml so
-                     that any visitor-pass-specific keys defined later
-                     override the Syncfusion defaults where there is a
-                     clash. -->
+
+                <!-- 1. Syncfusion MaterialLight palette + control brushes.
+                        Loaded FIRST so our visitor-pass keys win any clash. -->
                 <syncTheme:SyncfusionThemeResourceDictionary VisualTheme="MaterialLight" />
 
-                <!-- Local theme: palette tokens, named brushes, per-idiom
-                     styles (added by VP-003). -->
+                <!-- 2. Local palette tokens (Primary, Surface, Status
+                        Expected/CheckedIn/CheckedOut/Cancelled/Overdue, etc.) -->
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+
+                <!-- 3. Base styles + per-idiom named styles
+                        (PagePaddingDesktop / Mobile, SectionSpacingDesktop
+                        / Mobile, font sizes, Headline / SubHeadline,
+                        default Label / Button / Entry / Page). -->
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+
+                <!-- 4. Reusable card / panel / badge styles
+                        (KpiCard, PanelCard, ChartPanelCard, SectionTitle,
+                        SectionEyebrow, StatusBadgePill, FilterChip,
+                        RegisterVisitorPill, Fab). -->
+                <ResourceDictionary Source="Resources/Styles/VisitorPassCard.xaml" />
+
+                <!-- 5. Syncfusion palette overrides — MUST be loaded LAST
+                        so the SfsPrimary / SfBorderColor / SfsStatus*
+                        keys override the MaterialLight defaults from
+                        SyncfusionThemeResourceDictionary. -->
+                <ResourceDictionary Source="Resources/Styles/VisitorPassTheme.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

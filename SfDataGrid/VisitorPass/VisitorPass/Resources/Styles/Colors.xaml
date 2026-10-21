@@ -4,38 +4,95 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <!-- ============================================================
-         Visitor Pass theme palette (defined per SPEC §13 + HARNESS §6).
-         This is the skeleton set; VP-003 will expand it with status
-         brushes, named font/spacing tokens, and Syncfusion overrides.
+         Visitor Pass theme palette (SPEC §13 + HARNESS §6).
+         Single source of truth for every colour/brush used in the app.
+         VP-003 introduced:
+         - Light + Dark variants for every brand + status palette token
+         - Status brushes (foreground + pale background + badge dot)
+         - Syncfusion override keys the toolkit reads under the
+           MaterialLight palette
          ============================================================ -->
 
-    <!-- Brand / accents -->
+    <!-- =========================================================
+         1. Brand / accents
+         ========================================================= -->
     <Color x:Key="Primary">#5146E5</Color>
     <Color x:Key="PrimaryDark">#3F38B8</Color>
     <Color x:Key="PrimaryLight">#EEF2FF</Color>
+    <!-- Dark-mode values (kept here so AppThemeBinding can swap them) -->
+    <Color x:Key="PrimaryDarkTheme">#7C77FF</Color>
+    <Color x:Key="PrimaryDarkHoverTheme">#6653FF</Color>
+    <Color x:Key="PrimaryLightTheme">#1E1B4B</Color>
 
-    <!-- Surfaces -->
+    <!-- =========================================================
+         2. Surfaces
+         ========================================================= -->
     <Color x:Key="Surface">#FFFFFF</Color>
     <Color x:Key="SurfaceAlt">#F6F8FD</Color>
     <Color x:Key="Border">#E5E9F2</Color>
+    <Color x:Key="SurfaceDark">#161B2C</Color>
+    <Color x:Key="SurfaceAltDark">#0F1322</Color>
+    <Color x:Key="BorderDark">#2A3045</Color>
 
-    <!-- Text -->
+    <!-- =========================================================
+         3. Text
+         ========================================================= -->
     <Color x:Key="TextPrimary">#17243A</Color>
     <Color x:Key="TextSecondary">#3A4658</Color>
     <Color x:Key="TextMuted">#6B7589</Color>
+    <Color x:Key="TextPrimaryDark">#F1F4FB</Color>
+    <Color x:Key="TextSecondaryDark">#A4ADC2</Color>
+    <Color x:Key="TextMutedDark">#6E7894</Color>
 
-    <!-- Convenience brushes (used by SF controls that need a Brush) -->
+    <!-- =========================================================
+         4. Status palette (HARNESS §6 rule 7 — fixed)
+         ========================================================= -->
+    <Color x:Key="StatusExpected">#3B82F6</Color>
+    <Color x:Key="StatusExpectedBg">#DBEAFE</Color>
+    <Color x:Key="StatusCheckedIn">#10B981</Color>
+    <Color x:Key="StatusCheckedInBg">#D1FAE5</Color>
+    <Color x:Key="StatusCheckedOut">#6B7280</Color>
+    <Color x:Key="StatusCheckedOutBg">#E5E7EB</Color>
+    <Color x:Key="StatusCancelled">#EF4444</Color>
+    <Color x:Key="StatusCancelledBg">#FEE2E2</Color>
+    <Color x:Key="StatusOverdue">#F59E0B</Color>
+    <Color x:Key="StatusOverdueBg">#FEF3C7</Color>
+
+    <!-- =========================================================
+         5. Convenience brushes (used by Syncfusion controls and
+            any XAML that needs a Brush rather than a Color).
+         ========================================================= -->
+
+    <!-- Brand -->
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}" />
     <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{StaticResource PrimaryDark}" />
     <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLight}" />
+
+    <!-- Surfaces -->
     <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource Surface}" />
     <SolidColorBrush x:Key="SurfaceAltBrush" Color="{StaticResource SurfaceAlt}" />
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource Border}" />
+
+    <!-- Text -->
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimary}" />
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}" />
     <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMuted}" />
 
-    <!-- Neutral scale (kept for base styles that reference them) -->
+    <!-- Status foreground + pale backgrounds (used by VisitorStatusBadge) -->
+    <SolidColorBrush x:Key="StatusExpectedBrush" Color="{StaticResource StatusExpected}" />
+    <SolidColorBrush x:Key="StatusExpectedBgBrush" Color="{StaticResource StatusExpectedBg}" />
+    <SolidColorBrush x:Key="StatusCheckedInBrush" Color="{StaticResource StatusCheckedIn}" />
+    <SolidColorBrush x:Key="StatusCheckedInBgBrush" Color="{StaticResource StatusCheckedInBg}" />
+    <SolidColorBrush x:Key="StatusCheckedOutBrush" Color="{StaticResource StatusCheckedOut}" />
+    <SolidColorBrush x:Key="StatusCheckedOutBgBrush" Color="{StaticResource StatusCheckedOutBg}" />
+    <SolidColorBrush x:Key="StatusCancelledBrush" Color="{StaticResource StatusCancelled}" />
+    <SolidColorBrush x:Key="StatusCancelledBgBrush" Color="{StaticResource StatusCancelledBg}" />
+    <SolidColorBrush x:Key="StatusOverdueBrush" Color="{StaticResource StatusOverdue}" />
+    <SolidColorBrush x:Key="StatusOverdueBgBrush" Color="{StaticResource StatusOverdueBg}" />
+
+    <!-- =========================================================
+         6. Neutral scale (kept for base styles that reference them)
+         ========================================================= -->
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
     <Color x:Key="Gray100">#E1E1E1</Color>
@@ -57,5 +114,11 @@
     <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}" />
     <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}" />
     <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}" />
+
+    <!-- =========================================================
+         7. Syncfusion palette overrides — see VisitorPassTheme.xaml
+         (loaded AFTER this file so SfsPrimary etc. win over the
+         MaterialLight defaults).
+         ========================================================= -->
 
 </ResourceDictionary>

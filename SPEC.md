@@ -610,8 +610,8 @@ Benefits of this approach:
 - ✅ Clear business workflow
 - ✅ Only 3 primary screens
 - ✅ Minimal navigation complexity
-- ✅ `SfPopup` / `SfBottomSheet` driven registration — a single page
-  that picks the right surface per idiom
+- ✅ `SfPopup` / MAUI-native modal slide-up page driven registration —
+  a single page that picks the right surface per idiom
 - ✅ Strong visual showcase through Digital Pass
 - ✅ Demonstrates forms, grids, charts and workflow states
 - ✅ Covers most commonly used Syncfusion controls

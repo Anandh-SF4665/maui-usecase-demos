@@ -259,7 +259,7 @@ style helpers in `Resources/Styles/Styles.xaml`.
 | KPI grid | 4 columns × 1 row | 2 columns × 2 rows | `Grid ColumnDefinitions` set per-idiom with two `x:Double` resources (`KpiGridColumnWidthDesktop`, `KpiGridColumnWidthMobile`) |
 | Charts panel | Two side-by-side panels | Stacked vertically | A `Grid` whose `ColumnDefinitions`/`RowDefinitions` come from `OnIdiom` |
 | DataGrid columns | All columns visible | PassID hidden on narrow widths | `DataGrid.Columns` declaratively selects `IsVisible="{OnIdiom Phone=False, Default=True}"` |
-| Register surface | Centered `SfPopup` | Slide-up bottom sheet (`SfBottomSheet`) | A single `RegisterVisitorPage` opened via `Navigation.PushModalAsync`; the page itself picks popup vs sheet style from `OnIdiom` (see §8) |
+| Register surface | Centered `SfPopup` | MAUI-native modal slide-up page | A single `RegisterVisitorPage` opened via `Navigation.PushModalAsync`; the page itself picks popup vs slide-up style from `OnIdiom` (see §8) |
 | Status badge width | Full label | Compact (`Checked In` → `In`) | `VisitorStatusBadge` applies a short-label converter when `OnIdiom Phone` |
 | Font sizes | Body 13 px | Body 12 px | Named font-size styles in `Styles.xaml` |
 | Top nav | `TopNavBar` shows full title + subtitle | Same `TopNavBar`, smaller height + shorter subtitle | Styles applied per-idiom |

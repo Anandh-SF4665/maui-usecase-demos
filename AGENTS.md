@@ -216,7 +216,7 @@ For idioms that XAML cannot express (very rare), fall back to
 | Mark a task complete without a green build | False progress; reviewers lose trust. |
 | Invent new enums / models not in `SPEC.md §5` | The data model is locked. |
 | Create `Views/DesktopUI/` or `Views/MobileUI/` folders | Visitor Pass has **one page per screen**. Layout differences live in `OnIdiom` branches — see HARNESS §7. |
-| Create a separate `RegisterVisitorPopup.xaml` and `RegisterVisitorBottomSheet.xaml` | The registration surface is one `RegisterVisitorPage`; the container chooses `SfPopup` vs `SfBottomSheet` via `OnIdiom`. |
+| Create a separate `RegisterVisitorPopup.xaml` and a separate phone-modal variant XAML | The registration surface is one `RegisterVisitorPage`; the container chooses `SfPopup` (desktop) vs a MAUI-native modal slide-up page (phone) via `OnIdiom`. |
 | Add `App.IsMobileRuntime()` and switch the root page on it | Produces two parallel UI trees. Use a single `AppShell` + per-idiom XAML. |
 | Add an `AppSidebar` / `MobileShell` (SfTabView) | The three screens are linear; a top `TopNavBar` control handles navigation on every platform. |
 | Read `DeviceInfo.Idiom` in code-behind to branch behaviour | Use `OnIdiom` in XAML or `IdiomToBoolConverter` only. |
