@@ -26,11 +26,6 @@ namespace PatientCare
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     // App icons use the bundled Google Material Icons font directly.
                     fonts.AddFont("MaterialIcons-Regular.ttf", "MaterialIcons");
-                    // MauiMaterialAssets.ttf is not in this repo: it ships inside the Syncfusion.Maui.Core NuGet
-                    // package (buildTransitive/Resources/Fonts/MauiMaterialAssets.ttf) and is registered as a
-                    // MauiFont automatically by that package's props file. It is only needed for Syncfusion controls'
-                    // own icons.
-                    fonts.AddFont("MauiMaterialAssets.ttf", "MauiMaterialAssets");
                 });
 
 #if DEBUG
