@@ -51,17 +51,17 @@ public partial class PatientsPage : ContentPage
         }
     }
 
-    private async void OnCloseProfileTapped(object? sender, TappedEventArgs e)
+    private void OnCloseProfileTapped(object? sender, TappedEventArgs e)
     {
-        await CloseProfileAsync();
+        CloseProfile();
     }
 
-    private async void OnCloseProfileClicked(object? sender, EventArgs e)
+    private void OnCloseProfileClicked(object? sender, EventArgs e)
     {
-        await CloseProfileAsync();
+        CloseProfile();
     }
 
-    private async Task CloseProfileAsync()
+    private void CloseProfile()
     {
         try
         {

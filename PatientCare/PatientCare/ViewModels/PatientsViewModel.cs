@@ -26,7 +26,6 @@ public sealed class PatientsViewModel : INotifyPropertyChanged, IQueryAttributab
         this.scheduleDataService = scheduleDataService;
         FilterOptions = ["All Patients", "High Priority", "Follow-up Due"];
         ClearSearchCommand = new Command(() => SearchText = string.Empty);
-        SelectFilterCommand = new Command<string>(filter => SelectedFilter = filter ?? "All Patients");
         RetryCommand = new Command(Load);
         OpenPatientCommand = new Command<Patient>(OpenPatientProfile);
         CloseProfileCommand = new Command(() => IsProfileOpen = false);
@@ -98,7 +97,6 @@ public sealed class PatientsViewModel : INotifyPropertyChanged, IQueryAttributab
     }
 
     public Command ClearSearchCommand { get; }
-    public Command<string> SelectFilterCommand { get; }
     public Command RetryCommand { get; }
     public Command<Patient> OpenPatientCommand { get; }
     public Command CloseProfileCommand { get; }

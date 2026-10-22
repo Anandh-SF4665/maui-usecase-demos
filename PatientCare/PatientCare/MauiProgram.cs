@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using PatientCare.Services;
 using Syncfusion.Maui.Core.Hosting;
-using Syncfusion.Licensing;
 
 namespace PatientCare
 {
@@ -9,9 +8,6 @@ namespace PatientCare
     {
         public static MauiApp CreateMauiApp()
         {
-
-            SyncfusionLicenseProvider.RegisterLicense("YOUR_LICENSE_KEY");
-
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
@@ -28,14 +24,17 @@ namespace PatientCare
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                    // App icons use the bundled Google Material Icons font directly; MauiMaterialAssets (Syncfusion's
-                    // internal icon font) was not rendering reliably and is only kept for Syncfusion controls' own icons.
+                    // App icons use the bundled Google Material Icons font directly.
                     fonts.AddFont("MaterialIcons-Regular.ttf", "MaterialIcons");
+                    // MauiMaterialAssets.ttf is not in this repo: it ships inside the Syncfusion.Maui.Core NuGet
+                    // package (buildTransitive/Resources/Fonts/MauiMaterialAssets.ttf) and is registered as a
+                    // MauiFont automatically by that package's props file. It is only needed for Syncfusion controls'
+                    // own icons.
                     fonts.AddFont("MauiMaterialAssets.ttf", "MauiMaterialAssets");
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

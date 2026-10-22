@@ -14,11 +14,9 @@ The Patient Care sample is a healthcare management application built with .NET M
 1. Ensure you have Visual Studio 2022 or later with .NET MAUI workload installed
 2. Open the `PatientCare.slnx` solution file
 3. Restore NuGet packages (this will automatically restore Syncfusion packages)
-4. Add your Syncfusion license key in `MauiProgram.cs`:
-   ```csharp
-   SyncfusionLicenseProvider.RegisterLicense("YOUR_LICENSE_KEY");
-   ```
-5. Build and run the application
+4. Build and run the application
+
+Note: Syncfusion components may require a license key. Register it in `MauiProgram.cs` via `Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("YOUR_LICENSE_KEY")` if your usage requires it.
 
 ## Application Structure
 - **Views**: XAML pages for each feature area
@@ -28,9 +26,12 @@ The Patient Care sample is a healthcare management application built with .NET M
 - **Controls**: Custom reusable UI controls
 
 ## License Registration
-Before running the application, you must register your Syncfusion license:
+Syncfusion controls run in evaluation mode unless a valid license key is registered. To register one:
 1. Obtain a Syncfusion license key from https://www.syncfusion.com/account/license
-2. Replace "YOUR_LICENSE_KEY" in `MauiProgram.cs` with your actual license key
+2. Add the registration call at the top of `MauiProgram.cs` in `CreateMauiApp()`:
+   ```csharp
+   Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("YOUR_LICENSE_KEY");
+   ```
 
 ## Supported Platforms
 - Android
