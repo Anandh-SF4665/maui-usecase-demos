@@ -19,7 +19,7 @@ This repository contains Syncfusion .NET MAUI use case demos that showcase pract
 | StudentGradesDashboard | `SfDataGrid/StudentGradesDashboard` | Student grades dashboard. |
 | TaskManagement | `SfDataGrid/TaskManagement` | Task list with charts. |
 | WeatherForecast | `WeatherForecast` | Weather forecast sample. |
-| **VisitorPass** | `SfDataGrid/VisitorPass` *(planned)* | Visitor pass management with KPI dashboard, directory, and digital pass details. **One page per screen**, shared across desktop and mobile via `OnIdiom` — no `DesktopUI/` / `MobileUI/` folder split. |
+| **VisitorPass** | `SfDataGrid/VisitorPass` | Visitor pass management with KPI dashboard, directory, and digital pass details. **One page per screen**, shared across desktop and mobile via `OnIdiom` — no `DesktopUI/` / `MobileUI/` folder split. **Status:** MVP shipped (Phases 2–9 complete). |
 
 ## Governance Files
 
@@ -45,3 +45,33 @@ Read these four files in order before working on the Visitor Pass application.
 > There are **no** `Views/DesktopUI/` or `Views/MobileUI/` folders, no
 > `App.IsMobileRuntime()` switch, and no `AppSidebar` / `MobileShell`
 > (`SfTabView`) components. See `HARNESS.md §7` for the decision matrix.
+
+### Visitor Pass feature set (MVP)
+
+| Screen | XAML | ViewModel |
+|---|---|---|
+| Dashboard | `Views/DashboardPage.xaml` | `ViewModels/DashboardViewModel.cs` — KPI counts, donut + column chart series, today's-activity grid (8-row cap) |
+| Directory | `Views/DirectoryPage.xaml` | `ViewModels/DirectoryViewModel.cs` — live search + status filter chips |
+| Digital Pass | `Views/VisitorDetailsPage.xaml` | `ViewModels/VisitorDetailsViewModel.cs` — Check In / Check Out / Cancel commands, 4-step timeline |
+| Registration | `Views/RegisterVisitorPage.xaml` + `Views/RegisterVisitorView.xaml` | `ViewModels/RegisterVisitorViewModel.cs` — 3-step wizard with validation |
+
+Shared controls (`Controls/`) and value converters (`Converters/`) are reused
+across every screen. Theme toggle (light / dark) is exposed via the
+`TopNavBar` sun/moon pill and applies through `AppThemeBinding` on the
+palette brushes — no per-page code.
+
+### Build verification (VP-090)
+
+| Target | Status | Notes |
+|---|---|---|
+| `net10.0-android` | ✅ Verified on E2B Linux sandbox | `dotnet build VisitorPass.csproj -f net10.0-android -c Debug` — 0 warnings, 0 errors |
+| `net10.0-ios` | ⚠️ Requires macOS host | iOS workload not installable on Linux; per HARNESS §12 the agent doesn't run this target |
+| `net10.0-maccatalyst` | ⚠️ Requires macOS host | Mac Catalyst workload not installable on Linux |
+| `net10.0-windows10.0.19041.0` | ⚠️ Requires Windows host | Windows workload not installable on Linux |
+
+Verified Android build on the E2B Linux sandbox using the HARNESS §12 install
+sequence (workload install via `DOTNET_CLI_WORKLOAD_INSTALL_PATH=/var/dotnet-work`,
+Android SDK at `/var/dotnet-work/android-sdk`). The other three targets are
+expected to build cleanly because the project code is platform-agnostic MAUI
+XAML + .NET 10 — no per-target `#if` branches, no platform-specific API
+references.
