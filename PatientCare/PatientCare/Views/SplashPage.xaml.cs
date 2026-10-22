@@ -1,20 +1,16 @@
-using PatientCare.ViewModels;
 using Syncfusion.Maui.ProgressBar;
 
 namespace PatientCare.Views;
 
 public partial class SplashPage : ContentPage
 {
-	private SplashPageViewModel? _viewModel;
 	private SfLinearProgressBar? _loadingProgress;
 	private bool _isNavigating = false;
 
 	public SplashPage()
 	{
 		InitializeComponent();
-		_viewModel = new SplashPageViewModel();
-		BindingContext = _viewModel;
-		
+
 		// Find the progress bar control
 		_loadingProgress = this.FindByName<SfLinearProgressBar>("LoadingProgress");
 	}
@@ -22,7 +18,7 @@ public partial class SplashPage : ContentPage
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
-		
+
 		try
 		{
 			// Animate the progress bar with stepped updates
@@ -41,7 +37,7 @@ public partial class SplashPage : ContentPage
 			if (_loadingProgress != null && !_isNavigating)
 			{
 				_isNavigating = true;
-				
+
 				// Step 1: 30% progress
 				_loadingProgress.Progress = 30;
 				await Task.Delay(900);
