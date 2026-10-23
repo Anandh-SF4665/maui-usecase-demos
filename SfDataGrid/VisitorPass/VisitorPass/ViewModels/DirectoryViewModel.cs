@@ -61,6 +61,20 @@ public partial class DirectoryViewModel : BaseViewModel
     [ObservableProperty]
     private bool _hasNoResults;
 
+    /// <summary>
+    /// Currently focused row in the directory grid. The Active Dossier
+    /// preview card at the bottom of the page binds to this property
+    /// so the user sees a summary (PassId + status badge + QR barcode)
+    /// for the row they tapped without leaving the Directory page.
+    /// Null until the user taps a row (or until OnCellTapped is
+    /// called by the page).
+    /// </summary>
+    [ObservableProperty]
+    private Visitor? _selectedVisitor;
+
+    /// <summary>True when SelectedVisitor has been resolved.</summary>
+    public bool HasSelectedVisitor => SelectedVisitor is not null;
+
     public DirectoryViewModel(IVisitorStore store)
     {
         _store = store;

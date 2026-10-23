@@ -108,6 +108,14 @@ public partial class Visitor : ObservableObject
     /// <summary>Derived: scheduled end = <see cref="ScheduledStart"/> + expected duration.</summary>
     public DateTime ScheduledEnd => ScheduledStart.AddMinutes(ExpectedDurationMinutes);
 
+    /// <summary>
+    /// Friendly check-in caption for the Active Dossier preview
+    /// card. Shows the time when checked in, falls back to
+    /// "—:— AM" before check-in.
+    /// </summary>
+    public string CheckInTimeDisplay =>
+        CheckInTime?.ToString("h:mm tt") ?? "—:— AM";
+
     /// <summary>True when status is <see cref="VisitorStatus.CheckedIn"/> or <see cref="VisitorStatus.CheckedOut"/>.</summary>
     public bool HasArrived => Status is VisitorStatus.CheckedIn or VisitorStatus.CheckedOut;
 

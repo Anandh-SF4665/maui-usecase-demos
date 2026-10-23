@@ -74,10 +74,25 @@ public partial class DirectoryPage : ContentPage
         if (e.RowData is not Visitor visitor)
             return;
 
-        // Push the Digital Pass page directly via Navigation
-        // (no Shell). The VM is a singleton — DI resolves the
-        // same instance so any state set on the dashboard grid
-        // (e.g. Check In from this page) is reflected here.
+        // Per the design (image 1), row tap selects the row and
+        // updates the "Active Dossier" preview card at the bottom
+        // of the page. The user opens the full Digital Pass via
+        // the card's "Open Full Pass Details" button (OnOpenFullPass).
+        if (BindingContext is DirectoryViewModel vm)
+            vm.SelectedVisitor = visitor;
+    }
+
+    /// <summary>
+    /// "Open Full Pass Details" button on the Active Dossier
+    /// preview card. Pushes the Digital Pass page with the
+    /// currently selected visitor's pass id.
+    /// </summary>
+    private async void OnOpenFullPass(object? sender, EventArgs e)
+    {
+        if (BindingContext is not DirectoryViewModel vm
+            || vm.SelectedVisitor is not { } visitor)
+            return;
+
         await Navigation.PushAsync(
             new VisitorDetailsPage(
                 _services.GetRequiredService<VisitorDetailsViewModel>(),

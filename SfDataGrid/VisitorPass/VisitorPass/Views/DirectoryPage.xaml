@@ -26,6 +26,7 @@
              xmlns:models="clr-namespace:VisitorPass.Models;assembly=VisitorPass"
              xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
              xmlns:sfgrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             xmlns:barcode="clr-namespace:Syncfusion.Maui.Barcode;assembly=Syncfusion.Maui.Barcode"
              x:Class="VisitorPass.Views.DirectoryPage"
              x:DataType="vm:DirectoryViewModel"
              Title="Visitor Directory"
@@ -71,7 +72,7 @@
         <Grid Grid.Column="1"
               Padding="{OnIdiom Desktop='24,0,24,24', Phone='14,8,14,14'}"
               RowSpacing="14"
-              RowDefinitions="Auto,Auto,Auto,*,Auto">
+              RowDefinitions="Auto,Auto,Auto,*,Auto,Auto">
 
         <!-- ============================== -->
         <!-- 1. TopNavBar (no register)     -->
@@ -295,9 +296,173 @@
                                  Message="Try clearing the search box or selecting a different status." />
 
             <!-- ============================== -->
+            <!-- 4b. Active Dossier preview      -->
+            <!-- ============================== -->
+            <Border Grid.Row="4"
+                    Style="{StaticResource PanelCard}"
+                    Padding="{OnIdiom Desktop='22,18,22,18', Phone='14,12,14,12'}"
+                    IsVisible="{Binding HasSelectedVisitor}">
+
+                <Grid ColumnDefinitions="Auto,*,Auto"
+                      ColumnSpacing="22"
+                      RowDefinitions="Auto,Auto"
+                      RowSpacing="14">
+
+                    <!-- Eyebrow + status badge row -->
+                    <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                          ColumnDefinitions="*,Auto">
+                        <HorizontalStackLayout Grid.Column="0" Spacing="10" VerticalOptions="Center">
+                            <Label Text="&#x1F4C4;"
+                                   FontSize="14"
+                                   TextColor="{StaticResource Primary}"
+                                   VerticalOptions="Center" />
+                            <VerticalStackLayout Spacing="0" VerticalOptions="Center">
+                                <Label Text="ACTIVE DOSSIER"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="10"
+                                       CharacterSpacing="1.4"
+                                       TextColor="{StaticResource TextMuted}" />
+                                <Label Text="Visitor Pass Details"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="16"
+                                       TextColor="{StaticResource TextPrimary}" />
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+                        <controls:VisitorStatusBadge Grid.Column="1"
+                                                      Status="{Binding SelectedVisitor.Status}"
+                                                      VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- Identity column: avatar + name + host + purpose -->
+                    <HorizontalStackLayout Grid.Row="1" Grid.Column="0"
+                                           Spacing="14"
+                                           VerticalOptions="Center">
+                        <controls:VisitorAvatar Initials="{Binding SelectedVisitor.VisitorName}"
+                                                WidthRequest="56"
+                                                HeightRequest="56" />
+                        <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                            <Label Text="{Binding SelectedVisitor.VisitorName}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="15"
+                                   TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="{Binding SelectedVisitor.Host}"
+                                   FontFamily="OpenSansRegular"
+                                   FontSize="11"
+                                   TextColor="{StaticResource TextSecondary}" />
+                            <Label Text="{Binding SelectedVisitor.Purpose}"
+                                   FontFamily="OpenSansRegular"
+                                   FontSize="10"
+                                   TextColor="{StaticResource TextMuted}" />
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+
+                    <!-- QR barcode + passcode caption -->
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="1"
+                                         Spacing="6"
+                                         HorizontalOptions="Center"
+                                         VerticalOptions="Center">
+                        <barcode:SfBarcodeGenerator Value="{Binding SelectedVisitor.PassId}"
+                                                     BackgroundColor="{StaticResource Surface}"
+                                                     ForegroundColor="{StaticResource TextPrimary}"
+                                                     HeightRequest="110"
+                                                     WidthRequest="110"
+                                                     HorizontalOptions="Center">
+                            <barcode:SfBarcodeGenerator.Symbology>
+                                <barcode:QRCode />
+                            </barcode:SfBarcodeGenerator.Symbology>
+                        </barcode:SfBarcodeGenerator>
+                        <Label Text="SECURE PASSCODE"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="9"
+                               CharacterSpacing="1.4"
+                               TextColor="{StaticResource TextMuted}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding SelectedVisitor.PassId, StringFormat='{0}-CC'}"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="11"
+                               TextColor="{StaticResource TextPrimary}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+
+                    <!-- Summary tiles + action buttons -->
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="2"
+                                         Spacing="10"
+                                         HorizontalOptions="End"
+                                         VerticalOptions="Center">
+                        <HorizontalStackLayout Spacing="10">
+                            <Border Style="{StaticResource KpiCard}"
+                                    BackgroundColor="{StaticResource SurfaceAlt}"
+                                    Padding="10,8">
+                                <VerticalStackLayout Spacing="0">
+                                    <Label Text="PASS ID"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="8"
+                                           CharacterSpacing="1.4"
+                                           TextColor="{StaticResource TextMuted}" />
+                                    <Label Text="{Binding SelectedVisitor.PassId}"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="11"
+                                           TextColor="{StaticResource Primary}"
+                                           VerticalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Style="{StaticResource KpiCard}"
+                                    BackgroundColor="{StaticResource SurfaceAlt}"
+                                    Padding="10,8">
+                                <VerticalStackLayout Spacing="0">
+                                    <Label Text="CHECK-IN"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="8"
+                                           CharacterSpacing="1.4"
+                                           TextColor="{StaticResource TextMuted}" />
+                                    <Label Text="{Binding SelectedVisitor.CheckInTimeDisplay}"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="11"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </HorizontalStackLayout>
+
+                        <Button Text="Open Full Pass Details"
+                                Clicked="OnOpenFullPass"
+                                BackgroundColor="{StaticResource Primary}"
+                                TextColor="{StaticResource White}"
+                                FontFamily="OpenSansSemibold"
+                                FontSize="12"
+                                Padding="14,10"
+                                CornerRadius="10"
+                                HeightRequest="42" />
+
+                        <HorizontalStackLayout Spacing="8" HorizontalOptions="Fill">
+                            <Button Text="Print Badge"
+                                    Clicked="OnOpenFullPass"
+                                    BackgroundColor="{StaticResource SurfaceAlt}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    FontFamily="OpenSansSemibold"
+                                    FontSize="11"
+                                    Padding="10,8"
+                                    CornerRadius="8"
+                                    HeightRequest="36"
+                                    HorizontalOptions="Fill" />
+                            <Button Text="Call Host"
+                                    Clicked="OnOpenFullPass"
+                                    BackgroundColor="{StaticResource SurfaceAlt}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    FontFamily="OpenSansSemibold"
+                                    FontSize="11"
+                                    Padding="10,8"
+                                    CornerRadius="8"
+                                    HeightRequest="36"
+                                    HorizontalOptions="Fill" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- ============================== -->
             <!-- 5. Footer (row count summary)  -->
             <!-- ============================== -->
-            <Label Grid.Row="4"
+            <Label Grid.Row="5"
                    Text="{Binding FilteredVisitors.Count, StringFormat='{0} visitor(s) shown'}"
                    TextColor="{StaticResource TextMuted}"
                    FontFamily="OpenSansRegular"

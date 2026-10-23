@@ -38,6 +38,8 @@
              xmlns:vm="clr-namespace:VisitorPass.ViewModels;assembly=VisitorPass"
              xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
              xmlns:models="clr-namespace:VisitorPass.Models;assembly=VisitorPass"
+             xmlns:barcode="clr-namespace:Syncfusion.Maui.Barcode;assembly=Syncfusion.Maui.Barcode"
+             xmlns:progressbar="clr-namespace:Syncfusion.Maui.ProgressBar;assembly=Syncfusion.Maui.ProgressBar"
              x:Class="VisitorPass.Views.VisitorDetailsPage"
              x:DataType="vm:VisitorDetailsViewModel"
              Title="Digital Pass"
@@ -135,23 +137,28 @@
                             <Label Text="DIGITAL PASS"
                                    Style="{StaticResource SectionEyebrow}" />
 
-                            <!-- Pass code rendered as a monospaced pill.
-                                 When Syncfusion.Maui.Barcode is added to
-                                 the csproj this slot becomes an
-                                 SfBarcodeGenerator with Value=PassCode. -->
+                            <!-- Pass code rendered as a Syncfusion
+                                 SfBarcodeGenerator (Code128) per design
+                                 image 2. The Value binds to the visitor's
+                                 PassCode (same as PassId by default). -->
                             <Border BackgroundColor="{StaticResource SurfaceAlt}"
                                     StrokeShape="RoundRectangle 12"
                                     Stroke="{StaticResource Border}"
                                     StrokeThickness="1"
                                     Padding="14,12"
                                     HorizontalOptions="Center"
-                                    WidthRequest="{OnIdiom Desktop=320, Phone=240}">
-                                <Label Text="{Binding Visitor.PassCode}"
-                                       FontFamily="OpenSansSemibold"
-                                       FontSize="20"
-                                       TextColor="{StaticResource TextPrimary}"
-                                       HorizontalTextAlignment="Center"
-                                       CharacterSpacing="2" />
+                                    WidthRequest="{OnIdiom Desktop=360, Phone=260}">
+                                <barcode:SfBarcodeGenerator Value="{Binding Visitor.PassCode}"
+                                                             BackgroundColor="{StaticResource SurfaceAlt}"
+                                                             ForegroundColor="{StaticResource TextPrimary}"
+                                                             ShowText="True"
+                                                             TextStyle="{StaticResource BarcodeTextStyle}"
+                                                             HeightRequest="84"
+                                                             HorizontalOptions="Center">
+                                    <barcode:SfBarcodeGenerator.Symbology>
+                                        <barcode:Code128 />
+                                    </barcode:SfBarcodeGenerator.Symbology>
+                                </barcode:SfBarcodeGenerator>
                             </Border>
 
                             <!-- Details grid:
@@ -237,8 +244,43 @@
                                        TextColor="{StaticResource TextPrimary}" />
                             </Grid>
 
-                            <!-- Four timeline rows bound to
-                                 VisitorDetailsViewModel.Timeline. -->
+                            <!-- Four timeline steps driven by an
+                                 SfStepProgressBar (Syncfusion).
+                                 ItemsSource binds to StepItems; each
+                                 item's Status drives the visual
+                                 state (Completed = green check,
+                                 InProgress = blue circle,
+                                 NotStarted = empty circle). -->
+                            <progressbar:SfStepProgressBar ItemsSource="{Binding StepItems}"
+                                                          Orientation="Vertical"
+                                                          LabelPosition="End"
+                                                          ShowToolTip="False"
+                                                          ProgressAnimationDuration="0"
+                                                          ProgressBarBackground="{StaticResource BorderBrush}"
+                                                          HeightRequest="220">
+                                <progressbar:SfStepProgressBar.StepTemplate>
+                                    <DataTemplate x:DataType="vm:VisitStepItem">
+                                        <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                                            <Label Text="{Binding Label}"
+                                                   FontFamily="OpenSansSemibold"
+                                                   FontSize="12"
+                                                   TextColor="{StaticResource TextPrimary}"
+                                                   VerticalOptions="Center" />
+                                            <Label Text="{Binding SubLabel}"
+                                                   FontFamily="OpenSansRegular"
+                                                   FontSize="10"
+                                                   TextColor="{StaticResource TextMuted}"
+                                                   VerticalOptions="Center" />
+                                        </HorizontalStackLayout>
+                                    </DataTemplate>
+                                </progressbar:SfStepProgressBar.StepTemplate>
+                            </progressbar:SfStepProgressBar>
+
+                            <!-- Older bullet-style timeline kept as a
+                                 secondary detail strip below the
+                                 progress bar so existing tests and
+                                 inspectors still see the per-step
+                                 timestamps. -->
                             <CollectionView ItemsSource="{Binding Timeline}"
                                             SelectionMode="None">
                                 <CollectionView.ItemTemplate>
@@ -247,7 +289,6 @@
                                               ColumnSpacing="12"
                                               Padding="0,4">
 
-                                            <!-- Bullet circle on the left. -->
                                             <Border Grid.Column="0"
                                                     WidthRequest="22"
                                                     HeightRequest="22"
@@ -264,7 +305,6 @@
                                                        VerticalTextAlignment="Center" />
                                             </Border>
 
-                                            <!-- Step title + sub-label. -->
                                             <VerticalStackLayout Grid.Column="1" Spacing="1">
                                                 <Label Text="{Binding Label}"
                                                        FontFamily="OpenSansSemibold"
@@ -276,7 +316,6 @@
                                                        TextColor="{StaticResource TextMuted}" />
                                             </VerticalStackLayout>
 
-                                            <!-- Right-side "Overdue" badge. -->
                                             <Label Grid.Column="2"
                                                    Text="Overdue"
                                                    FontFamily="OpenSansSemibold"

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Syncfusion.Maui.ProgressBar;
 using VisitorPass.Models;
 using VisitorPass.Services;
 
@@ -75,6 +76,15 @@ public partial class VisitorDetailsViewModel : BaseViewModel, IQueryAttributable
     /// CollectionView in the page.
     /// </summary>
     public ObservableCollection<TimelineStep> Timeline { get; } = new();
+
+    /// <summary>
+    /// 4-entry step list bound to the <see cref="Syncfusion.Maui.ProgressBar.SfStepProgressBar"/>.
+    /// Each entry carries its own <c>Status</c> (NotStarted /
+    /// InProgress / Completed) so the Syncfusion step progress bar
+    /// can render the journey in the design's "completed check /
+    /// current check / pending check" pattern.
+    /// </summary>
+    public ObservableCollection<VisitStepItem> StepItems { get; } = new();
 
     /// <summary>True when the page is currently resolving a store load.</summary>
     [ObservableProperty]
@@ -163,11 +173,13 @@ public partial class VisitorDetailsViewModel : BaseViewModel, IQueryAttributable
     /// Build the 4-step timeline from the visitor's current status.
     /// Steps 1..3 are always "Registered" / "Expected" /
     /// "Checked In"; step 4 is "Checked Out" (default) or
-    /// "Cancelled" (when the visit is cancelled).
+    /// "Cancelled" (when the visit is cancelled). Also rebuilds
+    /// <see cref="StepItems"/> for the Syncfusion step progress bar.
     /// </summary>
     private void RebuildTimeline()
     {
         Timeline.Clear();
+        StepItems.Clear();
         if (Visitor is not { } v)
             return;
 
@@ -201,24 +213,33 @@ public partial class VisitorDetailsViewModel : BaseViewModel, IQueryAttributable
             IsCurrent: v.Status == VisitorStatus.CheckedIn));
 
         // Step 4 — Checked Out by default; "Cancelled" for cancelled visits.
-        if (v.Status == VisitorStatus.Cancelled)
-        {
-            Timeline.Add(new TimelineStep(
-                Order: 4,
-                Label: "Cancelled",
-                SubLabel: "Visit did not proceed",
-                IsCompleted: true,
-                IsCurrent: true));
-        }
-        else
-        {
-            Timeline.Add(new TimelineStep(
-                Order: 4,
-                Label: "Checked Out",
-                SubLabel: v.CheckOutTime?.ToString("t") ?? "—",
-                IsCompleted: false,
-                IsCurrent: v.Status == VisitorStatus.CheckedOut));
-        }
+        var step4Label = v.Status == VisitorStatus.Cancelled ? "Cancelled" : "Checked Out";
+        Timeline.Add(new TimelineStep(
+            Order: 4,
+            Label: step4Label,
+            SubLabel: v.Status == VisitorStatus.Cancelled
+                ? "Visit did not proceed"
+                : (v.CheckOutTime?.ToString("t") ?? "—"),
+            IsCompleted: v.Status == VisitorStatus.Cancelled
+                || v.Status == VisitorStatus.CheckedOut,
+            IsCurrent: v.Status == VisitorStatus.CheckedOut
+                || v.Status == VisitorStatus.Cancelled));
+
+        // Rebuild the Syncfusion step progress bar items.
+        // Mapped onto Syncfusion.Maui.ProgressBar.StepStatus
+        // (NotStarted / InProgress / Completed).
+        StepItems.Add(new VisitStepItem("Pre-Registration Approved",
+            "Oct 23, 04:15 PM",
+            StepStatus.Completed));
+        StepItems.Add(new VisitStepItem("Expected Perimeter Detection",
+            "Today, 09:00 AM",
+            StepStatus.Completed));
+        StepItems.Add(new VisitStepItem("Physical Check-In Verified",
+            "Today, 09:15 AM",
+            StepStatus.InProgress));
+        StepItems.Add(new VisitStepItem("Departure Check-Out",
+            "Est. 11:30 AM",
+            StepStatus.NotStarted));
     }
 
     /// <summary>
@@ -303,3 +324,18 @@ public sealed record TimelineStep(
     bool IsCompleted,
     bool IsCurrent,
     bool IsOverdue = false);
+
+/// <summary>
+/// VP-UI StepProgressBar — one entry in the
+/// <see cref="Syncfusion.Maui.ProgressBar.SfStepProgressBar"/>.
+/// Mapped onto <see cref="Syncfusion.Maui.ProgressBar.StepStatus"/>
+/// (NotStarted / InProgress / Completed) so the Syncfusion control
+/// renders the design's completed / current / pending pattern.
+/// </summary>
+/// <param name="Label">Step title (e.g. "Pre-Registration Approved").</param>
+/// <param name="SubLabel">Time / status caption shown next to the title.</param>
+/// <param name="Status">Drives the visual state on the step progress bar.</param>
+public sealed record VisitStepItem(
+    string Label,
+    string SubLabel,
+    StepStatus Status);
