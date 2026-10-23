@@ -91,9 +91,11 @@
                     <Border Grid.Column="0" Style="{StaticResource KpiCard}">
                         <VerticalStackLayout Spacing="6">
                             <HorizontalStackLayout Spacing="6">
-                                <Ellipse WidthRequest="8" HeightRequest="8"
-                                         Fill="{StaticResource StatusExpectedBrush}"
-                                         VerticalOptions="Center" />
+                                <Label Text="{x:Static controls:IconKeys.Schedule}"
+                                       FontFamily="MauiMaterialAssets"
+                                       FontSize="13"
+                                       TextColor="{StaticResource StatusExpected}"
+                                       VerticalOptions="Center" />
                                 <Label Text="EXPECTED VISITORS"
                                        Style="{StaticResource SectionEyebrow}" />
                             </HorizontalStackLayout>
@@ -106,9 +108,11 @@
                     <Border Grid.Column="{OnIdiom Desktop=1, Phone=1}" Style="{StaticResource KpiCard}">
                         <VerticalStackLayout Spacing="6">
                             <HorizontalStackLayout Spacing="6">
-                                <Ellipse WidthRequest="8" HeightRequest="8"
-                                         Fill="{StaticResource StatusCheckedInBrush}"
-                                         VerticalOptions="Center" />
+                                <Label Text="{x:Static controls:IconKeys.Verified}"
+                                       FontFamily="MauiMaterialAssets"
+                                       FontSize="13"
+                                       TextColor="{StaticResource StatusCheckedIn}"
+                                       VerticalOptions="Center" />
                                 <Label Text="CHECKED IN"
                                        Style="{StaticResource SectionEyebrow}" />
                             </HorizontalStackLayout>
@@ -121,9 +125,11 @@
                     <Border Grid.Column="{OnIdiom Desktop=2, Phone=0}" Style="{StaticResource KpiCard}">
                         <VerticalStackLayout Spacing="6">
                             <HorizontalStackLayout Spacing="6">
-                                <Ellipse WidthRequest="8" HeightRequest="8"
-                                         Fill="{StaticResource StatusCheckedOutBrush}"
-                                         VerticalOptions="Center" />
+                                <Label Text="{x:Static controls:IconKeys.EventAvailable}"
+                                       FontFamily="MauiMaterialAssets"
+                                       FontSize="13"
+                                       TextColor="{StaticResource StatusCheckedOut}"
+                                       VerticalOptions="Center" />
                                 <Label Text="CHECKED OUT"
                                        Style="{StaticResource SectionEyebrow}" />
                             </HorizontalStackLayout>
@@ -331,8 +337,12 @@
                      ShowFooter="False"
                      ShowCloseButton="True"
                      Opened="OnRegisterPopupOpened"
-                     WidthRequest="640"
-                     HeightRequest="640">
+                     WidthRequest="{OnIdiom Desktop=640, Phone=340}"
+                     HeightRequest="{OnIdiom Desktop=640, Phone=560}">
+        <sfpopup:SfPopup.PopupStyle>
+            <sfpopup:PopupStyle StrokeThickness="0"
+                                CornerRadius="{OnIdiom Default=16, Phone=24}" />
+        </sfpopup:SfPopup.PopupStyle>
         <sfpopup:SfPopup.ContentTemplate>
             <DataTemplate>
                 <views:RegisterVisitorView />

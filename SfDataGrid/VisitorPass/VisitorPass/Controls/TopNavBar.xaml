@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
              x:Class="VisitorPass.Controls.TopNavBar">
 
     <!--
@@ -87,9 +88,9 @@
                         StrokeShape="RoundRectangle 11"
                         WidthRequest="22" HeightRequest="22"
                         VerticalOptions="Center">
-                    <Label Text="+"
+                    <Label Text="{x:Static controls:IconKeys.Add}"
+                           FontFamily="MauiMaterialAssets"
                            TextColor="{StaticResource White}"
-                           FontFamily="OpenSansSemibold"
                            FontSize="14"
                            HorizontalOptions="Center"
                            VerticalOptions="Center" />

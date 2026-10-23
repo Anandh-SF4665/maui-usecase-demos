@@ -69,8 +69,14 @@ public partial class TopNavBar : ContentView
         set => SetValue(IsDarkModeProperty, value);
     }
 
-    /// <summary>Glyph rendered inside the toggle pill (sun or moon).</summary>
-    public string ThemeToggleGlyph => IsDarkMode ? "\u2600" : "\u263E";
+    /// <summary>
+    /// Glyph rendered inside the toggle pill. Uses MAUI's bundled
+    /// Material Icons font (light_mode / dark_mode codepoints).
+    /// VP-104 — replaces the earlier emoji glyphs.
+    /// </summary>
+    public string ThemeToggleGlyph => IsDarkMode
+        ? "\ue51c"  // light_mode — tap to switch to light
+        : "\ue51d"; // dark_mode  — tap to switch to dark
 
     /// <summary>Raised when the user taps the "Register Visitor" trigger.</summary>
     public event EventHandler? RegisterClicked;
