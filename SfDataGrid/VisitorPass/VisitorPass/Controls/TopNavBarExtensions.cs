@@ -1,3 +1,5 @@
+using Syncfusion.Maui.Popup;
+
 namespace VisitorPass.Controls;
 
 /// <summary>
@@ -29,6 +31,18 @@ public static class TopNavBarExtensions
     {
         if (page.Content is IView root)
             return FindInLayout<SideNavigation>(root);
+        return default;
+    }
+
+    /// <summary>
+    /// Returns the first <see cref="SfPopup"/> in
+    /// <paramref name="page"/>'s visual tree, or <c>null</c> if
+    /// the page doesn't host one.
+    /// </summary>
+    public static SfPopup? FindRegisterPopup(this ContentPage page)
+    {
+        if (page.Content is IView root)
+            return FindInLayout<SfPopup>(root);
         return default;
     }
 

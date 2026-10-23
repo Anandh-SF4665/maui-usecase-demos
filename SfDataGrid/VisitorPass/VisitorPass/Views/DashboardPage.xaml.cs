@@ -1,32 +1,35 @@
 using Microsoft.Extensions.DependencyInjection;
 using Syncfusion.Maui.DataGrid;
+using Syncfusion.Maui.Popup;
 using VisitorPass.Controls;
 using VisitorPass.Models;
 using VisitorPass.Services;
 using VisitorPass.ViewModels;
+using VisitorPass.Views;
 
 namespace VisitorPass.Views;
 
 /// <summary>
-/// VP-041 / VP-042 / VP-043 — Dashboard page code-behind.
+/// VP-UI popup+nav — Dashboard page code-behind.
 ///
-/// The XAML is the single source of truth for layout; the code-behind
-/// wires up three events:
+/// Three events wired:
+///   1. TopNavBar.RegisterClicked -> opens the SfPopup defined in
+///      DashboardPage.xaml with RegisterVisitorView as its body.
+///   2. TopNavBar.ThemeToggleClicked -> ThemeService.Toggle(); nav
+///      bar's IsDarkMode rebinds from the service.
+///   3. SfDataGrid.CellTapped on today's grid -> pushes
+///      VisitorDetailsPage via Navigation.PushAsync.
 ///
-///   1. TopNavBar.RegisterClicked -> routes to the registration
-///      surface. Per VP-073 the container is chosen by idiom:
-///      a Navigation.PushModalAsync to RegisterVisitorPage (the
-///      platform renders the modal idiom-appropriate — centred modal
-///      on desktop / tablet, full-screen slide-up sheet on phone).
-///   2. TopNavBar.ThemeToggleClicked -> forwards to
-///      ThemeService.Toggle(). The page also binds the nav bar's
-///      IsDarkMode from the service so the sun/moon glyph flips.
-///   3. SfDataGrid.CellTapped on the today's-activity grid ->
-///      navigates to the Digital Pass page with the tapped visitor's
-///      id.
+/// Sidebar navigation: each tile's NavItemClicked routes via
+/// Navigation.PushAsync (not Shell.GoToAsync). Shell was
+/// previously crashing with "Relative routing to shell elements
+/// is currently not supported"; switching to plain Navigation
+/// avoids that crash AND keeps Shell out of the picture (the
+/// root is now a NavigationPage, see App.xaml.cs).
 ///
-/// Per HARNESS §6 rule 2 there is no business logic in this file —
-/// it just routes events to the Shell and DI container.
+/// Per HARNESS §6 rule 2 there is no business logic here — this
+/// file routes events to the DI container and the navigation
+/// stack.
 /// </summary>
 public partial class DashboardPage : ContentPage
 {
@@ -46,8 +49,6 @@ public partial class DashboardPage : ContentPage
         _services = services;
         _theme = theme;
 
-        // The TopNavBar control lives inside the page's root layout;
-        // walk the visual tree to find it and subscribe to its events.
         if (this.FindTopNavBar() is { } navBar)
         {
             navBar.RegisterClicked += OnRegisterClicked;
@@ -56,22 +57,36 @@ public partial class DashboardPage : ContentPage
             _theme.PropertyChanged += OnThemePropertyChanged;
         }
 
-        // Sidebar (desktop / tablet only). Walk the visual tree for
-        // the SideNavigation control and subscribe to NavItemClicked.
         if (this.FindSideNavigation() is { } sidebar)
             sidebar.NavItemClicked += OnSidebarNavItemClicked;
     }
 
-    /// <summary>
-    /// VP-UI sidebar handler — route to whichever route the user
-    /// tapped. Dashboard stays put when "Command Center" is tapped;
-    /// navigate to the directory when "Visitor Directory" is tapped.
-    /// </summary>
+    /// <summary>Sidebar nav handler — pushes the chosen page via plain
+    /// Navigation (no Shell).</summary>
     private async void OnSidebarNavItemClicked(object? sender, string route)
     {
         if (route == DashboardViewModel.Route)
             return; // already here
-        await Shell.Current.GoToAsync(route);
+        var targetPage = ResolvePageForRoute(route);
+        if (targetPage is null) return;
+
+        // Pop back to the root first so we don't stack duplicates.
+        await Navigation.PopToRootAsync();
+        if (Navigation.NavigationStack.Count == 1
+            || Navigation.NavigationStack[^1].GetType() != targetPage.GetType())
+        {
+            await Navigation.PushAsync(targetPage);
+        }
+    }
+
+    /// <summary>Resolves a page from DI for a route id.</summary>
+    private Page? ResolvePageForRoute(string route)
+    {
+        return route switch
+        {
+            DirectoryViewModel.Route => _services.GetRequiredService<DirectoryPage>(),
+            _ => null,
+        };
     }
 
     private void OnThemeToggleClicked(object? sender, EventArgs e)
@@ -79,62 +94,94 @@ public partial class DashboardPage : ContentPage
 
     private void OnThemePropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        // Re-bind IsDarkMode so the sun/moon glyph flips on every
-        // theme change. Subscribed in the constructor.
         if (this.FindTopNavBar() is { } navBar && e.PropertyName == nameof(ThemeService.IsDarkMode))
             navBar.IsDarkMode = _theme.IsDarkMode;
     }
 
-    /// <summary>
-    /// VP-073 — register trigger handler.
-    ///
-    /// Resolves a fresh <see cref="RegisterVisitorViewModel"/> from
-    /// DI (transient, see MauiProgram.cs), wraps it in a
-    /// <see cref="RegisterVisitorPage"/>, pushes the modal idiom-aware
-    /// (centred modal on desktop / tablet, full-screen sheet on
-    /// phone), wires up <see cref="RegisterVisitorPage.PassGenerated"/>
-    /// to navigate to the Digital Pass page after a successful
-    /// submission, and dismisses the modal afterwards.
-    /// </summary>
-    private async void OnRegisterClicked(object? sender, EventArgs e)
+    /// <summary>VP-UI register trigger — opens the SfPopup. The popup's
+    /// body hosts RegisterVisitorView directly, so the form
+    /// layout exists exactly once. The VM is bound to the inner
+    /// view inside <see cref="OnRegisterPopupOpened"/> so each
+    /// opening gets a fresh DI-resolved VM (transient registration).</summary>
+    private void OnRegisterClicked(object? sender, EventArgs e)
     {
-        var vm = _services.GetRequiredService<RegisterVisitorViewModel>();
-        var page = new RegisterVisitorPage(vm);
-
-        // VP-074 — when Generate Pass succeeds, dismiss the modal
-        // and navigate to the new visitor's Digital Pass page.
-        page.PassGenerated += async (_, visitor) =>
-        {
-            await page.Navigation.PopModalAsync();
-            await Shell.Current.GoToAsync(
-                $"{VisitorDetailsViewModel.Route}?{VisitorIdQueryKey}={Uri.EscapeDataString(visitor.PassId)}");
-        };
-        page.DismissRequested += async (_, _) =>
-            await page.Navigation.PopModalAsync();
-
-        // Wrap in NavigationPage on desktop / tablet so the modal
-        // renders with a navigation bar that respects the platform
-        // idiom (centred modal on Mac Catalyst / Windows, top-bar
-        // sheet on iPad / Android tablet). On phone, push as a
-        // borderless full-screen modal — MAUI's default phone
-        // modal slide-up animation applies.
-        Page host = DeviceInfo.Idiom == DeviceIdiom.Phone
-            ? page
-            : new NavigationPage(page);
-
-        await Navigation.PushModalAsync(host);
+        if (this.FindRegisterPopup() is { } popup)
+            popup.IsOpen = true;
     }
 
-    /// <summary>
-    /// VP-043 — row tap handler on the today's-activity SfDataGrid.
-    /// Routes to the Digital Pass page with the tapped visitor's id.
-    /// </summary>
+    /// <summary>Called by XAML each time the popup opens. Resolves a
+    /// fresh <see cref="RegisterVisitorViewModel"/> from DI, walks
+    /// the popup's visual tree to find the inflated
+    /// <see cref="RegisterVisitorView"/>, and wires the VM +
+    /// lifecycle events.</summary>
+    private async void OnRegisterPopupOpened(object? sender, EventArgs e)
+    {
+        if (sender is not SfPopup popup) return;
+
+        // Resolve a fresh VM (transient registration) per open.
+        var vm = _services.GetRequiredService<RegisterVisitorViewModel>();
+        popup.BindingContext = vm;
+
+        // Find the inflated RegisterVisitorView inside the
+        // PopupView's child tree and bind the same VM to it.
+        var view = FindRegisterVisitorView(popup);
+        if (view is null) return;
+        view.BindingContext = vm;
+
+        view.DismissRequested += (_, _) => popup.IsOpen = false;
+        view.PassGenerated += async (_, visitor) =>
+        {
+            popup.IsOpen = false;
+            await Navigation.PushAsync(
+                new VisitorDetailsPage(
+                    _services.GetRequiredService<VisitorDetailsViewModel>(),
+                    _theme,
+                    passId: visitor.PassId));
+        };
+    }
+
+    /// <summary>Walks <paramref name="popup"/>'s child tree for the
+    /// inflated <see cref="RegisterVisitorView"/>.</summary>
+    private static RegisterVisitorView? FindRegisterVisitorView(SfPopup popup)
+    {
+        foreach (var descendant in EnumerateDescendants(popup))
+        {
+            if (descendant is RegisterVisitorView view)
+                return view;
+        }
+        return null;
+    }
+
+    private static IEnumerable<IView> EnumerateDescendants(IView root)
+    {
+        if (root is Layout layout)
+        {
+            foreach (var child in layout.Children)
+            {
+                yield return child;
+                foreach (var deeper in EnumerateDescendants(child))
+                    yield return deeper;
+            }
+        }
+        if (root is IContentView cv && cv.Content is IView nested)
+        {
+            yield return nested;
+            foreach (var deeper in EnumerateDescendants(nested))
+                yield return deeper;
+        }
+    }
+
+    /// <summary>VP-043 — today's grid cell tap -> pushes
+    /// VisitorDetailsPage via Navigation.PushAsync.</summary>
     private async void OnTodayGridCellTapped(object? sender, DataGridCellTappedEventArgs e)
     {
         if (e.RowData is not Visitor visitor)
             return;
 
-        await Shell.Current.GoToAsync(
-            $"{VisitorDetailsViewModel.Route}?{VisitorIdQueryKey}={Uri.EscapeDataString(visitor.PassId)}");
+        await Navigation.PushAsync(
+            new VisitorDetailsPage(
+                _services.GetRequiredService<VisitorDetailsViewModel>(),
+                _theme,
+                passId: visitor.PassId));
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Syncfusion.Maui.DataGrid;
 using VisitorPass.Controls;
 using VisitorPass.Models;
@@ -9,26 +10,29 @@ namespace VisitorPass.Views;
 /// <summary>
 /// VP-051 / VP-052 — Directory page code-behind.
 ///
-/// The XAML owns all layout. The code-behind handles two events:
+/// Events:
+///   - SfDataGrid.CellTapped on the visitor grid -> pushes
+///     VisitorDetailsPage via Navigation.PushAsync (no Shell).
+///   - TopNavBar.ThemeToggleClicked -> ThemeService.Toggle();
+///     nav bar's IsDarkMode rebinds from the service.
+///   - Sidebar.NavItemClicked -> pops back to root then pushes
+///     Dashboard (no Shell).
 ///
-///   - SfDataGrid.CellTapped on the visitor grid -> navigates to
-///     the Digital Pass page with the tapped visitor's pass id as
-///     a Shell query parameter (see <see cref="DashboardPage.VisitorIdQueryKey"/>).
-///   - TopNavBar.ThemeToggleClicked -> forwards to
-///     ThemeService.Toggle(); the nav bar's IsDarkMode is also
-///     bound from the service so the sun/moon glyph flips.
-///
-/// Per HARNESS §6 rule 2 there is no business logic in this file —
-/// it just routes events to the Shell and DI container.
+/// Per HARNESS §6 rule 2 there is no business logic here.
 /// </summary>
 public partial class DirectoryPage : ContentPage
 {
+    private readonly IServiceProvider _services;
     private readonly ThemeService _theme;
 
-    public DirectoryPage(DirectoryViewModel viewModel, ThemeService theme)
+    public DirectoryPage(
+        DirectoryViewModel viewModel,
+        IServiceProvider services,
+        ThemeService theme)
     {
         InitializeComponent();
         BindingContext = viewModel;
+        _services = services;
         _theme = theme;
 
         if (this.FindTopNavBar() is { } navBar)
@@ -38,7 +42,6 @@ public partial class DirectoryPage : ContentPage
             _theme.PropertyChanged += OnThemePropertyChanged;
         }
 
-        // Sidebar (desktop / tablet only).
         if (this.FindSideNavigation() is { } sidebar)
             sidebar.NavItemClicked += OnSidebarNavItemClicked;
     }
@@ -47,7 +50,14 @@ public partial class DirectoryPage : ContentPage
     {
         if (route == DirectoryViewModel.Route)
             return; // already here
-        await Shell.Current.GoToAsync(route);
+        // Pop back to root then push the target page so we don't
+        // stack duplicates (uses Navigation, not Shell).
+        await Navigation.PopToRootAsync();
+        if (route == DashboardViewModel.Route
+            && Navigation.NavigationStack[^1].GetType() != typeof(DashboardPage))
+        {
+            await Navigation.PushAsync(_services.GetRequiredService<DashboardPage>());
+        }
     }
 
     private void OnThemeToggleClicked(object? sender, EventArgs e)
@@ -61,13 +71,17 @@ public partial class DirectoryPage : ContentPage
 
     private async void OnCellTapped(object? sender, DataGridCellTappedEventArgs e)
     {
-        // RowData carries the bound item; when it's a Visitor we
-        // navigate to the details page with its PassId as a query
-        // parameter so Phase 6's VisitorDetailsViewModel can load it.
         if (e.RowData is not Visitor visitor)
             return;
 
-        await Shell.Current.GoToAsync(
-            $"{VisitorDetailsViewModel.Route}?{DashboardPage.VisitorIdQueryKey}={Uri.EscapeDataString(visitor.PassId)}");
+        // Push the Digital Pass page directly via Navigation
+        // (no Shell). The VM is a singleton — DI resolves the
+        // same instance so any state set on the dashboard grid
+        // (e.g. Check In from this page) is reflected here.
+        await Navigation.PushAsync(
+            new VisitorDetailsPage(
+                _services.GetRequiredService<VisitorDetailsViewModel>(),
+                _theme,
+                passId: visitor.PassId));
     }
 }

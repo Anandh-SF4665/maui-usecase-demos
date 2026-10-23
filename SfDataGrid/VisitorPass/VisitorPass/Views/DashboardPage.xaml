@@ -23,8 +23,10 @@
              xmlns:vm="clr-namespace:VisitorPass.ViewModels;assembly=VisitorPass"
              xmlns:models="clr-namespace:VisitorPass.Models;assembly=VisitorPass"
              xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
+             xmlns:views="clr-namespace:VisitorPass.Views;assembly=VisitorPass"
              xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
              xmlns:sfgrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             xmlns:sfpopup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
              x:Class="VisitorPass.Views.DashboardPage"
              x:DataType="vm:DashboardViewModel"
              Title="Visitor Command Center"
@@ -48,7 +50,15 @@
     </ContentPage.Resources>
 
     <!--
-        Root 2-column Grid: sidebar on the left (desktop / tablet
+        Root overlay Grid: the 2-column layout (sidebar + content)
+        sits in row 0; the SfPopup for the registration surface
+        overlays the whole page in row 1 so it covers both the
+        sidebar and the content when open.
+    -->
+    <Grid>
+
+    <!--
+        2-column layout: sidebar on the left (desktop / tablet
         only), content on the right (always). On phone the sidebar
         column collapses to 0 width and the content fills the page.
     -->
@@ -301,5 +311,34 @@
 
             </VerticalStackLayout>
         </ScrollView>
+    </Grid>
+
+    <!-- ==================================================
+         VP-UI popup — registration surface.
+         Hosts RegisterVisitorView directly inside the popup
+         body via ContentTemplate. Triggered from
+         OnRegisterClicked in code-behind; the Opened event
+         handler resolves a fresh RegisterVisitorViewModel from
+         DI, sets it as the popup's BindingContext, then walks the
+         PopupView's visual tree to find the inflated
+         RegisterVisitorView and binds the same VM to it. The
+         view's lifecycle events (DismissRequested /
+         PassGenerated) are wired on the inflated view so
+         dismiss/pass navigate correctly.
+         ================================================== -->
+    <sfpopup:SfPopup x:Name="RegisterPopup"
+                     ShowHeader="False"
+                     ShowFooter="False"
+                     ShowCloseButton="True"
+                     Opened="OnRegisterPopupOpened"
+                     WidthRequest="640"
+                     HeightRequest="640">
+        <sfpopup:SfPopup.ContentTemplate>
+            <DataTemplate>
+                <views:RegisterVisitorView />
+            </DataTemplate>
+        </sfpopup:SfPopup.ContentTemplate>
+    </sfpopup:SfPopup>
+
     </Grid>
 </ContentPage>

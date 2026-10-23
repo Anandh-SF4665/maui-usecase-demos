@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
-using Syncfusion.Maui.Popup.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
 using VisitorPass.Services;
 using VisitorPass.ViewModels;
@@ -17,9 +16,11 @@ public static class MauiProgram
             .UseMauiApp<App>()
             // ----- Syncfusion hosts (HARNESS §3, Architecture Rule 5) -----
             // ConfigureSyncfusionCore loads the Syncfusion.Maui.Core
-            // assembly, registers control themes, and makes
-            // SfBadgeView / SfAvatarView / etc. available with the
-            // MaterialLight palette pulled in from
+            // assembly AND the Syncfusion.Maui.Popup assembly (SfPopup
+            // ships under the same Syncfusion.Maui.Core umbrella in
+            // this release). It registers control themes, handlers,
+            // and makes SfBadgeView / SfAvatarView / SfPopup etc.
+            // available with the MaterialLight palette pulled in from
             // App.xaml's SyncfusionThemeResourceDictionary.
             .ConfigureSyncfusionCore()
             // ConfigureSyncfusionToolkit loads the Syncfusion.Maui.Toolkit
@@ -28,11 +29,6 @@ public static class MauiProgram
             // registered in Resources/Styles/Colors.xaml can resolve
             // its theme brushes at inflation time.
             .ConfigureSyncfusionToolkit()
-            // ConfigureSyncfusionPopup loads the Syncfusion.Maui.Popup
-            // assembly so SfPopup can resolve its themes + handler at
-            // inflation time. Used by the Dashboard's "Register
-            // Visitor" trigger (VP-UI popup fix).
-            .ConfigureSyncfusionPopup()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

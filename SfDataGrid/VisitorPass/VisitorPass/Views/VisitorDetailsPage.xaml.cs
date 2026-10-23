@@ -8,17 +8,25 @@ namespace VisitorPass.Views;
 /// VP-060..064 — Digital Pass / Visitor Details (Screen 3) page.
 ///
 /// The XAML owns the layout (identity card, pass card, timeline,
-/// action buttons). The code-behind implements the Shell navigation
-/// lifecycle hooks plus the theme-toggle wiring (VP-080):
+/// action buttons). The code-behind wires the lifecycle and
+/// theme-toggle hooks (VP-080):
 ///
-///   - ApplyQueryAttributes -> forwards the passId to the VM.
 ///   - OnAppearing -> triggers LoadAsync so the VM resolves the
 ///     visitor from IVisitorStore and rebuilds the timeline.
 ///   - OnNavigatedFrom (when popping back) -> clears the VM so the
-///     next push of this route doesn't briefly show stale data.
+///     next push of this page doesn't briefly show stale data.
 ///   - TopNavBar.ThemeToggleClicked -> forwards to
 ///     ThemeService.Toggle(); the nav bar's IsDarkMode is also
 ///     bound from the service so the sun/moon glyph flips.
+///   - Sidebar.NavItemClicked -> pops back to root and pushes the
+///     chosen page via Navigation (no Shell — Shell.GoToAsync
+///     crashes with 'Relative routing to shell elements is
+///     currently not supported' when invoked from a content page).
+///
+/// The pass-id is supplied through the optional <c>passId</c>
+/// constructor parameter; pages push this page with the visitor
+/// id so the VM's SetPassId is called before the first
+/// OnAppearing.
 ///
 /// Per HARNESS §6 rule 2 there is no business logic in this file —
 /// action buttons bind to RelayCommands on the VM and the page
@@ -29,12 +37,18 @@ public partial class VisitorDetailsPage : ContentPage
     private readonly VisitorDetailsViewModel _viewModel;
     private readonly ThemeService _theme;
 
-    public VisitorDetailsPage(VisitorDetailsViewModel viewModel, ThemeService theme)
+    public VisitorDetailsPage(
+        VisitorDetailsViewModel viewModel,
+        ThemeService theme,
+        string? passId = null)
     {
         InitializeComponent();
         BindingContext = viewModel;
         _viewModel = viewModel;
         _theme = theme;
+
+        if (passId is not null)
+            _viewModel.SetPassId(passId);
 
         if (this.FindTopNavBar() is { } navBar)
         {
@@ -43,19 +57,16 @@ public partial class VisitorDetailsPage : ContentPage
             _theme.PropertyChanged += OnThemePropertyChanged;
         }
 
-        // Sidebar (desktop / tablet only).
         if (this.FindSideNavigation() is { } sidebar)
             sidebar.NavItemClicked += OnSidebarNavItemClicked;
     }
 
     private async void OnSidebarNavItemClicked(object? sender, string route)
     {
-        // Digital Pass is a sub-route of the dashboard's flow; always
-        // pop back to whichever main route the user picked. The page's
-        // Shell query parameter is consumed only when arriving from
-        // the dashboard / directory; for the sidebar nav we just
-        // navigate to the chosen main screen.
-        await Shell.Current.GoToAsync($"//{route}");
+        // Pop back to root then optionally push the target page if
+        // the chosen route isn't the current one.
+        await Navigation.PopToRootAsync();
+        // (No need to push anything else — the root IS the Dashboard.)
     }
 
     private void OnThemeToggleClicked(object? sender, EventArgs e)
@@ -65,21 +76,6 @@ public partial class VisitorDetailsPage : ContentPage
     {
         if (this.FindTopNavBar() is { } navBar && e.PropertyName == nameof(ThemeService.IsDarkMode))
             navBar.IsDarkMode = _theme.IsDarkMode;
-    }
-
-    /// <summary>
-    /// Shell pushes the route with <c>?passId=…</c>; forward every
-    /// query key to the VM which knows what to do with them.
-    /// </summary>
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
-    {
-        base.OnNavigatedTo(args);
-
-        if (Shell.Current?.CurrentState?.Location is Uri location)
-        {
-            _viewModel.ApplyQueryAttributes(
-                QueryStringToDictionary(location.Query));
-        }
     }
 
     protected override async void OnAppearing()
@@ -92,29 +88,5 @@ public partial class VisitorDetailsPage : ContentPage
     {
         base.OnNavigatedFrom(args);
         _viewModel.Clear();
-    }
-
-    /// <summary>
-    /// Parses <c>?key=value&amp;key2=value2</c> into a plain dictionary
-    /// for the VM. Lives in the page because Uri parsing is a
-    /// navigation concern, not a domain concern.
-    /// </summary>
-    private static Dictionary<string, object> QueryStringToDictionary(string query)
-    {
-        var result = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-        if (string.IsNullOrEmpty(query))
-            return result;
-
-        var trimmed = query.StartsWith('?') ? query[1..] : query;
-        foreach (var pair in trimmed.Split('&', StringSplitOptions.RemoveEmptyEntries))
-        {
-            var idx = pair.IndexOf('=');
-            if (idx < 0)
-                continue;
-            var key = Uri.UnescapeDataString(pair[..idx]);
-            var value = Uri.UnescapeDataString(pair[(idx + 1)..]);
-            result[key] = value;
-        }
-        return result;
     }
 }

@@ -126,8 +126,8 @@ public partial class VisitorDetailsViewModel : BaseViewModel, IQueryAttributable
 
     /// <summary>
     /// Called from the Details page's OnAppearing handler. Resolves
-    /// the pending pass-id (set by ApplyQueryAttributes) and rebuilds
-    /// the timeline.
+    /// the pending pass-id (set by ApplyQueryAttributes or
+    /// <see cref="SetPassId"/>) and rebuilds the timeline.
     /// </summary>
     public async Task LoadAsync()
     {
@@ -146,6 +146,17 @@ public partial class VisitorDetailsViewModel : BaseViewModel, IQueryAttributable
             IsLoading = false;
         }
         await Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Direct setter for the pending pass-id. Used by the page
+    /// code-behind when navigation is via plain MAUI Navigation
+    /// (no Shell query parameters).
+    /// </summary>
+    public void SetPassId(string passId)
+    {
+        if (!string.IsNullOrWhiteSpace(passId))
+            _pendingPassId = passId;
     }
 
     /// <summary>
