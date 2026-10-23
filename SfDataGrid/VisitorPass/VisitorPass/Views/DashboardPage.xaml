@@ -83,6 +83,9 @@
                                     Subtitle="Real-time visitor activity overview"
                                     ShowRegisterButton="True" />
 
+                <!-- VP-100 — top info strip matching the design. -->
+                <controls:PageHeaderStrip />
+
                 <!-- ============== Section 1 — KPI grid ============== -->
                 <Grid ColumnDefinitions="{OnIdiom Desktop='*,*,*,*', Phone='*,*'}"
                       ColumnSpacing="14"
