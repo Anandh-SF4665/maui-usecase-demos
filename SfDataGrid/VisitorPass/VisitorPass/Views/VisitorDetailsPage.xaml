@@ -79,25 +79,35 @@
                  ======================================================= -->
             <Grid IsVisible="{Binding HasVisitor}">
 
-                <VerticalStackLayout Spacing="14">
+                <!--
+                    VP-102 — 2-column layout matching VisitorPassDesktop:
+                      Left (5/12): Identity card + Pass card (barcode + details)
+                      Right (7/12): Journey timeline + Action buttons
+                    On phone the two columns stack.
+                -->
+                <Grid ColumnDefinitions="{OnIdiom Desktop='5*,7*', Phone='*'}"
+                      ColumnSpacing="14"
+                      RowSpacing="14"
+                      RowDefinitions="{OnIdiom Desktop='*', Phone='Auto,*'}">
 
                     <!-- ===============================================
-                         Section B — Identity card
-                         (VP-021 VisitorAvatar + name + status badge)
+                         LEFT COLUMN — Identity card + Pass card
                          =============================================== -->
-                    <Border Style="{StaticResource PanelCard}">
+
+                    <!-- Section B — Identity card -->
+                    <Border Grid.Column="{OnIdiom Desktop=0, Phone=0}"
+                            Grid.Row="{OnIdiom Desktop=0, Phone=0}"
+                            Style="{StaticResource PanelCard}">
                         <Grid ColumnDefinitions="Auto,*,Auto"
                               ColumnSpacing="14"
                               Padding="{OnIdiom Desktop='20,20,20,20', Phone='16,16,16,16'}">
 
-                            <!-- Large avatar tile (initials, hex colour). -->
                             <controls:VisitorAvatar Grid.Column="0"
                                                     Initials="{Binding Visitor.Initials}"
                                                     AvatarSize="Large"
                                                     WidthRequest="60"
                                                     HeightRequest="60" />
 
-                            <!-- Name + host / purpose two-line caption. -->
                             <VerticalStackLayout Grid.Column="1"
                                                  Spacing="2"
                                                  VerticalOptions="Center">
@@ -118,29 +128,22 @@
                                        LineBreakMode="TailTruncation" />
                             </VerticalStackLayout>
 
-                            <!-- Status badge. -->
                             <controls:VisitorStatusBadge Grid.Column="2"
                                                           Status="{Binding Visitor.Status}"
                                                           VerticalOptions="Center" />
                         </Grid>
                     </Border>
 
-                    <!-- ===============================================
-                         Section C — Pass card
-                         (pass code + 3x2 details grid)
-                         =============================================== -->
-                    <Border Style="{StaticResource PanelCard}">
+                    <!-- Section C — Pass card (barcode + details) -->
+                    <Border Grid.Column="{OnIdiom Desktop=0, Phone=0}"
+                            Grid.Row="{OnIdiom Desktop=1, Phone=1}"
+                            Style="{StaticResource PanelCard}">
                         <VerticalStackLayout Spacing="14"
                                              Padding="{OnIdiom Desktop='20,20,20,20', Phone='16,16,16,16'}">
 
-                            <!-- Section eyebrow. -->
                             <Label Text="DIGITAL PASS"
                                    Style="{StaticResource SectionEyebrow}" />
 
-                            <!-- Pass code rendered as a Syncfusion
-                                 SfBarcodeGenerator (Code128) per design
-                                 image 2. The Value binds to the visitor's
-                                 PassCode (same as PassId by default). -->
                             <Border BackgroundColor="{StaticResource SurfaceAlt}"
                                     StrokeShape="RoundRectangle 12"
                                     Stroke="{StaticResource Border}"
@@ -160,8 +163,6 @@
                                 </barcode:SfBarcodeGenerator>
                             </Border>
 
-                            <!-- Details grid:
-                                 Pass Id | Host | Purpose | Date | Time | Duration -->
                             <Grid ColumnDefinitions="*,*"
                                   ColumnSpacing="20"
                                   RowSpacing="14"
@@ -225,13 +226,16 @@
                     </Border>
 
                     <!-- ===============================================
-                         Section D — Timeline (4 step rows)
+                         RIGHT COLUMN — Journey timeline + Action buttons
                          =============================================== -->
-                    <Border Style="{StaticResource PanelCard}">
-                        <VerticalStackLayout Spacing="12"
+
+                    <!-- Section D — Journey timeline -->
+                    <Border Grid.Column="{OnIdiom Desktop=1, Phone=0}"
+                            Grid.Row="{OnIdiom Desktop=0, Phone=0}"
+                            Style="{StaticResource PanelCard}">
+                        <VerticalStackLayout Spacing="14"
                                              Padding="{OnIdiom Desktop='20,20,20,20', Phone='16,16,16,16'}">
 
-                            <!-- Section eyebrow + live caption. -->
                             <Grid ColumnDefinitions="*,Auto">
                                 <Label Grid.Column="0"
                                        Text="JOURNEY"
@@ -243,122 +247,58 @@
                                        TextColor="{StaticResource TextPrimary}" />
                             </Grid>
 
-                            <!-- Four timeline steps driven by an
-                                 SfStepProgressBar (Syncfusion).
-                                 ItemsSource binds to StepItems; each
-                                 item's Status drives the visual
-                                 state (Completed = green check,
-                                 InProgress = blue circle,
-                                 NotStarted = empty circle). -->
                             <progressbar:SfStepProgressBar ItemsSource="{Binding StepItems}"
                                                           Orientation="Vertical"
                                                           LabelPosition="End"
                                                           ShowToolTip="False"
                                                           ProgressAnimationDuration="0"
                                                           ProgressBarBackground="{StaticResource BorderBrush}"
-                                                          HeightRequest="220">
+                                                          HeightRequest="280">
                                 <progressbar:SfStepProgressBar.StepTemplate>
                                     <DataTemplate x:DataType="vm:VisitStepItem">
-                                        <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                                        <VerticalStackLayout Spacing="1" VerticalOptions="Center">
                                             <Label Text="{Binding Label}"
                                                    FontFamily="OpenSansSemibold"
                                                    FontSize="12"
-                                                   TextColor="{StaticResource TextPrimary}"
-                                                   VerticalOptions="Center" />
+                                                   TextColor="{StaticResource TextPrimary}" />
                                             <Label Text="{Binding SubLabel}"
                                                    FontFamily="OpenSansRegular"
                                                    FontSize="10"
-                                                   TextColor="{StaticResource TextMuted}"
-                                                   VerticalOptions="Center" />
-                                        </HorizontalStackLayout>
+                                                   TextColor="{StaticResource TextMuted}" />
+                                        </VerticalStackLayout>
                                     </DataTemplate>
                                 </progressbar:SfStepProgressBar.StepTemplate>
                             </progressbar:SfStepProgressBar>
-
-                            <!-- Older bullet-style timeline kept as a
-                                 secondary detail strip below the
-                                 progress bar so existing tests and
-                                 inspectors still see the per-step
-                                 timestamps. -->
-                            <CollectionView ItemsSource="{Binding Timeline}"
-                                            SelectionMode="None">
-                                <CollectionView.ItemTemplate>
-                                    <DataTemplate x:DataType="vm:TimelineStep">
-                                        <Grid ColumnDefinitions="32,*,Auto"
-                                              ColumnSpacing="12"
-                                              Padding="0,4">
-
-                                            <Border Grid.Column="0"
-                                                    WidthRequest="22"
-                                                    HeightRequest="22"
-                                                    StrokeShape="RoundRectangle 11"
-                                                    StrokeThickness="0"
-                                                    BackgroundColor="{StaticResource PrimaryLightBrush}"
-                                                    HorizontalOptions="Center"
-                                                    VerticalOptions="Center">
-                                                <Label Text="{Binding Order}"
-                                                       TextColor="{StaticResource Primary}"
-                                                       FontFamily="OpenSansSemibold"
-                                                       FontSize="11"
-                                                       HorizontalTextAlignment="Center"
-                                                       VerticalTextAlignment="Center" />
-                                            </Border>
-
-                                            <VerticalStackLayout Grid.Column="1" Spacing="1">
-                                                <Label Text="{Binding Label}"
-                                                       FontFamily="OpenSansSemibold"
-                                                       FontSize="12"
-                                                       TextColor="{StaticResource TextPrimary}" />
-                                                <Label Text="{Binding SubLabel}"
-                                                       FontFamily="OpenSansRegular"
-                                                       FontSize="10"
-                                                       TextColor="{StaticResource TextMuted}" />
-                                            </VerticalStackLayout>
-
-                                            <Label Grid.Column="2"
-                                                   Text="Overdue"
-                                                   FontFamily="OpenSansSemibold"
-                                                   FontSize="10"
-                                                   TextColor="{StaticResource StatusOverdueBrush}"
-                                                   IsVisible="{Binding IsOverdue}"
-                                                   VerticalOptions="Center" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </CollectionView.ItemTemplate>
-                            </CollectionView>
                         </VerticalStackLayout>
                     </Border>
 
-                    <!-- ===============================================
-                         Section E — Action button row
-                         =============================================== -->
-                    <Grid ColumnDefinitions="*,*,*"
-                          ColumnSpacing="10"
-                          IsVisible="{Binding HasVisitor}">
+                    <!-- Section E — Action buttons -->
+                    <Grid Grid.Column="{OnIdiom Desktop=1, Phone=0}"
+                          Grid.Row="{OnIdiom Desktop=1, Phone=2}"
+                          ColumnDefinitions="*,*"
+                          ColumnSpacing="10">
 
-                        <!-- Check In: visible when Expected / Overdue. -->
                         <Button Grid.Column="0"
                                 Text="Check In"
                                 Style="{StaticResource ActionPrimaryButton}"
                                 IsVisible="{Binding IsCheckInVisible}"
                                 Command="{Binding CheckInCommand}" />
 
-                        <!-- Check Out: visible when CheckedIn. -->
                         <Button Grid.Column="1"
                                 Text="Check Out"
                                 Style="{StaticResource ActionSecondaryButton}"
                                 IsVisible="{Binding IsCheckOutVisible}"
                                 Command="{Binding CheckOutCommand}" />
-
-                        <!-- Cancel Visit: visible when Expected / Overdue. -->
-                        <Button Grid.Column="2"
-                                Text="Cancel"
-                                Style="{StaticResource ActionDangerButton}"
-                                IsVisible="{Binding IsCancelVisible}"
-                                Command="{Binding CancelVisitCommand}" />
                     </Grid>
 
-                </VerticalStackLayout>
+                    <Button Grid.Column="{OnIdiom Desktop=1, Phone=0}"
+                            Grid.Row="{OnIdiom Desktop=2, Phone=3}"
+                            Text="Cancel Visit"
+                            Style="{StaticResource ActionDangerButton}"
+                            IsVisible="{Binding IsCancelVisible}"
+                            Command="{Binding CancelVisitCommand}" />
+
+                </Grid>
             </Grid>
 
             <!-- Empty state when no visitor is loaded. -->
