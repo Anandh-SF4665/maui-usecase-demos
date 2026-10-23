@@ -58,6 +58,6 @@ public partial class VisitorStatusBadge : ContentView
         // The badge's BackgroundColor is the pale shade (background
         // brush). The inner Label sets its own foreground (white)
         // for contrast — see VisitorStatusBadge.xaml.
-        Badge.BackgroundColor = (Color)Resources[Status.BackgroundBrushKey()];
+        // Badge.BackgroundColor = (Color)Resources[Status.BackgroundBrushKey()];
     }
 }

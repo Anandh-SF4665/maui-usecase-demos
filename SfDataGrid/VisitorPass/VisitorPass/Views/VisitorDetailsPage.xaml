@@ -152,7 +152,6 @@
                                                              BackgroundColor="{StaticResource SurfaceAlt}"
                                                              ForegroundColor="{StaticResource TextPrimary}"
                                                              ShowText="True"
-                                                             TextStyle="{StaticResource BarcodeTextStyle}"
                                                              HeightRequest="84"
                                                              HorizontalOptions="Center">
                                     <barcode:SfBarcodeGenerator.Symbology>

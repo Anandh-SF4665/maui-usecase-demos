@@ -53,11 +53,11 @@ public partial class DirectoryPage : ContentPage
         // Pop back to root then push the target page so we don't
         // stack duplicates (uses Navigation, not Shell).
         await Navigation.PopToRootAsync();
-        if (route == DashboardViewModel.Route
-            && Navigation.NavigationStack[^1].GetType() != typeof(DashboardPage))
-        {
-            await Navigation.PushAsync(_services.GetRequiredService<DashboardPage>());
-        }
+        //if (route == DashboardViewModel.Route
+        //    && Navigation.NavigationStack[^1].GetType() != typeof(DashboardPage))
+        //{
+        //    await Navigation.PushAsync(_services.GetRequiredService<DashboardPage>());
+        //}
     }
 
     private void OnThemeToggleClicked(object? sender, EventArgs e)

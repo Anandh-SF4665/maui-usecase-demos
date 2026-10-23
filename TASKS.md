@@ -449,3 +449,73 @@
 - **Files:** `README.md`
 - **Done when:** README renders the application table + governance
   documentation links clearly.
+
+---
+
+## Phase 10 — UI Design Alignment
+
+### VP-100 — Dashboard Visual Alignment
+
+- **Goal:** Match DashboardPage exactly with the reference design.
+- **Reference Images:**
+  - [DashboardPageDesktop](/VisitorPassDesign/DashboardPageDesktop.png)
+  - [DashbooardpageMobile](/VisitorPassDesign/DashboardPageMobile.png)
+- **Files:**
+  - `Views/DashboardPage.xaml`
+  - `Resources/Styles/*`
+  - `Controls/TopNavBar.xaml`
+- **Requirements:**
+  - Match spacing, padding, typography, colors, shadows, border radius.
+  - Use only MAUI Material Assets icons.
+  - Preserve ViewModel logic.
+  - Preserve existing bindings.
+- **Done when:**
+  - Visual differences between implementation and design are minimal.
+  - Layout matches design on Phone and Desktop.
+  - All icons come from MAUI Material Assets.
+- **Parallel:** No
+
+### VP-101 — Directory Visual Alignment
+
+- **Goal:** Match DashboardPage exactly with the reference design.
+- **Reference Images:**
+  - [VisitorDirectoryDesktop](/VisitorPassDesign/VisitorDirectoryDesktop.png)
+  - [VisitorDetailsMobile](/VisitorPassDesign/VisitorDetailsMobile.png)
+
+- **Requirements:**
+  - Match search bar styling.
+  - Match filter chips.
+  - Match grid appearance.
+  - Use Material icons only.
+
+### VP-102 — Visitor Details Visual Alignment
+
+- **Goal:** Match DashboardPage exactly with the reference design.
+- **Reference Images:**
+  - [VisitorDetailsMobile](/VisitorPassDesign/VisitorDetailsMobile.png)
+  - [VisitorPassDesktop](/VisitorPassDesign/VisitorPassDesktop.png)
+  - [VisitorPassMobile](/VisitorPassDesign/VisitorPassMobile.png)
+
+- **Requirements:**
+  - Match the UI exactly like the reference images for both desktop and mobile
+  - Use SfBarcodeGenerator for the QRCode and Barcode.
+
+### VP-103 — Registration Form Visual Alignment
+
+- **Goal:** Match DashboardPage exactly with the reference design.
+- **Reference Images:**
+  - [RegistrationDesktop](/VisitorPassDesign/RegistrationDesktop.png)
+  - [RegistrationMobile](/VisitorPassDesign/RegistrationMobile.png)
+
+### VP-104 — Global Styling Review
+
+- **Goal:** Ensure application-wide visual consistency.
+
+- **Requirements:**
+  - Popup alignment should be in center for Desktop and in bottom for mobile as per the reference image. 
+  - Consistent corner radius.
+  - Consistent shadows.
+  - Consistent spacing scale.
+  - Consistent typography scale.
+  - Material asset icons only.
+  - Remove temporary styling.

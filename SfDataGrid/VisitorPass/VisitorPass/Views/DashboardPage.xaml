@@ -112,7 +112,7 @@
                                 <Label Text="CHECKED IN"
                                        Style="{StaticResource SectionEyebrow}" />
                             </HorizontalStackLayout>
-                            <Label Text="{Binding Stats.CheckedInVisitors}"
+                            <Label Text="{Binding Stats.CheckedIn}"
                                    Style="{StaticResource KpiValue}"
                                    TextColor="{StaticResource StatusCheckedInBrush}" />
                         </VerticalStackLayout>
@@ -127,7 +127,7 @@
                                 <Label Text="CHECKED OUT"
                                        Style="{StaticResource SectionEyebrow}" />
                             </HorizontalStackLayout>
-                            <Label Text="{Binding Stats.CheckedOutVisitors}"
+                            <Label Text="{Binding Stats.CheckedOut}"
                                    Style="{StaticResource KpiValue}"
                                    TextColor="{StaticResource StatusCheckedOutBrush}" />
                         </VerticalStackLayout>
