@@ -62,7 +62,7 @@
         only), content on the right (always). On phone the sidebar
         column collapses to 0 width and the content fills the page.
     -->
-    <Grid ColumnDefinitions="{OnIdiom Desktop='220,*', Phone='0,*'}"
+    <Grid ColumnDefinitions="{OnIdiom Desktop='232,*', Phone='0,*'}"
           ColumnSpacing="0">
 
         <!-- ============================================

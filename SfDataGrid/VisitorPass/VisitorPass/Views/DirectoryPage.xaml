@@ -60,7 +60,7 @@
         only), content on the right. Same idiom-switched
         ColumnDefinitions as the Dashboard page.
     -->
-    <Grid ColumnDefinitions="{OnIdiom Desktop='220,*', Phone='0,*'}"
+    <Grid ColumnDefinitions="{OnIdiom Desktop='232,*', Phone='0,*'}"
           ColumnSpacing="0">
 
         <!-- Sidebar (desktop / tablet only) -->

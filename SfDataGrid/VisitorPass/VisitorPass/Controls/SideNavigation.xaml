@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
     SideNavigation - vertical nav rail injected into every page
-    on desktop / tablet idioms (hidden on phone per HARNESS §7
-    OnIdiom rule).
+    on desktop / tablet idioms (hidden on phone per HARNESS §7).
+
+    Matches the design's vertical sidebar: blue-tinted surface
+    (#F1F5FF), 232px wide on desktop. Two nav tiles
+    (Command Center + Visitor Directory) with the active item
+    highlighted via the Bindable ActiveRoute property.
 
     Layout (top to bottom):
-      1. Brand block - rounded icon tile + "Visitor Pass" / sub-label
+      1. Brand block - shield icon tile + "Visitor Pass" / "Enterprise OS"
       2. "NAVIGATION" eyebrow
-      3. Two nav items: Command Center + Visitor Directory.
-         The active item is highlighted via the Bindable
-         ActiveRoute property; visual states are switched via
-         DataTriggers on each tile so the code-behind doesn't
-         need to walk the visual tree.
-      4. Footer status indicator ("MAUI Runtime v4.2.0").
+      3. Nav items (Command Center, Visitor Directory)
+      4. Footer status indicator ("MAUI Runtime v4.2.0")
 -->
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -20,12 +20,11 @@
              x:Class="VisitorPass.Controls.SideNavigation"
              x:Name="Root">
 
-    <Border BackgroundColor="{StaticResource Surface}"
-            Stroke="{StaticResource Border}"
+    <Border BackgroundColor="#F1F5FF"
             StrokeThickness="0"
-            Padding="14,18,14,18">
+            Padding="18,22,18,22">
 
-        <Grid RowSpacing="14"
+        <Grid RowSpacing="18"
               RowDefinitions="Auto,Auto,*,Auto">
 
             <!-- ==================================================
