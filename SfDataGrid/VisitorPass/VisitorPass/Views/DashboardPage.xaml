@@ -188,6 +188,9 @@
                             <Label Text="VISITS BY PURPOSE"
                                    Style="{StaticResource SectionEyebrow}" />
                             <chart:SfCartesianChart HeightRequest="320">
+                                <chart:SfCartesianChart.PaletteBrushes>
+                                    <SolidColorBrush Color="#0050CB" />
+                                </chart:SfCartesianChart.PaletteBrushes>
                                 <chart:SfCartesianChart.XAxes>
                                     <chart:CategoryAxis />
                                 </chart:SfCartesianChart.XAxes>
