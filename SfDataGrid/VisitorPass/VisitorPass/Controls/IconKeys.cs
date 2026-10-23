@@ -45,6 +45,9 @@ public static class IconKeys
     public const string Event = "\ue878";            // event
     public const string EventAvailable = "\ue614";   // event_available
     public const string EventNote = "\ue861";        // event_note
+    public const string Place = "\ue55a";            // place
+    public const string LightMode = "\ue51c";        // light_mode
+    public const string DarkMode = "\ue51d";         // dark_mode
     public const string Schedule = "\ue8b5";        // schedule
     public const string Today = "\ue935";           // today
     public const string Badge = "\ue7a9";           // badge
