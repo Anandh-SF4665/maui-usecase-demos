@@ -54,9 +54,24 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid Padding="{OnIdiom Desktop='24,0,24,24', Phone='14,8,14,14'}"
-          RowSpacing="14"
-          RowDefinitions="Auto,Auto,Auto,*,Auto">
+    <!--
+        Root 2-column Grid: sidebar on the left (desktop / tablet
+        only), content on the right. Same idiom-switched
+        ColumnDefinitions as the Dashboard page.
+    -->
+    <Grid ColumnDefinitions="{OnIdiom Desktop='220,*', Phone='0,*'}"
+          ColumnSpacing="0">
+
+        <!-- Sidebar (desktop / tablet only) -->
+        <controls:SideNavigation Grid.Column="0"
+                                ActiveRoute="directory"
+                                IsVisible="{OnIdiom Phone=False, Default=True}" />
+
+        <!-- Content (always visible) -->
+        <Grid Grid.Column="1"
+              Padding="{OnIdiom Desktop='24,0,24,24', Phone='14,8,14,14'}"
+              RowSpacing="14"
+              RowDefinitions="Auto,Auto,Auto,*,Auto">
 
         <!-- ============================== -->
         <!-- 1. TopNavBar (no register)     -->
@@ -270,6 +285,8 @@
 
             </sfgrid:SfDataGrid>
 
+            </Grid>
+
             <!--
                 Empty state — shown when filters exclude every visitor.
             -->
@@ -277,17 +294,16 @@
                                  Title="No visitors match your filters"
                                  Message="Try clearing the search box or selecting a different status." />
 
+            <!-- ============================== -->
+            <!-- 5. Footer (row count summary)  -->
+            <!-- ============================== -->
+            <Label Grid.Row="4"
+                   Text="{Binding FilteredVisitors.Count, StringFormat='{0} visitor(s) shown'}"
+                   TextColor="{StaticResource TextMuted}"
+                   FontFamily="OpenSansRegular"
+                   FontSize="11"
+                   HorizontalOptions="Start" />
+
         </Grid>
-
-        <!-- ============================== -->
-        <!-- 5. Footer (row count summary)  -->
-        <!-- ============================== -->
-        <Label Grid.Row="4"
-               Text="{Binding FilteredVisitors.Count, StringFormat='{0} visitor(s) shown'}"
-               TextColor="{StaticResource TextMuted}"
-               FontFamily="OpenSansRegular"
-               FontSize="11"
-               HorizontalOptions="Start" />
-
     </Grid>
 </ContentPage>

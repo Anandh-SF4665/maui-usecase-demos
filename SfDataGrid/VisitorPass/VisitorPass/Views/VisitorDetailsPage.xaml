@@ -43,9 +43,26 @@
              Title="Digital Pass"
              BackgroundColor="{StaticResource SurfaceAlt}">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="{OnIdiom Desktop='24,0,24,28', Phone='14,8,14,14'}"
-                             Spacing="14">
+    <!--
+        Root 2-column Grid: sidebar on the left (desktop / tablet
+        only), content on the right. Same idiom-switched
+        ColumnDefinitions as the Dashboard and Directory pages.
+        Details screen doesn't have a dedicated sidebar entry —
+        the sidebar still highlights "Command Center" as the
+        default since it's the surface that produces deep links
+        to a specific visitor's Digital Pass.
+    -->
+    <Grid ColumnDefinitions="{OnIdiom Desktop='220,*', Phone='0,*'}"
+          ColumnSpacing="0">
+
+        <!-- Sidebar (desktop / tablet only) -->
+        <controls:SideNavigation Grid.Column="0"
+                                ActiveRoute="dashboard"
+                                IsVisible="{OnIdiom Phone=False, Default=True}" />
+
+        <ScrollView Grid.Column="1">
+            <VerticalStackLayout Padding="{OnIdiom Desktop='24,0,24,28', Phone='14,8,14,14'}"
+                                 Spacing="14">
 
             <!-- =======================================================
                  Section A — TopNavBar (no Register trigger)
@@ -311,6 +328,7 @@
                                  Message="Tap any visitor in the directory or today's activity grid to view their digital pass."
                                  IsVisible="{Binding HasVisitor, Converter={StaticResource InvertBoolConverter}}" />
 
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

@@ -37,6 +37,17 @@ public partial class DirectoryPage : ContentPage
             navBar.IsDarkMode = _theme.IsDarkMode;
             _theme.PropertyChanged += OnThemePropertyChanged;
         }
+
+        // Sidebar (desktop / tablet only).
+        if (this.FindSideNavigation() is { } sidebar)
+            sidebar.NavItemClicked += OnSidebarNavItemClicked;
+    }
+
+    private async void OnSidebarNavItemClicked(object? sender, string route)
+    {
+        if (route == DirectoryViewModel.Route)
+            return; // already here
+        await Shell.Current.GoToAsync(route);
     }
 
     private void OnThemeToggleClicked(object? sender, EventArgs e)

@@ -55,6 +55,23 @@ public partial class DashboardPage : ContentPage
             navBar.IsDarkMode = _theme.IsDarkMode;
             _theme.PropertyChanged += OnThemePropertyChanged;
         }
+
+        // Sidebar (desktop / tablet only). Walk the visual tree for
+        // the SideNavigation control and subscribe to NavItemClicked.
+        if (this.FindSideNavigation() is { } sidebar)
+            sidebar.NavItemClicked += OnSidebarNavItemClicked;
+    }
+
+    /// <summary>
+    /// VP-UI sidebar handler — route to whichever route the user
+    /// tapped. Dashboard stays put when "Command Center" is tapped;
+    /// navigate to the directory when "Visitor Directory" is tapped.
+    /// </summary>
+    private async void OnSidebarNavItemClicked(object? sender, string route)
+    {
+        if (route == DashboardViewModel.Route)
+            return; // already here
+        await Shell.Current.GoToAsync(route);
     }
 
     private void OnThemeToggleClicked(object? sender, EventArgs e)

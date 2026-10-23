@@ -42,6 +42,20 @@ public partial class VisitorDetailsPage : ContentPage
             navBar.IsDarkMode = _theme.IsDarkMode;
             _theme.PropertyChanged += OnThemePropertyChanged;
         }
+
+        // Sidebar (desktop / tablet only).
+        if (this.FindSideNavigation() is { } sidebar)
+            sidebar.NavItemClicked += OnSidebarNavItemClicked;
+    }
+
+    private async void OnSidebarNavItemClicked(object? sender, string route)
+    {
+        // Digital Pass is a sub-route of the dashboard's flow; always
+        // pop back to whichever main route the user picked. The page's
+        // Shell query parameter is consumed only when arriving from
+        // the dashboard / directory; for the sidebar nav we just
+        // navigate to the chosen main screen.
+        await Shell.Current.GoToAsync($"//{route}");
     }
 
     private void OnThemeToggleClicked(object? sender, EventArgs e)

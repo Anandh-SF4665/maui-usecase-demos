@@ -19,6 +19,19 @@ public static class TopNavBarExtensions
         return default;
     }
 
+    /// <summary>
+    /// Returns the first <see cref="SideNavigation"/> in
+    /// <paramref name="page"/>'s visual tree, or <c>null</c> if the
+    /// page doesn't host one (e.g. on phone idioms where the
+    /// sidebar is collapsed via OnIdiom).
+    /// </summary>
+    public static SideNavigation? FindSideNavigation(this ContentPage page)
+    {
+        if (page.Content is IView root)
+            return FindInLayout<SideNavigation>(root);
+        return default;
+    }
+
     private static T? FindInLayout<T>(IView view) where T : class, IView
     {
         if (view is T match)
