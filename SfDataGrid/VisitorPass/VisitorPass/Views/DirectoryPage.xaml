@@ -92,10 +92,12 @@
                 StrokeShape="RoundRectangle 12"
                 Padding="14,0,14,0">
             <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                <!-- magnifier glyph (text-as-icon keeps the file portable) -->
+                <!-- Search glyph (Material Icons font). VP-104. -->
                 <Label Grid.Column="0"
-                       Text="🔍"
+                       Text="{x:Static controls:IconKeys.Search}"
+                       FontFamily="MauiMaterialAssets"
                        FontSize="14"
+                       TextColor="{StaticResource TextMuted}"
                        VerticalOptions="Center" />
                 <Entry Grid.Column="1"
                        Placeholder="Search by name, host, or pass id..."
