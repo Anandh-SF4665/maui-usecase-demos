@@ -72,17 +72,17 @@ public static class IconKeys
     public const string Flag = "\ue153";            // flag
 
     // Actions
-    public const string Add = "\ue145";             // add
-    public const string Close = "\ue5cd";           // close
+    public const string Add = "\ue70d";             // add
+    public const string Close = "\ue70b";           // close
     public const string Check = "\ue5ca";          // check
-    public const string CheckCircle = "\ue86c";     // check_circle
+    public const string CheckCircle = "\ue78b";     // check_circle
     public const string CheckCircleOutline = "\ue92d"; // check_circle_outline
-    public const string Print = "\ue8ad";           // print
+    public const string Print = "\ue77f";           // print
     public const string Download = "\ue2c4";        // download
-    public const string Save = "\ue161";            // save
-    public const string Cancel = "\ue5c9";          // cancel
-    public const string Edit = "\ue3c9";            // edit
-    public const string Delete = "\ue872";          // delete
+    public const string Save = "\ue75f";            // save
+    public const string Cancel = "\ue70e";          // cancel
+    public const string Edit = "\ue756";            // edit
+    public const string Delete = "\ue70f";          // delete
     public const string Lock = "\ue897";            // lock
     public const string LockOpen = "\ue898";        // lock_open
     public const string Visibility = "\ue8f4";     // visibility

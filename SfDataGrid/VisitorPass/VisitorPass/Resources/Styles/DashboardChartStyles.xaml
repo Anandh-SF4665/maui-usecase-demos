@@ -9,6 +9,6 @@
                              FontSize="9" />
 
   <chart:ChartLineStyle x:Key="DashboardGridLineStyle"
-                        Stroke="{StaticResource ChartGridLineBrush}"
+                        Stroke="Black"
                         StrokeWidth="1" />
 </ResourceDictionary>

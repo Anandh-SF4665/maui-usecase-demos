@@ -58,7 +58,7 @@
                 <VerticalStackLayout Spacing="14">
 
                     <!-- Error banner (only visible when ValidationErrors has rows). -->
-                    <Border BackgroundColor="{StaticResource StatusCancelledBgBrush}"
+                    <Border BackgroundColor="{StaticResource StatusCancelledBg}"
                             StrokeShape="RoundRectangle 8"
                             StrokeThickness="0"
                             Padding="12"
@@ -146,7 +146,7 @@
                                FontSize="12"
                                CharacterSpacing="2"
                                HorizontalTextAlignment="Center"
-                               TextColor="{StaticResource StatusCheckedInBrush}" />
+                               TextColor="{StaticResource StatusCheckedIn}" />
                         <Label Text="{Binding CreatedVisitor.PassId}"
                                FontFamily="OpenSansSemibold"
                                FontSize="22"

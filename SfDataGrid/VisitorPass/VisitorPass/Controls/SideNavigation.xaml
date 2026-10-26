@@ -214,7 +214,7 @@
                  ================================================== -->
             <HorizontalStackLayout Grid.Row="3" Spacing="6">
                 <Ellipse WidthRequest="6" HeightRequest="6"
-                         Fill="{StaticResource StatusCheckedInBrush}"
+                         Fill="{StaticResource StatusCheckedIn}"
                          VerticalOptions="Center" />
                 <Label Text="MAUI Runtime"
                        FontFamily="OpenSansRegular"

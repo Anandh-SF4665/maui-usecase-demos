@@ -92,9 +92,13 @@ public partial class TopNavBar : ContentView
         // (Column="1" = theme, Column="2" = register) so the
         // Tapped handlers hook them in XAML-free code below.
         ThemeTrigger.Tapped += (_, e) => ThemeToggleClicked?.Invoke(this, EventArgs.Empty);
-        HeaderTrigger.Tapped += (_, e) => RegisterClicked?.Invoke(this, EventArgs.Empty);
     }
 
     private static void OnIsDarkModeChanged(BindableObject bindable, object oldValue, object newValue)
         => ((TopNavBar)bindable).OnPropertyChanged(nameof(ThemeToggleGlyph));
+
+    private void SfButton_Clicked(object sender, EventArgs e)
+    {
+        RegisterClicked?.Invoke(this, EventArgs.Empty);
+    }
 }

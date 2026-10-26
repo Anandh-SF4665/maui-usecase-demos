@@ -33,11 +33,6 @@ public static class MauiProgram
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                // VP-104 — register the Material Icons font shipped
-                // with MAUI so every Label with
-                // FontFamily="MauiMaterialAssets" + Text="<glyph>"
-                // renders the matching Material glyph. See
-                // Controls/IconKeys.cs for the codepoint catalogue.
                 fonts.AddFont("MauiMaterialAssets.ttf", "MauiMaterialAssets");
             });
 

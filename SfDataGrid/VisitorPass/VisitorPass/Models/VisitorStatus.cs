@@ -66,23 +66,23 @@ public static class VisitorStatusExtensions
     /// <summary>Foreground brush key (no ResourceManager reference — consumers resolve the brush by key).</summary>
     public static string BrushKey(this VisitorStatus status) => status switch
     {
-        VisitorStatus.Expected => "StatusExpectedBrush",
-        VisitorStatus.CheckedIn => "StatusCheckedInBrush",
-        VisitorStatus.CheckedOut => "StatusCheckedOutBrush",
-        VisitorStatus.Cancelled => "StatusCancelledBrush",
-        VisitorStatus.Overdue => "StatusOverdueBrush",
-        _ => "TextPrimaryBrush"
+        VisitorStatus.Expected => "StatusExpected",
+        VisitorStatus.CheckedIn => "StatusCheckedIn",
+        VisitorStatus.CheckedOut => "StatusCheckedOut",
+        VisitorStatus.Cancelled => "StatusCancelled",
+        VisitorStatus.Overdue => "StatusOverdue",
+        _ => "TextPrimary"
     };
 
     /// <summary>Pale background brush key (used by SfBadgeView's BadgeBackground + StatusBadgePill).</summary>
     public static string BackgroundBrushKey(this VisitorStatus status) => status switch
     {
-        VisitorStatus.Expected => "StatusExpectedBgBrush",
-        VisitorStatus.CheckedIn => "StatusCheckedInBgBrush",
-        VisitorStatus.CheckedOut => "StatusCheckedOutBgBrush",
-        VisitorStatus.Cancelled => "StatusCancelledBgBrush",
-        VisitorStatus.Overdue => "StatusOverdueBgBrush",
-        _ => "SurfaceAltBrush"
+        VisitorStatus.Expected => "StatusExpectedBg",
+        VisitorStatus.CheckedIn => "StatusCheckedInBg",
+        VisitorStatus.CheckedOut => "StatusCheckedOutBg",
+        VisitorStatus.Cancelled => "StatusCancelledBg",
+        VisitorStatus.Overdue => "StatusOverdueBg",
+        _ => "SurfaceAlt"
     };
 
     /// <summary>True for statuses the dashboard KPI section counts (everything except Cancelled).</summary>

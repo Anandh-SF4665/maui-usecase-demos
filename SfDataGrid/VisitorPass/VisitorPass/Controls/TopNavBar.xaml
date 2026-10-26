@@ -2,6 +2,7 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              x:Class="VisitorPass.Controls.TopNavBar">
 
     <!--
@@ -72,35 +73,38 @@
              Desktop / Tablet: header pill (RegisterVisitorPill style).
              Phone: floating action button anchored bottom-right.
              Both raise the same Tapped event handled in code-behind. -->
-        <Border Grid.Column="2"
-                BackgroundColor="{StaticResource Primary}"
-                StrokeThickness="0"
-                StrokeShape="RoundRectangle 18"
-                Padding="14,9"
-                VerticalOptions="Center"
-                IsVisible="{Binding ShowRegisterButton, Source={RelativeSource AncestorType={x:Type ContentView}}}">
-            <Border.GestureRecognizers>
-                <TapGestureRecognizer x:Name="HeaderTrigger" />
-            </Border.GestureRecognizers>
-            <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
-                <Border BackgroundColor="{StaticResource PrimaryDark}"
-                        StrokeThickness="0"
-                        StrokeShape="RoundRectangle 11"
-                        WidthRequest="22" HeightRequest="22"
-                        VerticalOptions="Center">
-                    <Label Text="{x:Static controls:IconKeys.Add}"
-                           FontFamily="MauiMaterialAssets"
-                           TextColor="{StaticResource White}"
-                           FontSize="14"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center" />
-                </Border>
-                <Label Text="Register Visitor"
-                       TextColor="{StaticResource White}"
-                       FontFamily="OpenSansSemibold"
-                       FontSize="11"
-                       VerticalOptions="Center" />
-            </HorizontalStackLayout>
-        </Border>
+        <buttons:SfButton Grid.Column="2"
+                          Background="{StaticResource Primary}"
+                          CornerRadius="12"
+                          WidthRequest="140"
+                          Padding="14,9"
+                          HorizontalTextAlignment="Center"
+                          Clicked="SfButton_Clicked"
+                          IsVisible="{Binding ShowRegisterButton, Source={RelativeSource AncestorType={x:Type ContentView}}}">
+            <buttons:SfButton.Content>
+                <DataTemplate>
+                    <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Border BackgroundColor="{StaticResource PrimaryDark}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 11"
+                            WidthRequest="22"
+                            HeightRequest="22">
+                            <Label Text="{x:Static controls:IconKeys.Add}"
+                               FontFamily="MauiMaterialAssets"
+                               TextColor="White"
+                               FontSize="14"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                        </Border>
+
+                        <Label Text="Register Visitor"
+                           TextColor="White"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="11"
+                           VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </DataTemplate>
+            </buttons:SfButton.Content>
+        </buttons:SfButton>
     </Grid>
 </ContentView>
