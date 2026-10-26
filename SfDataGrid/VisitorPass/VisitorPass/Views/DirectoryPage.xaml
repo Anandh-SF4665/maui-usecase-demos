@@ -43,9 +43,9 @@
             <sfgrid:DataGridStyle x:Key="DirectoryGridStyle"
                                   RowBackground="{StaticResource Surface}"
                                   AlternateRowBackground="{StaticResource SurfaceAlt}"
-                                  HeaderRowBackground="{StaticResource PrimaryLight}"
-                                  HeaderRowTextColor="{StaticResource TextPrimary}"
-                                  HeaderRowFontSize="11"
+                                  HeaderRowBackground="{StaticResource SurfaceAlt}"
+                                  HeaderRowTextColor="{StaticResource TextMuted}"
+                                  HeaderRowFontSize="10"
                                   HeaderRowFontFamily="OpenSansSemibold"
                                   RowTextColor="{StaticResource TextPrimary}"
                                   RowFontSize="11"
@@ -90,7 +90,8 @@
                 StrokeThickness="1"
                 Stroke="{StaticResource Border}"
                 StrokeShape="RoundRectangle 12"
-                Padding="14,0,14,0">
+                Padding="14,0,14,0"
+                HeightRequest="48">
             <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
                 <!-- Search glyph (Material Icons font). VP-104. -->
                 <Label Grid.Column="0"
@@ -120,7 +121,7 @@
         <CollectionView Grid.Row="2"
                         ItemsSource="{Binding StatusFilters}"
                         ItemsLayout="HorizontalList"
-                        HeightRequest="40"
+                        HeightRequest="42"
                         ItemSizingStrategy="MeasureFirstItem"
                         SelectionMode="None">
             <CollectionView.ItemTemplate>
@@ -167,8 +168,9 @@
                                AutoGenerateColumnsMode="None"
                                SelectionMode="Single"
                                ColumnWidthMode="Auto"
-                               HeaderRowHeight="38"
-                               RowHeight="58"
+                               HeaderRowHeight="42"
+                               RowHeight="64"
+                               SelectionBackground="{StaticResource PrimaryLight}"
                                Style="{StaticResource DirectoryGridStyle}"
                                CellTapped="OnCellTapped">
 
@@ -241,7 +243,8 @@
                     <!-- Visit time (short label). -->
                     <sfgrid:DataGridTemplateColumn HeaderText="VISIT TIME"
                                                    MappingName="VisitTime"
-                                                   Width="130">
+                                                   Width="130"
+                                                   Visible="{OnIdiom Phone=False, Default=True}">
                         <sfgrid:DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="models:Visitor">
                                 <Label Text="{Binding VisitTime, Converter={StaticResource DateToShortLabelConverter}}"
@@ -305,17 +308,19 @@
                     Padding="{OnIdiom Desktop='22,18,22,18', Phone='14,12,14,12'}"
                     IsVisible="{Binding HasSelectedVisitor}">
 
-                <Grid ColumnDefinitions="Auto,*,Auto"
-                      ColumnSpacing="22"
-                      RowDefinitions="Auto,Auto"
+                <Grid ColumnDefinitions="{OnIdiom Desktop='Auto,*,Auto', Phone='*'}"
+                      ColumnSpacing="{OnIdiom Desktop=22, Phone=0}"
+                      RowDefinitions="Auto,Auto,Auto,Auto"
                       RowSpacing="14">
 
                     <!-- Eyebrow + status badge row -->
-                    <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                    <Grid Grid.Row="0" Grid.Column="0"
+                          Grid.ColumnSpan="{OnIdiom Desktop=3, Phone=1}"
                           ColumnDefinitions="*,Auto">
                         <HorizontalStackLayout Grid.Column="0" Spacing="10" VerticalOptions="Center">
-                            <Label Text="&#x1F4C4;"
-                                   FontSize="14"
+                            <Label Text="{x:Static controls:IconKeys.Badge}"
+                                   FontFamily="MauiMaterialAssets"
+                                   FontSize="18"
                                    TextColor="{StaticResource Primary}"
                                    VerticalOptions="Center" />
                             <VerticalStackLayout Spacing="0" VerticalOptions="Center">
@@ -336,7 +341,8 @@
                     </Grid>
 
                     <!-- Identity column: avatar + name + host + purpose -->
-                    <HorizontalStackLayout Grid.Row="1" Grid.Column="0"
+                    <HorizontalStackLayout Grid.Row="1"
+                                           Grid.Column="0"
                                            Spacing="14"
                                            VerticalOptions="Center">
                         <controls:VisitorAvatar Initials="{Binding SelectedVisitor.VisitorName}"
@@ -359,9 +365,10 @@
                     </HorizontalStackLayout>
 
                     <!-- QR barcode + passcode caption -->
-                    <VerticalStackLayout Grid.Row="1" Grid.Column="1"
+                    <VerticalStackLayout Grid.Row="{OnIdiom Desktop=1, Phone=2}"
+                                         Grid.Column="{OnIdiom Desktop=1, Phone=0}"
                                          Spacing="6"
-                                         HorizontalOptions="Center"
+                                         HorizontalOptions="{OnIdiom Desktop=Center, Phone=Start}"
                                          VerticalOptions="Center">
                         <barcode:SfBarcodeGenerator Value="{Binding SelectedVisitor.PassId}"
                                                      BackgroundColor="{StaticResource Surface}"
@@ -387,12 +394,15 @@
                     </VerticalStackLayout>
 
                     <!-- Summary tiles + action buttons -->
-                    <VerticalStackLayout Grid.Row="1" Grid.Column="2"
+                    <VerticalStackLayout Grid.Row="{OnIdiom Desktop=1, Phone=3}"
+                                         Grid.Column="{OnIdiom Desktop=2, Phone=0}"
                                          Spacing="10"
-                                         HorizontalOptions="End"
+                                         HorizontalOptions="{OnIdiom Desktop=End, Phone=Fill}"
                                          VerticalOptions="Center">
-                        <HorizontalStackLayout Spacing="10">
-                            <Border Style="{StaticResource KpiCard}"
+                        <Grid ColumnDefinitions="*,*"
+                              ColumnSpacing="10">
+                            <Border Grid.Column="0"
+                                    Style="{StaticResource KpiCard}"
                                     BackgroundColor="{StaticResource SurfaceAlt}"
                                     Padding="10,8">
                                 <VerticalStackLayout Spacing="0">
@@ -408,7 +418,8 @@
                                            VerticalTextAlignment="Center" />
                                 </VerticalStackLayout>
                             </Border>
-                            <Border Style="{StaticResource KpiCard}"
+                            <Border Grid.Column="1"
+                                    Style="{StaticResource KpiCard}"
                                     BackgroundColor="{StaticResource SurfaceAlt}"
                                     Padding="10,8">
                                 <VerticalStackLayout Spacing="0">
@@ -423,7 +434,7 @@
                                            TextColor="{StaticResource TextPrimary}" />
                                 </VerticalStackLayout>
                             </Border>
-                        </HorizontalStackLayout>
+                        </Grid>
 
                         <Button Text="Open Full Pass Details"
                                 Clicked="OnOpenFullPass"
