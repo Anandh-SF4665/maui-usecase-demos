@@ -46,6 +46,7 @@ public partial class DashboardPage : ContentPage
     {
         InitializeComponent();
         BindingContext = viewModel;
+        TodayGrid.CellTapped += OnTodayGridCellTapped;
         _services = services;
         _theme = theme;
 

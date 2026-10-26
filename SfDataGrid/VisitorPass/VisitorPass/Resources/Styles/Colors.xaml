@@ -71,16 +71,33 @@
     <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{StaticResource PrimaryDark}" />
     <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLight}" />
 
-    <!-- Syncfusion theme overrides (VP-104).
-         The dashboard's SfCircularChart / SfCartesianChart default to
-         a generic palette; these brushes override the colour chips
-         the chart palette picks up so the donut + column charts
-         match the design's blue + accent palette. -->
-    <SolidColorBrush x:Key="SyncChartFill1" Color="#0050CB" />
-    <SolidColorBrush x:Key="SyncChartFill2" Color="#3B9CFF" />
-    <SolidColorBrush x:Key="SyncChartFill3" Color="#73B5FF" />
-    <SolidColorBrush x:Key="SyncChartFill4" Color="#0A2A6B" />
-    <SolidColorBrush x:Key="SyncChartFill5" Color="#A8D0FF" />
+    <!-- Dashboard chart palette. -->
+    <Color x:Key="ChartExpected">#3B82F6</Color>
+    <Color x:Key="ChartCheckedIn">#10B981</Color>
+    <Color x:Key="ChartCheckedOut">#6B7280</Color>
+    <Color x:Key="ChartCancelled">#EF4444</Color>
+    <Color x:Key="ChartOverdue">#F59E0B</Color>
+    <Color x:Key="ChartGridLine">#E5E9F2</Color>
+    <Color x:Key="ChartBarInterview">#3268E8</Color>
+    <Color x:Key="ChartBarDelivery">#A9BDF4</Color>
+    <Color x:Key="ChartBarMaintenance">#10B981</Color>
+
+    <SolidColorBrush x:Key="ChartExpectedBrush" Color="{StaticResource ChartExpected}" />
+    <SolidColorBrush x:Key="ChartCheckedInBrush" Color="{StaticResource ChartCheckedIn}" />
+    <SolidColorBrush x:Key="ChartCheckedOutBrush" Color="{StaticResource ChartCheckedOut}" />
+    <SolidColorBrush x:Key="ChartCancelledBrush" Color="{StaticResource ChartCancelled}" />
+    <SolidColorBrush x:Key="ChartOverdueBrush" Color="{StaticResource ChartOverdue}" />
+    <SolidColorBrush x:Key="ChartGridLineBrush" Color="{StaticResource ChartGridLine}" />
+    <SolidColorBrush x:Key="ChartBarInterviewBrush" Color="{StaticResource ChartBarInterview}" />
+    <SolidColorBrush x:Key="ChartBarDeliveryBrush" Color="{StaticResource ChartBarDelivery}" />
+    <SolidColorBrush x:Key="ChartBarMaintenanceBrush" Color="{StaticResource ChartBarMaintenance}" />
+
+    <!-- Syncfusion theme overrides (VP-104). -->
+    <SolidColorBrush x:Key="SyncChartFill1" Color="{StaticResource ChartExpected}" />
+    <SolidColorBrush x:Key="SyncChartFill2" Color="{StaticResource ChartCheckedIn}" />
+    <SolidColorBrush x:Key="SyncChartFill3" Color="{StaticResource ChartCheckedOut}" />
+    <SolidColorBrush x:Key="SyncChartFill4" Color="{StaticResource ChartCancelled}" />
+    <SolidColorBrush x:Key="SyncChartFill5" Color="{StaticResource ChartOverdue}" />
 
     <!-- Surfaces (VP-080 — AppThemeBinding wrapper so the brushes
          auto-flip between light and dark mode without any code). -->

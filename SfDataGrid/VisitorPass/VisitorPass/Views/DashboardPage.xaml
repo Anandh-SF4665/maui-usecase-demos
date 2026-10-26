@@ -1,23 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--
-    Phase 4 — Dashboard (Screen 1, single page).
-
-    Single ContentPage hosts everything the Visitor Command Center
-    shows. Per HARNESS §7, every layout difference between desktop
-    and mobile is expressed inside the same XAML via OnIdiom.
-
-    Sidebar wrapper: the root is now a 2-column Grid. Column 0
-    hosts the SideNavigation control (hidden on phone via
-    OnIdiom Phone=False, Default=True). Column 1 is the existing
-    ScrollView body. This matches the expected UI which shows a
-    persistent left rail on desktop / tablet.
-
-    Section 1 — KPI grid: ColumnDefinitions use OnIdiom four-col
-    on desktop / tablet, two-col on phone.
-    Section 2 + 3 — chart panels: side-by-side on desktop / tablet,
-    stacked on phone.
-    Section 4 — today's activity grid: Pass ID hides on phone.
--->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:VisitorPass.ViewModels;assembly=VisitorPass"
@@ -32,329 +13,269 @@
              Title="Visitor Command Center"
              BackgroundColor="{StaticResource SurfaceAlt}">
 
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <sfgrid:DataGridStyle x:Key="TodayGridStyle"
-                                  RowBackground="{StaticResource Surface}"
-                                  AlternateRowBackground="{StaticResource SurfaceAlt}"
-                                  HeaderRowBackground="{StaticResource PrimaryLight}"
-                                  HeaderRowTextColor="{StaticResource TextPrimary}"
-                                  HeaderRowFontSize="11"
-                                  HeaderRowFontFamily="OpenSansSemibold"
-                                  RowTextColor="{StaticResource TextPrimary}"
-                                  RowFontSize="11"
-                                  RowFontFamily="OpenSansRegular"
-                                  GridLineColor="{StaticResource Border}"
-                                  GridLineStrokeThickness="0.5" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <sfgrid:DataGridStyle x:Key="TodayGridStyle"
+                            RowBackground="{StaticResource Surface}"
+                            AlternateRowBackground="{StaticResource SurfaceAlt}"
+                            HeaderRowBackground="{StaticResource PrimaryLight}"
+                            HeaderRowTextColor="{StaticResource TextPrimary}"
+                            HeaderRowFontSize="11"
+                            HeaderRowFontFamily="OpenSansSemibold"
+                            RowTextColor="{StaticResource TextPrimary}"
+                            RowFontSize="11"
+                            RowFontFamily="OpenSansRegular"
+                            GridLineColor="{StaticResource Border}"
+                            GridLineStrokeThickness="0.5" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
 
-    <!--
-        Root overlay Grid: the 2-column layout (sidebar + content)
-        sits in row 0; the SfPopup for the registration surface
-        overlays the whole page in row 1 so it covers both the
-        sidebar and the content when open.
-    -->
-    <Grid>
+  <Grid>
+    <Grid ColumnDefinitions="{OnIdiom Desktop='232,*', Phone='0,*'}" ColumnSpacing="0">
+      <controls:SideNavigation Grid.Column="0" ActiveRoute="dashboard"
+                               IsVisible="{OnIdiom Phone=False, Default=True}" />
+      <ScrollView Grid.Column="1">
+        <VerticalStackLayout Padding="{OnIdiom Desktop='24,0,24,28', Phone='14,8,14,14'}"
+                             Spacing="{OnIdiom Desktop=18, Phone=14}">
+          <controls:TopNavBar Title="Visitor Command Center"
+                              Subtitle="Real-time visitor activity overview"
+                              ShowRegisterButton="True" />
 
-    <!--
-        2-column layout: sidebar on the left (desktop / tablet
-        only), content on the right (always). On phone the sidebar
-        column collapses to 0 width and the content fills the page.
-    -->
-    <Grid ColumnDefinitions="{OnIdiom Desktop='232,*', Phone='0,*'}"
-          ColumnSpacing="0">
+          <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="4">
+            <Label Text="Facility Access Telemetry" FontFamily="OpenSansSemibold"
+                   FontSize="{OnIdiom Desktop=22, Phone=18}" TextColor="{StaticResource TextPrimary}" />
+            <Border Grid.Column="1" BackgroundColor="{StaticResource StatusCheckedInBg}" StrokeThickness="0"
+                    StrokeShape="{RoundRectangle CornerRadius=12}" Padding="10,5" VerticalOptions="Center">
+              <HorizontalStackLayout Spacing="5">
+                <Ellipse WidthRequest="8" HeightRequest="8" Fill="{StaticResource StatusCheckedInBrush}" VerticalOptions="Center" />
+                <Label Text="GATEWAYS A &amp; B ACTIVE" FontSize="9" FontFamily="OpenSansSemibold"
+                       TextColor="{StaticResource StatusCheckedInBrush}" VerticalOptions="Center" />
+              </HorizontalStackLayout>
+            </Border>
+            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="Real-time visitor activity overview across the facility."
+                   FontSize="12" TextColor="{StaticResource TextSecondary}" />
+          </Grid>
 
-        <!-- ============================================
-             Sidebar (desktop / tablet only)
-             ============================================ -->
-        <controls:SideNavigation Grid.Column="0"
-                                ActiveRoute="dashboard"
-                                IsVisible="{OnIdiom Phone=False, Default=True}" />
-
-        <!-- ============================================
-             Content area (always visible)
-             ============================================ -->
-        <ScrollView Grid.Column="1">
-            <VerticalStackLayout Padding="{OnIdiom Desktop='24,0,24,28', Phone='14,8,14,14'}"
-                                 Spacing="{OnIdiom Desktop=18, Phone=14}">
-
-                <controls:TopNavBar Title="Visitor Command Center"
-                                    Subtitle="Real-time visitor activity overview"
-                                    ShowRegisterButton="True" />
-
-                <!-- VP-100 — top info strip matching the design. -->
-                <controls:PageHeaderStrip />
-
-                <!-- ============== Section 1 — KPI grid ============== -->
-                <Grid ColumnDefinitions="{OnIdiom Desktop='*,*,*,*', Phone='*,*'}"
-                      ColumnSpacing="14"
-                      RowSpacing="14">
-
-                    <Border Grid.Column="0" Style="{StaticResource KpiCard}">
-                        <VerticalStackLayout Spacing="6">
-                            <HorizontalStackLayout Spacing="6">
-                                <Label Text="{x:Static controls:IconKeys.Schedule}"
-                                       FontFamily="MauiMaterialAssets"
-                                       FontSize="13"
-                                       TextColor="{StaticResource StatusExpected}"
-                                       VerticalOptions="Center" />
-                                <Label Text="EXPECTED VISITORS"
-                                       Style="{StaticResource SectionEyebrow}" />
-                            </HorizontalStackLayout>
-                            <Label Text="{Binding Stats.ExpectedVisitors}"
-                                   Style="{StaticResource KpiValue}"
-                                   TextColor="{StaticResource StatusExpectedBrush}" />
-                        </VerticalStackLayout>
-                    </Border>
-
-                    <Border Grid.Column="{OnIdiom Desktop=1, Phone=1}" Style="{StaticResource KpiCard}">
-                        <VerticalStackLayout Spacing="6">
-                            <HorizontalStackLayout Spacing="6">
-                                <Label Text="{x:Static controls:IconKeys.Verified}"
-                                       FontFamily="MauiMaterialAssets"
-                                       FontSize="13"
-                                       TextColor="{StaticResource StatusCheckedIn}"
-                                       VerticalOptions="Center" />
-                                <Label Text="CHECKED IN"
-                                       Style="{StaticResource SectionEyebrow}" />
-                            </HorizontalStackLayout>
-                            <Label Text="{Binding Stats.CheckedIn}"
-                                   Style="{StaticResource KpiValue}"
-                                   TextColor="{StaticResource StatusCheckedInBrush}" />
-                        </VerticalStackLayout>
-                    </Border>
-
-                    <Border Grid.Column="{OnIdiom Desktop=2, Phone=0}" Style="{StaticResource KpiCard}">
-                        <VerticalStackLayout Spacing="6">
-                            <HorizontalStackLayout Spacing="6">
-                                <Label Text="{x:Static controls:IconKeys.EventAvailable}"
-                                       FontFamily="MauiMaterialAssets"
-                                       FontSize="13"
-                                       TextColor="{StaticResource StatusCheckedOut}"
-                                       VerticalOptions="Center" />
-                                <Label Text="CHECKED OUT"
-                                       Style="{StaticResource SectionEyebrow}" />
-                            </HorizontalStackLayout>
-                            <Label Text="{Binding Stats.CheckedOut}"
-                                   Style="{StaticResource KpiValue}"
-                                   TextColor="{StaticResource StatusCheckedOutBrush}" />
-                        </VerticalStackLayout>
-                    </Border>
-
-                    <Border Grid.Column="{OnIdiom Desktop=3, Phone=0}" Style="{StaticResource KpiCard}">
-                        <VerticalStackLayout Spacing="6">
-                            <HorizontalStackLayout Spacing="6">
-                                <Ellipse WidthRequest="8" HeightRequest="8"
-                                         Fill="{StaticResource StatusOverdueBrush}"
-                                         VerticalOptions="Center" />
-                                <Label Text="OVERDUE"
-                                       Style="{StaticResource SectionEyebrow}" />
-                            </HorizontalStackLayout>
-                            <Label Text="{Binding Stats.OverdueVisitors}"
-                                   Style="{StaticResource KpiValue}"
-                                   TextColor="{StaticResource StatusOverdueBrush}" />
-                        </VerticalStackLayout>
-                    </Border>
-                </Grid>
-
-                <!-- ============== Section 2 + 3 — charts ============== -->
-                <Grid ColumnDefinitions="{OnIdiom Desktop='*,*', Phone='*'}"
-                      RowDefinitions="{OnIdiom Desktop='Auto', Phone='Auto,Auto'}"
-                      ColumnSpacing="14"
-                      RowSpacing="14">
-
-                    <!-- Donut: Visitor Status Distribution -->
-                    <Border Grid.Column="0" Grid.Row="0" Style="{StaticResource ChartPanelCard}">
-                        <VerticalStackLayout Spacing="8">
-                            <Label Text="VISITOR STATUS DISTRIBUTION"
-                                   Style="{StaticResource SectionEyebrow}" />
-                            <chart:SfCircularChart HeightRequest="320">
-                                <chart:SfCircularChart.Legend>
-                                    <chart:ChartLegend Placement="Top" />
-                                </chart:SfCircularChart.Legend>
-                                <chart:SfCircularChart.Series>
-                                    <chart:DoughnutSeries ItemsSource="{Binding StatusBreakdown}"
-                                                          XBindingPath="Label"
-                                                          YBindingPath="Count"
-                                                          InnerRadius="0.55" />
-                                </chart:SfCircularChart.Series>
-                            </chart:SfCircularChart>
-                        </VerticalStackLayout>
-                    </Border>
-
-                    <!-- Column: Visits by Purpose -->
-                    <Border Grid.Column="{OnIdiom Desktop=1, Phone=0}"
-                            Grid.Row="{OnIdiom Desktop=0, Phone=1}"
-                            Style="{StaticResource ChartPanelCard}">
-                        <VerticalStackLayout Spacing="8">
-                            <Label Text="VISITS BY PURPOSE"
-                                   Style="{StaticResource SectionEyebrow}" />
-                            <chart:SfCartesianChart HeightRequest="320">
-                                <chart:SfCartesianChart.PaletteBrushes>
-                                    <SolidColorBrush Color="#0050CB" />
-                                </chart:SfCartesianChart.PaletteBrushes>
-                                <chart:SfCartesianChart.XAxes>
-                                    <chart:CategoryAxis />
-                                </chart:SfCartesianChart.XAxes>
-                                <chart:SfCartesianChart.YAxes>
-                                    <chart:NumericalAxis />
-                                </chart:SfCartesianChart.YAxes>
-                                <chart:SfCartesianChart.Series>
-                                    <chart:ColumnSeries ItemsSource="{Binding PurposeBreakdown}"
-                                                        XBindingPath="Label"
-                                                        YBindingPath="Count" />
-                                </chart:SfCartesianChart.Series>
-                            </chart:SfCartesianChart>
-                        </VerticalStackLayout>
-                    </Border>
-                </Grid>
-
-                <!-- ============== Section 4 — Today's activity grid ============== -->
-                <Border Style="{StaticResource PanelCard}">
-                    <VerticalStackLayout Spacing="8">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <Label Grid.Column="0"
-                                   Text="TODAY'S ACTIVITY"
-                                   Style="{StaticResource SectionEyebrow}" />
-                            <Label Grid.Column="1"
-                                   Text="{Binding TodayVisitorsCount, StringFormat='{0} visitors today'}"
-                                   FontFamily="OpenSansSemibold"
-                                   FontSize="11"
-                                   TextColor="{StaticResource TextPrimary}" />
-                        </Grid>
-
-                        <sfgrid:SfDataGrid x:Name="TodayGrid"
-                                           ItemsSource="{Binding TodayVisitors}"
-                                           SelectionMode="Single"
-                                           ColumnWidthMode="Auto"
-                                           HeaderRowHeight="38"
-                                           RowHeight="58"
-                                           Style="{StaticResource TodayGridStyle}"
-                                           CellTapped="OnTodayGridCellTapped">
-
-                            <sfgrid:SfDataGrid.Columns>
-                                <sfgrid:DataGridTemplateColumn HeaderText="PASS ID"
-                                                              MappingName="PassId"
-                                                              Width="110"
-                                                              Visible="{OnIdiom Phone=False, Default=True}">
-                                    <sfgrid:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate x:DataType="models:Visitor">
-                                            <Label Text="{Binding PassId}"
-                                                   FontFamily="OpenSansSemibold"
-                                                   FontSize="11"
-                                                   TextColor="{StaticResource TextPrimary}"
-                                                   VerticalOptions="Center"
-                                                   Margin="14,0,0,0" />
-                                        </DataTemplate>
-                                    </sfgrid:DataGridTemplateColumn.CellTemplate>
-                                </sfgrid:DataGridTemplateColumn>
-
-                                <sfgrid:DataGridTemplateColumn HeaderText="VISITOR"
-                                                              MappingName="VisitorName"
-                                                              Width="160">
-                                    <sfgrid:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate x:DataType="models:Visitor">
-                                            <Label Text="{Binding VisitorName}"
-                                                   FontFamily="OpenSansSemibold"
-                                                   FontSize="11"
-                                                   TextColor="{StaticResource TextPrimary}"
-                                                   VerticalOptions="Center" />
-                                        </DataTemplate>
-                                    </sfgrid:DataGridTemplateColumn.CellTemplate>
-                                </sfgrid:DataGridTemplateColumn>
-
-                                <sfgrid:DataGridTemplateColumn HeaderText="HOST"
-                                                              MappingName="Host"
-                                                              Width="140">
-                                    <sfgrid:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate x:DataType="models:Visitor">
-                                            <Label Text="{Binding Host}"
-                                                   FontFamily="OpenSansRegular"
-                                                   FontSize="11"
-                                                   TextColor="{StaticResource TextSecondary}"
-                                                   VerticalOptions="Center" />
-                                        </DataTemplate>
-                                    </sfgrid:DataGridTemplateColumn.CellTemplate>
-                                </sfgrid:DataGridTemplateColumn>
-
-                                <sfgrid:DataGridTemplateColumn HeaderText="PURPOSE"
-                                                              MappingName="Purpose"
-                                                              Width="140">
-                                    <sfgrid:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate x:DataType="models:Visitor">
-                                            <Label Text="{Binding Purpose}"
-                                                   FontFamily="OpenSansRegular"
-                                                   FontSize="11"
-                                                   TextColor="{StaticResource TextSecondary}"
-                                                   VerticalOptions="Center" />
-                                        </DataTemplate>
-                                    </sfgrid:DataGridTemplateColumn.CellTemplate>
-                                </sfgrid:DataGridTemplateColumn>
-
-                                <sfgrid:DataGridTemplateColumn HeaderText="TIME"
-                                                              MappingName="VisitTime"
-                                                              Width="100">
-                                    <sfgrid:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate x:DataType="models:Visitor">
-                                            <Label Text="{Binding VisitTime, StringFormat='{0:hh\\:mm}'}"
-                                                   FontFamily="OpenSansRegular"
-                                                   FontSize="11"
-                                                   TextColor="{StaticResource TextSecondary}"
-                                                   VerticalOptions="Center" />
-                                        </DataTemplate>
-                                    </sfgrid:DataGridTemplateColumn.CellTemplate>
-                                </sfgrid:DataGridTemplateColumn>
-
-                                <sfgrid:DataGridTemplateColumn HeaderText="STATUS"
-                                                              MappingName="Status"
-                                                              Width="130">
-                                    <sfgrid:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate x:DataType="models:Visitor">
-                                            <controls:VisitorStatusBadge Status="{Binding Status}"
-                                                                       VerticalOptions="Center" />
-                                        </DataTemplate>
-                                    </sfgrid:DataGridTemplateColumn.CellTemplate>
-                                </sfgrid:DataGridTemplateColumn>
-                            </sfgrid:SfDataGrid.Columns>
-                        </sfgrid:SfDataGrid>
-                    </VerticalStackLayout>
+          <Grid ColumnDefinitions="{OnIdiom Desktop='*,*,*,*', Phone='*,*'}" ColumnSpacing="12" RowSpacing="12">
+            <Border Grid.Column="0" Style="{StaticResource KpiCard}">
+              <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                <Label Text="EXPECTED TODAY" Style="{StaticResource SectionEyebrow}" />
+                <Border Grid.Column="1" WidthRequest="32" HeightRequest="32" BackgroundColor="{StaticResource StatusExpectedBg}"
+                        StrokeThickness="0" StrokeShape="{RoundRectangle CornerRadius=12}">
+                  <Label Text="" Style="{StaticResource MaterialIconMd}" TextColor="{StaticResource StatusExpectedBrush}" />
                 </Border>
+                <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="2" Spacing="5" Margin="0,8,0,0">
+                  <Label Text="{Binding Stats.ExpectedVisitors}" Style="{StaticResource KpiValue}" FontSize="27" />
+                  <Label Text="passes" FontSize="11" TextColor="{StaticResource TextSecondary}" VerticalOptions="End" Margin="0,0,0,5" />
+                </HorizontalStackLayout>
+                <Label Grid.Row="2" Grid.ColumnSpan="2" Text="Scheduled for today" FontSize="10"
+                       TextColor="{StaticResource TextMuted}" Margin="0,7,0,0" />
+              </Grid>
+            </Border>
+            <Border Grid.Column="1" Style="{StaticResource KpiCard}">
+              <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                <Label Text="CURRENTLY ON-PREMISE" Style="{StaticResource SectionEyebrow}" />
+                <Border Grid.Column="1" WidthRequest="32" HeightRequest="32" BackgroundColor="{StaticResource StatusCheckedInBg}"
+                        StrokeThickness="0" StrokeShape="{RoundRectangle CornerRadius=12}">
+                  <Label Text="" Style="{StaticResource MaterialIconMd}" TextColor="{StaticResource StatusCheckedInBrush}" />
+                </Border>
+                <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="2" Spacing="5" Margin="0,8,0,0">
+                  <Label Text="{Binding Stats.CheckedIn}" Style="{StaticResource KpiValue}" FontSize="27" />
+                  <Label Text="badges live" FontSize="11" TextColor="{StaticResource TextSecondary}" VerticalOptions="End" Margin="0,0,0,5" />
+                </HorizontalStackLayout>
+                <Label Grid.Row="2" Grid.ColumnSpan="2" Text="Active facility visits" FontSize="10"
+                       TextColor="{StaticResource TextMuted}" Margin="0,7,0,0" />
+              </Grid>
+            </Border>
+            <Border Grid.Row="{OnIdiom Desktop=0, Phone=1}" Grid.Column="{OnIdiom Desktop=2, Phone=0}" Style="{StaticResource KpiCard}">
+              <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                <Label Text="PROCESSED EGRESS" Style="{StaticResource SectionEyebrow}" />
+                <Border Grid.Column="1" WidthRequest="32" HeightRequest="32" BackgroundColor="{StaticResource PrimaryLight}"
+                        StrokeThickness="0" StrokeShape="{RoundRectangle CornerRadius=12}">
+                  <Label Text="" Style="{StaticResource MaterialIconMd}" TextColor="{StaticResource Primary}" />
+                </Border>
+                <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="2" Spacing="5" Margin="0,8,0,0">
+                  <Label Text="{Binding Stats.CheckedOut}" Style="{StaticResource KpiValue}" FontSize="27" />
+                  <Label Text="exited" FontSize="11" TextColor="{StaticResource TextSecondary}" VerticalOptions="End" Margin="0,0,0,5" />
+                </HorizontalStackLayout>
+                <Label Grid.Row="2" Grid.ColumnSpan="2" Text="Visitors checked out" FontSize="10"
+                       TextColor="{StaticResource TextMuted}" Margin="0,7,0,0" />
+              </Grid>
+            </Border>
+            <Border Grid.Row="{OnIdiom Desktop=0, Phone=1}" Grid.Column="{OnIdiom Desktop=3, Phone=1}" Style="{StaticResource KpiCard}">
+              <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                <Label Text="OVERSTAY ALERTS" Style="{StaticResource SectionEyebrow}" TextColor="{StaticResource StatusCancelled}" />
+                <Border Grid.Column="1" WidthRequest="32" HeightRequest="32" BackgroundColor="{StaticResource StatusCancelledBg}"
+                        StrokeThickness="0" StrokeShape="{RoundRectangle CornerRadius=12}">
+                  <Label Text="" Style="{StaticResource MaterialIconMd}" TextColor="{StaticResource StatusCancelled}" />
+                </Border>
+                <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="2" Spacing="5" Margin="0,8,0,0">
+                  <Label Text="{Binding Stats.OverdueVisitors}" Style="{StaticResource KpiValue}" FontSize="27" TextColor="{StaticResource StatusCancelled}" />
+                  <Label Text="overdue" FontSize="11" TextColor="{StaticResource TextSecondary}" VerticalOptions="End" Margin="0,0,0,5" />
+                </HorizontalStackLayout>
+                <Label Grid.Row="2" Grid.ColumnSpan="2" Text="Requires attention" FontSize="10"
+                       TextColor="{StaticResource StatusCancelled}" Margin="0,7,0,0" />
+              </Grid>
+            </Border>
+          </Grid>
 
+          <Grid ColumnDefinitions="{OnIdiom Desktop='*,*', Phone='*'}"
+                RowDefinitions="{OnIdiom Desktop='Auto', Phone='Auto,Auto'}" ColumnSpacing="14" RowSpacing="14">
+            <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ChartPanelCard}" Padding="18">
+              <Grid RowDefinitions="Auto,Auto,*" RowSpacing="8">
+                <Label Text="Visitor Status Roster" Style="{StaticResource SectionTitle}" />
+                <Label Grid.Row="1" Text="Real-time occupancy status breakdown" FontSize="11" TextColor="{StaticResource TextMuted}" />
+                <Grid Grid.Row="2" RowDefinitions="*,Auto" RowSpacing="8">
+                  <chart:SfCircularChart HeightRequest="{OnIdiom Desktop=242, Phone=210}" Background="{StaticResource SurfaceBrush}">
+                    <chart:SfCircularChart.Series>
+                      <chart:DoughnutSeries ItemsSource="{Binding StatusBreakdown}" XBindingPath="Label" YBindingPath="Count"
+                                            InnerRadius="0.62" />
+                    </chart:SfCircularChart.Series>
+                  </chart:SfCircularChart>
+                  <Border Grid.Row="0" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent" InputTransparent="True">
+                    <VerticalStackLayout Spacing="1" HorizontalOptions="Center" VerticalOptions="Center">
+                      <Label Text="ACTIVE ROSTER" FontSize="8" FontFamily="OpenSansSemibold" CharacterSpacing="0.7"
+                             TextColor="{StaticResource TextMuted}" HorizontalTextAlignment="Center" />
+                      <Label Text="{Binding TodayVisitorsCount}" FontSize="24" FontFamily="OpenSansSemibold"
+                             TextColor="{StaticResource TextPrimary}" HorizontalTextAlignment="Center" />
+                      <Label Text="Logged Today" FontSize="9" TextColor="{StaticResource TextSecondary}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                  </Border>
+                  <Grid Grid.Row="1" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="6">
+                    <Border Grid.Row="0" Style="{StaticResource StatusLegendPill}" BackgroundColor="{StaticResource StatusCheckedOutBg}">
+                      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="5">
+                        <Ellipse WidthRequest="7" HeightRequest="7" Fill="{StaticResource ChartCheckedOutBrush}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Checked Out" FontSize="9" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="{Binding Stats.CheckedOut}" FontSize="9" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                      </Grid>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource StatusLegendPill}" BackgroundColor="{StaticResource StatusExpectedBg}">
+                      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="5">
+                        <Ellipse WidthRequest="7" HeightRequest="7" Fill="{StaticResource ChartExpectedBrush}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Expected" FontSize="9" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="{Binding Stats.ExpectedVisitors}" FontSize="9" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                      </Grid>
+                    </Border>
+                    <Border Grid.Row="1" Style="{StaticResource StatusLegendPill}" BackgroundColor="{StaticResource StatusCheckedInBg}">
+                      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="5">
+                        <Ellipse WidthRequest="7" HeightRequest="7" Fill="{StaticResource ChartCheckedInBrush}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Checked In" FontSize="9" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="{Binding Stats.CheckedIn}" FontSize="9" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                      </Grid>
+                    </Border>
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource StatusLegendPill}" BackgroundColor="{StaticResource StatusOverdueBg}">
+                      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="5">
+                        <Ellipse WidthRequest="7" HeightRequest="7" Fill="{StaticResource ChartOverdueBrush}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Overdue" FontSize="9" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="{Binding Stats.OverdueVisitors}" FontSize="9" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                      </Grid>
+                    </Border>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Border>
+
+            <Border Grid.Row="{OnIdiom Desktop=0, Phone=1}" Grid.Column="{OnIdiom Desktop=1, Phone=0}"
+                    Style="{StaticResource ChartPanelCard}" Padding="18">
+              <Grid RowDefinitions="Auto,Auto,*" RowSpacing="8">
+                <Grid ColumnDefinitions="*,Auto">
+                  <Label Text="Visits Classified By Purpose" Style="{StaticResource SectionTitle}" />
+                  <Border Grid.Column="1" BackgroundColor="{StaticResource PrimaryLight}" Padding="9,5" StrokeThickness="0"
+                          StrokeShape="{RoundRectangle CornerRadius=12}" VerticalOptions="Center">
+                    <Label Text="TODAY" FontSize="8" FontFamily="OpenSansSemibold" TextColor="{StaticResource Primary}" />
+                  </Border>
+                </Grid>
+                <Label Grid.Row="1" Text="Turnstile validation categorized by mission protocol" FontSize="11" TextColor="{StaticResource TextMuted}" />
+                <chart:SfCartesianChart Grid.Row="2" HeightRequest="{OnIdiom Desktop=276, Phone=250}"
+                                        Background="{StaticResource SurfaceBrush}">
+                  <chart:SfCartesianChart.XAxes>
+                    <chart:CategoryAxis LabelStyle="{StaticResource DashboardAxisLabelStyle}" ShowMajorGridLines="False" />
+                  </chart:SfCartesianChart.XAxes>
+                  <chart:SfCartesianChart.YAxes>
+                    <chart:NumericalAxis Minimum="0" Interval="4" LabelStyle="{StaticResource DashboardAxisLabelStyle}"
+                                         MajorGridLineStyle="{StaticResource DashboardGridLineStyle}" ShowMajorGridLines="True" />
+                  </chart:SfCartesianChart.YAxes>
+                  <chart:SfCartesianChart.Series>
+                    <chart:ColumnSeries ItemsSource="{Binding PurposeBreakdown}" XBindingPath="Label" YBindingPath="Count"
+                                        CornerRadius="7,7,0,0" />
+                  </chart:SfCartesianChart.Series>
+                </chart:SfCartesianChart>
+                <Grid Grid.Row="3" ColumnDefinitions="Auto,*" ColumnSpacing="8" Margin="0,2,0,0">
+                  <Label Text="⚡" TextColor="{StaticResource StatusCheckedInBrush}" FontSize="13" />
+                  <Label Grid.Column="1" Text="Security badge issuance SLA: under 90 seconds per visitor"
+                         FontSize="9" TextColor="{StaticResource TextSecondary}" VerticalOptions="Center" />
+                </Grid>
+              </Grid>
+            </Border>
+          </Grid>
+
+          <Border Style="{StaticResource PanelCard}" Padding="20,16">
+            <VerticalStackLayout Spacing="0">
+              <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,0,0,14">
+                <Ellipse WidthRequest="9" HeightRequest="9" Fill="{StaticResource StatusCheckedInBrush}" VerticalOptions="Center" />
+                <Label Grid.Column="1" Text="Today's Ingress Stream" Style="{StaticResource SectionTitle}" FontSize="16" />
+                <Border Grid.Column="2" BackgroundColor="{StaticResource PrimaryLight}" Padding="10,5" StrokeThickness="0"
+                        StrokeShape="{RoundRectangle CornerRadius=12}" VerticalOptions="Center">
+                  <Label Text="LIVE TELEMETRY" FontSize="8" FontFamily="OpenSansSemibold" TextColor="{StaticResource Primary}" />
+                </Border>
+              </Grid>
+              <sfgrid:SfDataGrid x:Name="TodayGrid" ItemsSource="{Binding TodayVisitors}" AutoGenerateColumnsMode="None"
+                                 HeaderRowHeight="34" RowHeight="50" GridStyle="{StaticResource TodayGridStyle}"
+                                 SelectionMode="Single" NavigationMode="Row" CellTapped="OnTodayGridCellTapped"
+                                 HeightRequest="{OnIdiom Desktop=402, Phone=390}">
+                <sfgrid:SfDataGrid.Columns>
+                  <sfgrid:DataGridTemplateColumn HeaderText="VISITOR / ORGANIZATION" MappingName="VisitorName" Width="1.6*">
+                    <sfgrid:DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="models:Visitor">
+                        <Grid ColumnDefinitions="36,*" ColumnSpacing="10" Padding="8,4">
+                          <Border WidthRequest="34" HeightRequest="34" BackgroundColor="{StaticResource PrimaryLight}"
+                                  StrokeThickness="0" StrokeShape="{RoundRectangle CornerRadius=17}">
+                            <Label Text="{Binding VisitorName, Converter={StaticResource InitialsConverter}}" FontSize="10"
+                                   FontFamily="OpenSansSemibold" TextColor="{StaticResource Primary}"
+                                   VerticalOptions="Center" HorizontalTextAlignment="Center" />
+                          </Border>
+                          <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="{Binding VisitorName}" FontSize="11" FontFamily="OpenSansSemibold"
+                                   TextColor="{StaticResource TextPrimary}" LineBreakMode="TailTruncation" />
+                            <Label Text="{Binding ContactNumber}" FontSize="9" TextColor="{StaticResource TextMuted}" />
+                          </VerticalStackLayout>
+                        </Grid>
+                      </DataTemplate>
+                    </sfgrid:DataGridTemplateColumn.CellTemplate>
+                  </sfgrid:DataGridTemplateColumn>
+                  <sfgrid:DataGridTextColumn HeaderText="HOST EMPLOYEE" MappingName="Host" Width="1.1*" />
+                  <sfgrid:DataGridTextColumn HeaderText="PURPOSE" MappingName="Purpose" Width="1.2*" />
+                  <sfgrid:DataGridTextColumn HeaderText="SCHEDULED" MappingName="VisitTime" Format="{0:hh\\:mm}" Width="1.1*" />
+                  <sfgrid:DataGridTemplateColumn HeaderText="BADGE STATUS" MappingName="Status" Width="1.1*">
+                    <sfgrid:DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="models:Visitor">
+                        <controls:VisitorStatusBadge Status="{Binding Status}" VerticalOptions="Center" />
+                      </DataTemplate>
+                    </sfgrid:DataGridTemplateColumn.CellTemplate>
+                  </sfgrid:DataGridTemplateColumn>
+                  <sfgrid:DataGridTextColumn HeaderText="PASS ID" MappingName="PassId" IsVisible="{OnIdiom Phone=False, Default=True}" Width="Auto" />
+                </sfgrid:SfDataGrid.Columns>
+              </sfgrid:SfDataGrid>
+              <Grid ColumnDefinitions="*,Auto" Padding="12,12,0,0">
+                <Label Text="Showing today's most recent visitors" FontSize="9" TextColor="{StaticResource TextMuted}" VerticalOptions="Center" />
+                <Label Grid.Column="1" Text="{Binding TodayVisitorsCount, StringFormat='{0} visitors today'}"
+                       FontSize="10" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}" />
+              </Grid>
             </VerticalStackLayout>
-        </ScrollView>
+          </Border>
+        </VerticalStackLayout>
+      </ScrollView>
     </Grid>
 
-    <!-- ==================================================
-         VP-UI popup — registration surface.
-         Hosts RegisterVisitorView directly inside the popup
-         body via ContentTemplate. Triggered from
-         OnRegisterClicked in code-behind; the Opened event
-         handler resolves a fresh RegisterVisitorViewModel from
-         DI, sets it as the popup's BindingContext, then walks the
-         PopupView's visual tree to find the inflated
-         RegisterVisitorView and binds the same VM to it. The
-         view's lifecycle events (DismissRequested /
-         PassGenerated) are wired on the inflated view so
-         dismiss/pass navigate correctly.
-         ================================================== -->
-    <sfpopup:SfPopup x:Name="RegisterPopup"
-                     ShowHeader="False"
-                     ShowFooter="False"
-                     ShowCloseButton="True"
-                     Opened="OnRegisterPopupOpened"
-                     WidthRequest="{OnIdiom Desktop=640, Phone=340}"
+    <sfpopup:SfPopup x:Name="RegisterPopup" ShowHeader="False" ShowFooter="False" ShowCloseButton="True"
+                     Opened="OnRegisterPopupOpened" WidthRequest="{OnIdiom Desktop=640, Phone=340}"
                      HeightRequest="{OnIdiom Desktop=640, Phone=560}">
-        <sfpopup:SfPopup.PopupStyle>
-            <sfpopup:PopupStyle StrokeThickness="0"
-                                CornerRadius="{OnIdiom Default=16, Phone=24}" />
-        </sfpopup:SfPopup.PopupStyle>
-        <sfpopup:SfPopup.ContentTemplate>
-            <DataTemplate>
-                <views:RegisterVisitorView />
-            </DataTemplate>
-        </sfpopup:SfPopup.ContentTemplate>
+      <sfpopup:SfPopup.PopupStyle>
+        <sfpopup:PopupStyle StrokeThickness="0" CornerRadius="{OnIdiom Default=16, Phone=24}" />
+      </sfpopup:SfPopup.PopupStyle>
+      <sfpopup:SfPopup.ContentTemplate>
+        <DataTemplate><views:RegisterVisitorView /></DataTemplate>
+      </sfpopup:SfPopup.ContentTemplate>
     </sfpopup:SfPopup>
-
-    </Grid>
+  </Grid>
 </ContentPage>

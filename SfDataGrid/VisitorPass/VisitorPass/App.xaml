@@ -29,6 +29,7 @@
                         SectionEyebrow, StatusBadgePill, FilterChip,
                         RegisterVisitorPill, Fab). -->
                 <ResourceDictionary Source="Resources/Styles/VisitorPassCard.xaml" />
+                <ResourceDictionary Source="Resources/Styles/DashboardChartStyles.xaml" />
 
                 <!-- 5. Syncfusion palette overrides — MUST be loaded LAST
                         so the SfsPrimary / SfBorderColor / SfsStatus*

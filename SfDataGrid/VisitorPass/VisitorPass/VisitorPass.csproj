@@ -47,6 +47,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<MauiXaml Update="Views\DashboardPage.xaml" Inflator="Runtime" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#5146E5" />
 
