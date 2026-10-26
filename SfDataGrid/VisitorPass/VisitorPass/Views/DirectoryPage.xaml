@@ -83,15 +83,79 @@
                             ShowRegisterButton="False" />
 
         <!-- ============================== -->
-        <!-- 2. Search entry (full width)   -->
+        <!-- 2. Directory summary and search -->
         <!-- ============================== -->
-        <Border Grid.Row="1"
-                BackgroundColor="{StaticResource Surface}"
-                StrokeThickness="1"
-                Stroke="{StaticResource Border}"
-                StrokeShape="RoundRectangle 12"
-                Padding="14,0,14,0"
-                HeightRequest="48">
+        <VerticalStackLayout Grid.Row="1" Spacing="12">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <VerticalStackLayout Spacing="2">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="Visitor Directory"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="22"
+                               TextColor="{StaticResource TextPrimary}" />
+                        <Border BackgroundColor="{StaticResource PrimaryLight}"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 10"
+                                Padding="9,4"
+                                VerticalOptions="Center">
+                            <Label Text="{Binding FilteredVisitors.Count, StringFormat='{0} Records'}"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="10"
+                                   TextColor="{StaticResource Primary}" />
+                        </Border>
+                    </HorizontalStackLayout>
+                    <Label Text="Search and filter every visit"
+                           FontSize="12"
+                           TextColor="{StaticResource TextSecondary}" />
+                </VerticalStackLayout>
+                <Border Grid.Column="1"
+                        BackgroundColor="{StaticResource Primary}"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="12,9"
+                        IsVisible="{OnIdiom Phone=False, Default=True}"
+                        VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnRegisterVisitor" />
+                    </Border.GestureRecognizers>
+                    <HorizontalStackLayout Spacing="6">
+                        <Label Text="{x:Static controls:IconKeys.Add}"
+                               FontFamily="MauiMaterialAssets"
+                               FontSize="14"
+                               TextColor="{StaticResource White}"
+                               VerticalOptions="Center" />
+                        <Label Text="Register Visitor"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="11"
+                               TextColor="{StaticResource White}"
+                               VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Border>
+            </Grid>
+
+            <Grid ColumnDefinitions="{OnIdiom Desktop='*,*,*,*', Phone='*,*'}"
+                  RowDefinitions="{OnIdiom Desktop='Auto', Phone='Auto,Auto'}"
+                  ColumnSpacing="8" RowSpacing="8">
+                <Border Grid.Row="0" Grid.Column="0" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 12" Padding="12,9">
+                    <VerticalStackLayout Spacing="2"><Label Text="TOTAL RECORDS" Style="{StaticResource SectionEyebrow}" /><Label Text="{Binding TotalVisitors}" Style="{StaticResource KpiValue}" FontSize="18" /></VerticalStackLayout>
+                </Border>
+                <Border Grid.Row="{OnIdiom Desktop=0, Phone=0}" Grid.Column="{OnIdiom Desktop=1, Phone=1}" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 12" Padding="12,9">
+                    <VerticalStackLayout Spacing="2"><Label Text="EXPECTED" Style="{StaticResource SectionEyebrow}" /><Label Text="{Binding ExpectedVisitors}" Style="{StaticResource KpiValue}" FontSize="18" TextColor="{StaticResource StatusExpected}" /></VerticalStackLayout>
+                </Border>
+                <Border Grid.Row="{OnIdiom Desktop=0, Phone=1}" Grid.Column="{OnIdiom Desktop=2, Phone=0}" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 12" Padding="12,9">
+                    <VerticalStackLayout Spacing="2"><Label Text="CHECKED IN" Style="{StaticResource SectionEyebrow}" /><Label Text="{Binding CheckedInVisitors}" Style="{StaticResource KpiValue}" FontSize="18" TextColor="{StaticResource StatusCheckedIn}" /></VerticalStackLayout>
+                </Border>
+                <Border Grid.Row="{OnIdiom Desktop=0, Phone=1}" Grid.Column="{OnIdiom Desktop=3, Phone=1}" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 12" Padding="12,9">
+                    <VerticalStackLayout Spacing="2"><Label Text="OVERDUE" Style="{StaticResource SectionEyebrow}" /><Label Text="{Binding OverdueVisitors}" Style="{StaticResource KpiValue}" FontSize="18" TextColor="{StaticResource StatusOverdue}" /></VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <Border BackgroundColor="{StaticResource Surface}"
+                    StrokeThickness="1"
+                    Stroke="{StaticResource Border}"
+                    StrokeShape="RoundRectangle 12"
+                    Padding="14,0"
+                    HeightRequest="48">
             <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
                 <!-- Search glyph (Material Icons font). VP-104. -->
                 <Label Grid.Column="0"
@@ -109,7 +173,8 @@
                        FontFamily="OpenSansRegular"
                        Text="{Binding SearchText, Mode=TwoWay}" />
             </Grid>
-        </Border>
+            </Border>
+        </VerticalStackLayout>
 
         <!-- ============================== -->
         <!-- 3. Status filter chips         -->
@@ -170,7 +235,7 @@
                                ColumnWidthMode="Auto"
                                HeaderRowHeight="42"
                                RowHeight="64"
-                               SelectionBackground="{StaticResource PrimaryLight}"
+                               GridLinesVisibility="Horizontal"
                                Style="{StaticResource DirectoryGridStyle}"
                                CellTapped="OnCellTapped">
 

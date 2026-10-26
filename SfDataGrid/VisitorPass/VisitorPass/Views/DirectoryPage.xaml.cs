@@ -37,6 +37,7 @@ public partial class DirectoryPage : ContentPage
 
         if (this.FindTopNavBar() is { } navBar)
         {
+            navBar.RegisterClicked += OnRegisterClicked;
             navBar.ThemeToggleClicked += OnThemeToggleClicked;
             navBar.IsDarkMode = _theme.IsDarkMode;
             _theme.PropertyChanged += OnThemePropertyChanged;
@@ -60,6 +61,24 @@ public partial class DirectoryPage : ContentPage
         //}
     }
 
+    private async void OnRegisterClicked(object? sender, EventArgs e)
+        => await OpenRegistrationAsync();
+
+    private async void OnRegisterVisitor(object? sender, TappedEventArgs e)
+        => await OpenRegistrationAsync();
+
+    private async Task OpenRegistrationAsync()
+    {
+        var page = new RegisterVisitorPage(_services.GetRequiredService<RegisterVisitorViewModel>());
+        page.DismissRequested += async (_, _) => await Navigation.PopAsync();
+        page.PassGenerated += async (_, visitor) =>
+        {
+            await Navigation.PopAsync();
+            await OpenVisitorDetailsAsync(visitor);
+        };
+        await Navigation.PushAsync(page);
+    }
+
     private void OnThemeToggleClicked(object? sender, EventArgs e)
         => _theme.Toggle();
 
@@ -74,12 +93,10 @@ public partial class DirectoryPage : ContentPage
         if (e.RowData is not Visitor visitor)
             return;
 
-        // Per the design (image 1), row tap selects the row and
-        // updates the "Active Dossier" preview card at the bottom
-        // of the page. The user opens the full Digital Pass via
-        // the card's "Open Full Pass Details" button (OnOpenFullPass).
         if (BindingContext is DirectoryViewModel vm)
             vm.SelectedVisitor = visitor;
+
+        await OpenVisitorDetailsAsync(visitor);
     }
 
     /// <summary>
@@ -93,10 +110,13 @@ public partial class DirectoryPage : ContentPage
             || vm.SelectedVisitor is not { } visitor)
             return;
 
-        await Navigation.PushAsync(
+        await OpenVisitorDetailsAsync(visitor);
+    }
+
+    private Task OpenVisitorDetailsAsync(Visitor visitor)
+        => Navigation.PushAsync(
             new VisitorDetailsPage(
                 _services.GetRequiredService<VisitorDetailsViewModel>(),
                 _theme,
                 passId: visitor.PassId));
-    }
 }

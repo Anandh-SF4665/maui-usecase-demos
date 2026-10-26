@@ -61,6 +61,11 @@ public partial class DirectoryViewModel : BaseViewModel
     [ObservableProperty]
     private bool _hasNoResults;
 
+    public int TotalVisitors => _store.Visitors.Count;
+    public int ExpectedVisitors => _store.Visitors.Count(visitor => visitor.Status == VisitorStatus.Expected);
+    public int CheckedInVisitors => _store.Visitors.Count(visitor => visitor.Status == VisitorStatus.CheckedIn);
+    public int OverdueVisitors => _store.Visitors.Count(visitor => visitor.Status == VisitorStatus.Overdue);
+
     /// <summary>
     /// Currently focused row in the directory grid. The Active Dossier
     /// preview card at the bottom of the page binds to this property
@@ -122,6 +127,10 @@ public partial class DirectoryViewModel : BaseViewModel
             FilteredVisitors.Add(v);
 
         HasNoResults = FilteredVisitors.Count == 0;
+        OnPropertyChanged(nameof(TotalVisitors));
+        OnPropertyChanged(nameof(ExpectedVisitors));
+        OnPropertyChanged(nameof(CheckedInVisitors));
+        OnPropertyChanged(nameof(OverdueVisitors));
     }
 
     /// <summary>Reset every filter and re-run the query. Bound to
