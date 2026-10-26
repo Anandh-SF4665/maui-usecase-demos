@@ -78,6 +78,44 @@ public partial class VisitorDetailsPage : ContentPage
             navBar.IsDarkMode = _theme.IsDarkMode;
     }
 
+    // ===== Operational Controls & Status Actions =====
+    // These forward the visual tiles to the VM's relay commands, which in
+    // turn mutate the visitor through IVisitorStore. CanExecute guards the
+    // tile's visibility (IsCheckInVisible / IsCheckOutVisible / IsCancelVisible)
+    // so an already-resolved status never surfaces a stale action.
+
+    private void OnCheckIn(object? sender, TappedEventArgs e)
+    {
+        if (_viewModel.CheckInCommand.CanExecute(null))
+            _viewModel.CheckInCommand.Execute(null);
+    }
+
+    private void OnCheckOut(object? sender, TappedEventArgs e)
+    {
+        if (_viewModel.CheckOutCommand.CanExecute(null))
+            _viewModel.CheckOutCommand.Execute(null);
+    }
+
+    private void OnCancelVisit(object? sender, TappedEventArgs e)
+    {
+        if (_viewModel.CancelVisitCommand.CanExecute(null))
+            _viewModel.CancelVisitCommand.Execute(null);
+    }
+
+    // ===== Header + secondary links =====
+    // Secondary affordances (Print / Share / Security Log / Notify Host /
+    // Re-issue Credentials / Incident Report) are decorative in this
+    // showcase; they exist so the surface mirrors the reference design.
+    // The handlers are intentionally inert to keep the harness rule
+    // "no business logic in code-behind" intact.
+
+    private void OnPrintBadge(object? sender, TappedEventArgs e) { /* no-op */ }
+    private void OnSharePass(object? sender, TappedEventArgs e) { /* no-op */ }
+    private void OnSecurityLog(object? sender, TappedEventArgs e) { /* no-op */ }
+    private void OnNotifyHost(object? sender, TappedEventArgs e) { /* no-op */ }
+    private void OnReissueCredentials(object? sender, TappedEventArgs e) { /* no-op */ }
+    private void OnIncidentReport(object? sender, TappedEventArgs e) { /* no-op */ }
+
     protected override async void OnAppearing()
     {
         base.OnAppearing();

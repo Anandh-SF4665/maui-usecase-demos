@@ -297,4 +297,94 @@
         <Setter Property="VerticalTextAlignment" Value="Center" />
     </Style>
 
+    <!-- =========================================================
+         16. Digital Pass (VisitorDetailsPage) — VP-110.
+             Ghost header actions, telemetry metric tiles, info
+             chips, and the operational control action tiles.
+         ========================================================= -->
+
+    <!-- 16a. Ghost header action button (Print / Share / Security Log). -->
+    <Style x:Key="GhostActionButton" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
+        <Setter Property="Stroke" Value="{StaticResource Border}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="10" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Padding" Value="12,9,12,9" />
+    </Style>
+
+    <!-- 16b. Telemetry metric tile (Visit Summary grid). -->
+    <Style x:Key="TelemetryTile" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource SurfaceAlt}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="12" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Padding" Value="12,10,12,10" />
+        <Setter Property="Margin" Value="0" />
+    </Style>
+
+    <!-- 16c. Info chip (Escort Status / Wi-Fi Token / Parking Bay). -->
+    <Style x:Key="InfoChip" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource SurfaceAlt}" />
+        <Setter Property="Stroke" Value="{StaticResource Border}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="12" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Padding" Value="12,9,12,9" />
+        <Setter Property="Margin" Value="0" />
+    </Style>
+
+    <!-- 16d. Action tile — secondary (Check In / Completed). -->
+    <Style x:Key="ActionTileSecondary" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
+        <Setter Property="Stroke" Value="{StaticResource Border}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="12" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Padding" Value="14,12,14,12" />
+    </Style>
+
+    <!-- 16e. Action tile — primary (Record Departure / Check Out). -->
+    <Style x:Key="ActionTilePrimary" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="12" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Padding" Value="16,13,16,13" />
+    </Style>
+
+    <!-- 16f. Action tile — danger (Cancel Visit / Revoke Badge). -->
+    <Style x:Key="ActionTileDanger" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource StatusCancelledBg}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="12" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Padding" Value="14,12,14,12" />
+    </Style>
+
+    <!-- 16g. Action tile — link (Notify Host / Re-issue Credentials / Incident). -->
+    <Style x:Key="ActionTileLink" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="Padding" Value="2,2,2,2" />
+    </Style>
+
 </ResourceDictionary>
