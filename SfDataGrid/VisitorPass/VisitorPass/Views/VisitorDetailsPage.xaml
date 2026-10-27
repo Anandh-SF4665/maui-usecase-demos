@@ -483,7 +483,9 @@
                                                            ShowToolTip="False"
                                                            ProgressAnimationDuration="0"
                                                            ProgressBarBackground="{StaticResource Border}"
-                                                           VerticalOptions="Start">
+                                                           HorizontalOptions="Fill"
+                                                           VerticalOptions="Start"
+                                                           MinimumHeightRequest="380">
                                 <progressbar:SfStepProgressBar.StepTemplate>
                                     <DataTemplate x:DataType="vm:JourneyCheckpoint">
                                         <Border BackgroundColor="{StaticResource SurfaceAlt}"

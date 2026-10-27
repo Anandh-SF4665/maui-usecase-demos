@@ -2,15 +2,14 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
-             xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
              x:Class="VisitorPass.Controls.TopNavBar">
-    
-    <Grid ColumnDefinitions="*,Auto,Auto"
-          ColumnSpacing="10"
+
+    <Grid ColumnDefinitions="Auto,*,Auto"
+          ColumnSpacing="16"
           Padding="0,0,0,12">
 
         <VerticalStackLayout Grid.Column="0"
-                             Spacing="2"
+                             Spacing="0"
                              VerticalOptions="Center">
             <Label Text="{Binding Title, Source={RelativeSource AncestorType={x:Type ContentView}}}"
                    FontFamily="OpenSansSemibold"
@@ -23,142 +22,132 @@
                    LineBreakMode="TailTruncation" />
         </VerticalStackLayout>
 
-        <Grid HeightRequest="72"
-      Padding="20,12"
-      ColumnSpacing="16"
-      ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto">
+        <Grid Grid.Column="1"
+              ColumnDefinitions="Auto,Auto,Auto,*,Auto"
+              ColumnSpacing="12"
+              VerticalOptions="Center">
 
-            <!-- Title -->
-            <Label Grid.Column="0"
-           Text="Visitor Command Center"
-           FontSize="20"
-           FontAttributes="Bold"
-           TextColor="#1E293B"
-           VerticalOptions="Center"/>
-
-            <!-- Separator -->
-            <BoxView Grid.Column="0"
-             HorizontalOptions="End"
-             WidthRequest="1"
-             HeightRequest="24"
-             Color="#E5E7EB"
-             Margin="20,0,-8,0"
-             VerticalOptions="Center"/>
-
-            <!-- Office -->
-            <Border Grid.Column="1"
-            BackgroundColor="#F8FAFC"
-            Stroke="#E2E8F0"
-            Padding="14,8"
-            StrokeShape="RoundRectangle 12">
-
+            <Border Grid.Column="0"
+                    BackgroundColor="{StaticResource Surface}"
+                    Stroke="{StaticResource Border}"
+                    StrokeThickness="1"
+                    Padding="14,8"
+                    StrokeShape="RoundRectangle 14"
+                    VerticalOptions="Center">
                 <HorizontalStackLayout Spacing="8">
-
-                    <Ellipse WidthRequest="10"
-                     HeightRequest="10"
-                     Fill="#22C55E"
-                     VerticalOptions="Center"/>
-
+                    <BoxView WidthRequest="10" HeightRequest="10" Color="{StaticResource StatusCheckedIn}" VerticalOptions="Center" />
                     <Label Text="Central Office"
-                   FontSize="14"
-                   TextColor="#334155"
-                   VerticalOptions="Center"/>
-
+                           FontFamily="OpenSansRegular"
+                           FontSize="14"
+                           TextColor="{StaticResource TextPrimary}"
+                           VerticalOptions="Center" />
                     <Label Text="⌄"
-                   FontSize="14"
-                   TextColor="#64748B"
-                   VerticalOptions="Center"/>
+                           FontFamily="OpenSansRegular"
+                           FontSize="12"
+                           TextColor="{StaticResource TextMuted}"
+                           VerticalOptions="Center" />
                 </HorizontalStackLayout>
             </Border>
 
-            <!-- Date -->
-            <Border Grid.Column="2"
-            BackgroundColor="#F8FAFC"
-            Stroke="#E2E8F0"
-            Padding="14,8"
-            StrokeShape="RoundRectangle 12">
-
+            <Border Grid.Column="1"
+                    BackgroundColor="{StaticResource Surface}"
+                    Stroke="{StaticResource Border}"
+                    StrokeThickness="1"
+                    Padding="14,8"
+                    StrokeShape="RoundRectangle 14"
+                    VerticalOptions="Center">
                 <HorizontalStackLayout Spacing="8">
-
-                    <Label Text="📅"
-                   FontSize="14"/>
-
+                    <Label Text="{x:Static controls:IconKeys.Event}"
+                           FontFamily="MauiMaterialAssets"
+                           FontSize="14"
+                           TextColor="{StaticResource TextMuted}"
+                           VerticalOptions="Center" />
                     <Label Text="Thursday, Oct 24, 2024"
-                   FontSize="14"
-                   FontAttributes="Bold"
-                   TextColor="#475569"/>
+                           FontFamily="OpenSansSemibold"
+                           FontSize="14"
+                           TextColor="{StaticResource TextPrimary}"
+                           VerticalOptions="Center" />
                 </HorizontalStackLayout>
             </Border>
 
-            <!-- Search -->
-            <syncfusion:SfTextInputLayout Grid.Column="3"
-                                  ContainerType="Outlined"
-                                  HeightRequest="44"
-                                  Hint="Quick search badges, guests">
+            <Border Grid.Column="2"
+                    BackgroundColor="{StaticResource Surface}"
+                    Stroke="{StaticResource Border}"
+                    StrokeThickness="1"
+                    Padding="12,7"
+                    StrokeShape="RoundRectangle 14"
+                    VerticalOptions="Center">
+                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                    <Label Text="{x:Static controls:IconKeys.Search}"
+                           FontFamily="MauiMaterialAssets"
+                           FontSize="14"
+                           TextColor="{StaticResource TextMuted}"
+                           VerticalOptions="Center" />
+                    <controls:SfEntry Placeholder="Quick search badges, guests (Ctrl+K)"
+                                      Text="{Binding SearchText}"
+                                      FontFamily="OpenSansRegular"
+                                      FontSize="13"
+                                      TextColor="{StaticResource TextPrimary}"
+                                      PlaceholderColor="{StaticResource TextMuted}"
+                                      HorizontalOptions="FillAndExpand"
+                                      BackgroundColor="Transparent"
+                                      VerticalTextAlignment="Center" />
+                </HorizontalStackLayout>
+            </Border>
 
-                <syncfusion:SfTextInputLayout.LeadingView>
-                    <Label Text="⌕"
-                   FontSize="16"
-                   VerticalTextAlignment="Center"/>
-                </syncfusion:SfTextInputLayout.LeadingView>
+            <Grid Grid.Column="3" />
 
-                <Entry Placeholder="Quick search badges, guests"
-               FontSize="14"/>
-            </syncfusion:SfTextInputLayout>
-
-            <!-- Notification -->
             <Grid Grid.Column="4"
-          WidthRequest="40"
-          HeightRequest="40">
+                  ColumnDefinitions="Auto,Auto"
+                  ColumnSpacing="12"
+                  VerticalOptions="Center">
+                <Grid WidthRequest="36" HeightRequest="36" VerticalOptions="Center">
+                    <Label Text="{x:Static controls:IconKeys.Notifications}"
+                           FontFamily="MauiMaterialAssets"
+                           FontSize="20"
+                           TextColor="{StaticResource TextPrimary}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                    <Border WidthRequest="8"
+                            HeightRequest="8"
+                            BackgroundColor="{StaticResource StatusCancelled}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 4"
+                            HorizontalOptions="End"
+                            VerticalOptions="Start" />
+                </Grid>
 
-                <Label Text="🔔"
-               FontSize="20"
-               HorizontalOptions="Center"
-               VerticalOptions="Center"/>
+                <HorizontalStackLayout Grid.Column="1"
+                                       Spacing="10"
+                                       VerticalOptions="Center">
+                    <VerticalStackLayout Spacing="0"
+                                         VerticalOptions="Center"
+                                         HorizontalOptions="End">
+                        <Label Text="Sarah Jenkins"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="14"
+                               TextColor="{StaticResource TextPrimary}"
+                               HorizontalTextAlignment="End" />
+                        <Label Text="Facility Admin"
+                               FontFamily="OpenSansRegular"
+                               FontSize="11"
+                               TextColor="{StaticResource TextSecondary}"
+                               HorizontalTextAlignment="End" />
+                    </VerticalStackLayout>
 
-                <Border WidthRequest="10"
-                HeightRequest="10"
-                BackgroundColor="#EF4444"
-                StrokeThickness="0"
-                StrokeShape="RoundRectangle 5"
-                HorizontalOptions="End"
-                VerticalOptions="Start"/>
+                    <Border WidthRequest="40"
+                            HeightRequest="40"
+                            BackgroundColor="{StaticResource Primary}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 20">
+                        <Label Text="SJ"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource White}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Border>
+                </HorizontalStackLayout>
             </Grid>
-
-            <!-- User -->
-            <HorizontalStackLayout Grid.Column="5"
-                           Spacing="12">
-
-                <VerticalStackLayout Spacing="0"
-                             VerticalOptions="Center">
-
-                    <Label Text="Sarah Jenkins"
-                   FontSize="14"
-                   FontAttributes="Bold"
-                   HorizontalTextAlignment="End"/>
-
-                    <Label Text="Facility Admin"
-                   FontSize="12"
-                   TextColor="#64748B"
-                   HorizontalTextAlignment="End"/>
-                </VerticalStackLayout>
-
-                <Border WidthRequest="42"
-                HeightRequest="42"
-                BackgroundColor="#2563EB"
-                StrokeThickness="0"
-                StrokeShape="RoundRectangle 21">
-
-                    <Label Text="👤"
-                   TextColor="White"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"/>
-                </Border>
-
-            </HorizontalStackLayout>
-
         </Grid>
-        
-        
     </Grid>
 </ContentView>

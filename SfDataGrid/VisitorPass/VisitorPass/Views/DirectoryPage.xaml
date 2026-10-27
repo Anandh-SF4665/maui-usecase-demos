@@ -110,41 +110,7 @@
                            FontSize="12"
                            TextColor="{StaticResource TextSecondary}" />
                 </VerticalStackLayout>
-                <!-- Register trigger.
-                    Desktop / Tablet: header pill (RegisterVisitorPill style).
-                    Phone: floating action button anchored bottom-right.
-                    Both raise the same Tapped event handled in code-behind. -->
-                <buttons:SfButton Grid.Column="2"
-                            Grid.ColumnSpan="2"
-                            Background="{StaticResource Primary}"
-                            CornerRadius="12"
-                            WidthRequest="140"
-                            HeightRequest="40"
-                            Padding="14,9"
-                            HorizontalTextAlignment="Center"
-                            Clicked="SfButton_Clicked"
-                            IsVisible="{Binding ShowRegisterButton, Source={RelativeSource AncestorType={x:Type ContentView}}}">
-                    <buttons:SfButton.Content>
-                        <DataTemplate>
-                            <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
-                                <Border BackgroundColor="{StaticResource PrimaryDark}"
-                    StrokeThickness="0"
-                    Padding="6"
-                    StrokeShape="RoundRectangle 16"
-                    WidthRequest="26"
-                    HeightRequest="26">
-                                    <Image Source="add.png" WidthRequest="14" HeightRequest="14"/>
-                                </Border>
-
-                                <Label Text="Register Visitor"
-                    TextColor="White"
-                    FontFamily="OpenSansSemibold"
-                    FontSize="11"
-                    VerticalOptions="Center"/>
-                            </HorizontalStackLayout>
-                        </DataTemplate>
-                    </buttons:SfButton.Content>
-                </buttons:SfButton>
+                <Grid Grid.Column="2" />
             </Grid>
 
             <Grid ColumnDefinitions="{OnIdiom Desktop='*,*,*,*', Phone='*,*'}"
@@ -178,14 +144,15 @@
                        FontSize="14"
                        TextColor="{StaticResource TextMuted}"
                        VerticalOptions="Center" />
-                <Entry Grid.Column="1"
-                       Placeholder="Search by name, host, or pass id..."
-                       PlaceholderColor="{StaticResource TextMuted}"
-                       TextColor="{StaticResource TextPrimary}"
-                       BackgroundColor="Transparent"
-                       FontSize="13"
-                       FontFamily="OpenSansRegular"
-                       Text="{Binding SearchText, Mode=TwoWay}" />
+                <controls:SfEntry Grid.Column="1"
+                                  Placeholder="Search by name, host, or pass id..."
+                                  PlaceholderColor="{StaticResource TextMuted}"
+                                  TextColor="{StaticResource TextPrimary}"
+                                  BackgroundColor="Transparent"
+                                  FontSize="13"
+                                  FontFamily="OpenSansRegular"
+                                  VerticalTextAlignment="Center"
+                                  Text="{Binding SearchText, Mode=TwoWay}" />
             </Grid>
             </Border>
         </VerticalStackLayout>
