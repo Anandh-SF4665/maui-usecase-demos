@@ -27,10 +27,11 @@
              xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
              xmlns:sfgrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
              xmlns:barcode="clr-namespace:Syncfusion.Maui.Barcode;assembly=Syncfusion.Maui.Barcode"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              x:Class="VisitorPass.Views.DirectoryPage"
              x:DataType="vm:DirectoryViewModel"
              Title="Visitor Directory"
-             BackgroundColor="{StaticResource SurfaceAlt}">
+             BackgroundColor="{StaticResource Surface}">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -60,7 +61,8 @@
         only), content on the right. Same idiom-switched
         ColumnDefinitions as the Dashboard page.
     -->
-    <Grid ColumnDefinitions="{OnIdiom Desktop='232,*', Phone='0,*'}"
+    <ScrollView>
+        <Grid ColumnDefinitions="{OnIdiom Desktop='232,*', Phone='0,*'}"
           ColumnSpacing="0">
 
         <!-- Sidebar (desktop / tablet only) -->
@@ -108,29 +110,41 @@
                            FontSize="12"
                            TextColor="{StaticResource TextSecondary}" />
                 </VerticalStackLayout>
-                <Border Grid.Column="1"
-                        BackgroundColor="{StaticResource Primary}"
-                        StrokeThickness="0"
-                        StrokeShape="RoundRectangle 12"
-                        Padding="12,9"
-                        IsVisible="{OnIdiom Phone=False, Default=True}"
-                        VerticalOptions="Center">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnRegisterVisitor" />
-                    </Border.GestureRecognizers>
-                    <HorizontalStackLayout Spacing="6">
-                        <Label Text="{x:Static controls:IconKeys.Add}"
-                               FontFamily="MauiMaterialAssets"
-                               FontSize="14"
-                               TextColor="{StaticResource White}"
-                               VerticalOptions="Center" />
-                        <Label Text="Register Visitor"
-                               FontFamily="OpenSansSemibold"
-                               FontSize="11"
-                               TextColor="{StaticResource White}"
-                               VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-                </Border>
+                <!-- Register trigger.
+                    Desktop / Tablet: header pill (RegisterVisitorPill style).
+                    Phone: floating action button anchored bottom-right.
+                    Both raise the same Tapped event handled in code-behind. -->
+                <buttons:SfButton Grid.Column="2"
+                            Grid.ColumnSpan="2"
+                            Background="{StaticResource Primary}"
+                            CornerRadius="12"
+                            WidthRequest="140"
+                            HeightRequest="40"
+                            Padding="14,9"
+                            HorizontalTextAlignment="Center"
+                            Clicked="SfButton_Clicked"
+                            IsVisible="{Binding ShowRegisterButton, Source={RelativeSource AncestorType={x:Type ContentView}}}">
+                    <buttons:SfButton.Content>
+                        <DataTemplate>
+                            <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                                <Border BackgroundColor="{StaticResource PrimaryDark}"
+                    StrokeThickness="0"
+                    Padding="6"
+                    StrokeShape="RoundRectangle 16"
+                    WidthRequest="26"
+                    HeightRequest="26">
+                                    <Image Source="add.png" WidthRequest="14" HeightRequest="14"/>
+                                </Border>
+
+                                <Label Text="Register Visitor"
+                    TextColor="White"
+                    FontFamily="OpenSansSemibold"
+                    FontSize="11"
+                    VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </DataTemplate>
+                    </buttons:SfButton.Content>
+                </buttons:SfButton>
             </Grid>
 
             <Grid ColumnDefinitions="{OnIdiom Desktop='*,*,*,*', Phone='*,*'}"
@@ -235,6 +249,9 @@
                                ColumnWidthMode="Auto"
                                HeaderRowHeight="42"
                                RowHeight="64"
+                               VerticalScrollBarVisibility="Never"
+                               HorizontalScrollBarVisibility="Never"
+                               HeightRequest="500"
                                GridLinesVisibility="Horizontal"
                                Style="{StaticResource DirectoryGridStyle}"
                                CellTapped="OnCellTapped">
@@ -312,7 +329,7 @@
                                                    Visible="{OnIdiom Phone=False, Default=True}">
                         <sfgrid:DataGridTemplateColumn.CellTemplate>
                             <DataTemplate x:DataType="models:Visitor">
-                                <Label Text="{Binding VisitTime, Converter={StaticResource DateToShortLabelConverter}}"
+                                <Label Text="{Binding VisitTime, StringFormat='{hh:mm}'}"
                                        VerticalOptions="Center"
                                        HorizontalOptions="Start"
                                        FontFamily="OpenSansRegular"
@@ -343,14 +360,38 @@
                     <sfgrid:DataGridTemplateColumn HeaderText="STATUS"
                                                    MappingName="Status"
                                                    Width="130">
-                        <sfgrid:DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate x:DataType="models:Visitor">
-                                <controls:VisitorStatusBadge Status="{Binding Status}"
-                                                             VerticalOptions="Center"
-                                                             HorizontalOptions="Start" />
-                            </DataTemplate>
-                        </sfgrid:DataGridTemplateColumn.CellTemplate>
-                    </sfgrid:DataGridTemplateColumn>
+                            <sfgrid:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate x:DataType="models:Visitor">
+                                    <Border
+                                        BackgroundColor="{Binding StatusBackgroundBrushKey}"
+                                        StrokeThickness="0"
+                                        Padding="12,8"
+                                        StrokeShape="RoundRectangle 20">
+
+                                        <HorizontalStackLayout Spacing="8">
+
+                                            <!-- Status Dot -->
+                                            <Border
+                                                WidthRequest="8"
+                                                HeightRequest="8"
+                                                BackgroundColor="{Binding StatusBrushKey}"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 5"
+                                                VerticalOptions="Center" />
+
+                                            <!-- Status Text -->
+                                            <Label
+                                                Text="{Binding Status}"
+                                                FontSize="12"
+                                                TextColor="{Binding StatusDisplayLabel}"
+                                                VerticalOptions="Center" />
+
+                                        </HorizontalStackLayout>
+
+                                    </Border>
+                                </DataTemplate>
+                            </sfgrid:DataGridTemplateColumn.CellTemplate>
+                        </sfgrid:DataGridTemplateColumn>
 
                 </sfgrid:SfDataGrid.Columns>
 
@@ -549,4 +590,5 @@
 
         </Grid>
     </Grid>
+    </ScrollView>
 </ContentPage>

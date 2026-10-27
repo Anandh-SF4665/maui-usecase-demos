@@ -33,7 +33,7 @@ public static class MauiProgram
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                fonts.AddFont("MauiMaterialAssets.ttf", "MauiMaterialAssets");
+                fonts.AddFont("MauiMaterialAssets.ttf", "MaterialAssets");
             });
 
         // ----- Services (HARNESS §6 rule 1 — single source of truth) -----

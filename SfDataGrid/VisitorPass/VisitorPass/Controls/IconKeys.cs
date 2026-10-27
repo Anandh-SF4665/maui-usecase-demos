@@ -19,7 +19,7 @@ public static class IconKeys
     public const string Home = "\ue88a";            // home
     public const string Dashboard = "\ue9d0";       // dashboard
     public const string List = "\ue896";            // view_list
-    public const string Group = "\ue7ef";           // group
+    public const string Group = "\ue71a";           // group
     public const string Person = "\ue7fd";          // person
     public const string PersonAdd = "\ue7fe";       // person_add
     public const string Search = "\ue8b6";          // search

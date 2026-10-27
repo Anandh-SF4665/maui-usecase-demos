@@ -98,6 +98,14 @@ public partial class DashboardViewModel : BaseViewModel
         RecomputeAll();
     }
 
+    public List<Brush> PurposeBrushes { get; } =
+    [
+        new SolidColorBrush(Color.FromArgb("#1456CC")),
+        new SolidColorBrush(Color.FromArgb("#3B68E7")),
+        new SolidColorBrush(Color.FromArgb("#A8B8F0")),
+        new SolidColorBrush(Color.FromArgb("#0A8A55"))
+    ];
+
     private void OnVisitorsChanged(object? sender, Visitor? e)
         => RecomputeAll();
 

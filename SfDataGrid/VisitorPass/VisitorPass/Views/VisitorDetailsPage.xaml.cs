@@ -50,13 +50,6 @@ public partial class VisitorDetailsPage : ContentPage
         if (passId is not null)
             _viewModel.SetPassId(passId);
 
-        if (this.FindTopNavBar() is { } navBar)
-        {
-            navBar.ThemeToggleClicked += OnThemeToggleClicked;
-            navBar.IsDarkMode = _theme.IsDarkMode;
-            _theme.PropertyChanged += OnThemePropertyChanged;
-        }
-
         if (this.FindSideNavigation() is { } sidebar)
             sidebar.NavItemClicked += OnSidebarNavItemClicked;
     }
@@ -67,15 +60,6 @@ public partial class VisitorDetailsPage : ContentPage
         // the chosen route isn't the current one.
         await Navigation.PopToRootAsync();
         // (No need to push anything else — the root IS the Dashboard.)
-    }
-
-    private void OnThemeToggleClicked(object? sender, EventArgs e)
-        => _theme.Toggle();
-
-    private void OnThemePropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (this.FindTopNavBar() is { } navBar && e.PropertyName == nameof(ThemeService.IsDarkMode))
-            navBar.IsDarkMode = _theme.IsDarkMode;
     }
 
     // ===== Operational Controls & Status Actions =====

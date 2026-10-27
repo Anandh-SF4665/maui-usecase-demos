@@ -37,10 +37,7 @@ public partial class DirectoryPage : ContentPage
 
         if (this.FindTopNavBar() is { } navBar)
         {
-            navBar.RegisterClicked += OnRegisterClicked;
-            navBar.ThemeToggleClicked += OnThemeToggleClicked;
-            navBar.IsDarkMode = _theme.IsDarkMode;
-            _theme.PropertyChanged += OnThemePropertyChanged;
+            this.RegisterClicked += OnRegisterClicked;
         }
 
         if (this.FindSideNavigation() is { } sidebar)
@@ -61,6 +58,13 @@ public partial class DirectoryPage : ContentPage
         //}
     }
 
+    public event EventHandler? RegisterClicked;
+
+    private void SfButton_Clicked(object sender, EventArgs e)
+    {
+        RegisterClicked?.Invoke(this, EventArgs.Empty);
+    }
+
     private async void OnRegisterClicked(object? sender, EventArgs e)
         => await OpenRegistrationAsync();
 
@@ -77,15 +81,6 @@ public partial class DirectoryPage : ContentPage
             await OpenVisitorDetailsAsync(visitor);
         };
         await Navigation.PushAsync(page);
-    }
-
-    private void OnThemeToggleClicked(object? sender, EventArgs e)
-        => _theme.Toggle();
-
-    private void OnThemePropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (this.FindTopNavBar() is { } navBar && e.PropertyName == nameof(ThemeService.IsDarkMode))
-            navBar.IsDarkMode = _theme.IsDarkMode;
     }
 
     private async void OnCellTapped(object? sender, DataGridCellTappedEventArgs e)

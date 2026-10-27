@@ -2,33 +2,9 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
-             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Toolkit.TextInputLayout;assembly=Syncfusion.Maui.Toolkit"
              x:Class="VisitorPass.Controls.TopNavBar">
-
-    <!--
-        Top navigation bar (VP-022 + VP-080).
-
-        Used at the top of every screen (Dashboard, Directory,
-        Details). Properties:
-
-            Title               (string)  - shown on every idiom
-            Subtitle            (string?) - full label on desktop /
-                                            tablet; truncated on phone
-            ShowRegisterButton  (bool)    - false hides the trigger
-                                            entirely. The button shows
-                                            in the header on desktop /
-                                            tablet; the FAB on phone.
-            ShowThemeToggle     (bool)    - false hides the theme
-                                            toggle button (default true).
-            IsDarkMode          (bool)    - drives the toggle's icon
-                                            (sun vs. moon). Set by the
-                                            page from ThemeService.
-
-        Raises:
-            RegisterClicked    - tapped the Register trigger.
-            ThemeToggleClicked - tapped the sun/moon toggle. Page
-                                 forwards this to ThemeService.
-    -->
+    
     <Grid ColumnDefinitions="*,Auto,Auto"
           ColumnSpacing="10"
           Padding="0,0,0,12">
@@ -47,64 +23,142 @@
                    LineBreakMode="TailTruncation" />
         </VerticalStackLayout>
 
-        <!-- Theme toggle (sun in dark mode = "switch to light";
-             moon in light mode = "switch to dark"). Hidden on phone
-             to keep the trigger cluster readable on narrow widths. -->
-        <Border Grid.Column="1"
-                BackgroundColor="{StaticResource SurfaceAlt}"
-                Stroke="{StaticResource Border}"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 16"
-                Padding="10,6"
-                VerticalOptions="Center"
-                IsVisible="{Binding ShowThemeToggle, Source={RelativeSource AncestorType={x:Type ContentView}}}">
-            <Border.GestureRecognizers>
-                <TapGestureRecognizer x:Name="ThemeTrigger" />
-            </Border.GestureRecognizers>
-            <Label Text="{Binding ThemeToggleGlyph, Source={RelativeSource AncestorType={x:Type ContentView}}}"
-                   FontFamily="OpenSansSemibold"
+        <Grid HeightRequest="72"
+      Padding="20,12"
+      ColumnSpacing="16"
+      ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto">
+
+            <!-- Title -->
+            <Label Grid.Column="0"
+           Text="Visitor Command Center"
+           FontSize="20"
+           FontAttributes="Bold"
+           TextColor="#1E293B"
+           VerticalOptions="Center"/>
+
+            <!-- Separator -->
+            <BoxView Grid.Column="0"
+             HorizontalOptions="End"
+             WidthRequest="1"
+             HeightRequest="24"
+             Color="#E5E7EB"
+             Margin="20,0,-8,0"
+             VerticalOptions="Center"/>
+
+            <!-- Office -->
+            <Border Grid.Column="1"
+            BackgroundColor="#F8FAFC"
+            Stroke="#E2E8F0"
+            Padding="14,8"
+            StrokeShape="RoundRectangle 12">
+
+                <HorizontalStackLayout Spacing="8">
+
+                    <Ellipse WidthRequest="10"
+                     HeightRequest="10"
+                     Fill="#22C55E"
+                     VerticalOptions="Center"/>
+
+                    <Label Text="Central Office"
                    FontSize="14"
-                   TextColor="{StaticResource TextPrimary}"
-                   VerticalOptions="Center"
-                   HorizontalOptions="Center" />
-        </Border>
+                   TextColor="#334155"
+                   VerticalOptions="Center"/>
 
-        <!-- Register trigger.
-             Desktop / Tablet: header pill (RegisterVisitorPill style).
-             Phone: floating action button anchored bottom-right.
-             Both raise the same Tapped event handled in code-behind. -->
-        <buttons:SfButton Grid.Column="2"
-                          Background="{StaticResource Primary}"
-                          CornerRadius="12"
-                          WidthRequest="140"
-                          Padding="14,9"
-                          HorizontalTextAlignment="Center"
-                          Clicked="SfButton_Clicked"
-                          IsVisible="{Binding ShowRegisterButton, Source={RelativeSource AncestorType={x:Type ContentView}}}">
-            <buttons:SfButton.Content>
-                <DataTemplate>
-                    <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
-                        <Border BackgroundColor="{StaticResource PrimaryDark}"
-                            StrokeThickness="0"
-                            StrokeShape="RoundRectangle 11"
-                            WidthRequest="22"
-                            HeightRequest="22">
-                            <Label Text="{x:Static controls:IconKeys.Add}"
-                               FontFamily="MauiMaterialAssets"
-                               TextColor="White"
-                               FontSize="14"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"/>
-                        </Border>
+                    <Label Text="⌄"
+                   FontSize="14"
+                   TextColor="#64748B"
+                   VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+            </Border>
 
-                        <Label Text="Register Visitor"
-                           TextColor="White"
-                           FontFamily="OpenSansSemibold"
-                           FontSize="11"
-                           VerticalOptions="Center"/>
-                    </HorizontalStackLayout>
-                </DataTemplate>
-            </buttons:SfButton.Content>
-        </buttons:SfButton>
+            <!-- Date -->
+            <Border Grid.Column="2"
+            BackgroundColor="#F8FAFC"
+            Stroke="#E2E8F0"
+            Padding="14,8"
+            StrokeShape="RoundRectangle 12">
+
+                <HorizontalStackLayout Spacing="8">
+
+                    <Label Text="📅"
+                   FontSize="14"/>
+
+                    <Label Text="Thursday, Oct 24, 2024"
+                   FontSize="14"
+                   FontAttributes="Bold"
+                   TextColor="#475569"/>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Search -->
+            <syncfusion:SfTextInputLayout Grid.Column="3"
+                                  ContainerType="Outlined"
+                                  HeightRequest="44"
+                                  Hint="Quick search badges, guests">
+
+                <syncfusion:SfTextInputLayout.LeadingView>
+                    <Label Text="⌕"
+                   FontSize="16"
+                   VerticalTextAlignment="Center"/>
+                </syncfusion:SfTextInputLayout.LeadingView>
+
+                <Entry Placeholder="Quick search badges, guests"
+               FontSize="14"/>
+            </syncfusion:SfTextInputLayout>
+
+            <!-- Notification -->
+            <Grid Grid.Column="4"
+          WidthRequest="40"
+          HeightRequest="40">
+
+                <Label Text="🔔"
+               FontSize="20"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"/>
+
+                <Border WidthRequest="10"
+                HeightRequest="10"
+                BackgroundColor="#EF4444"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 5"
+                HorizontalOptions="End"
+                VerticalOptions="Start"/>
+            </Grid>
+
+            <!-- User -->
+            <HorizontalStackLayout Grid.Column="5"
+                           Spacing="12">
+
+                <VerticalStackLayout Spacing="0"
+                             VerticalOptions="Center">
+
+                    <Label Text="Sarah Jenkins"
+                   FontSize="14"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="End"/>
+
+                    <Label Text="Facility Admin"
+                   FontSize="12"
+                   TextColor="#64748B"
+                   HorizontalTextAlignment="End"/>
+                </VerticalStackLayout>
+
+                <Border WidthRequest="42"
+                HeightRequest="42"
+                BackgroundColor="#2563EB"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 21">
+
+                    <Label Text="👤"
+                   TextColor="White"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+                </Border>
+
+            </HorizontalStackLayout>
+
+        </Grid>
+        
+        
     </Grid>
 </ContentView>

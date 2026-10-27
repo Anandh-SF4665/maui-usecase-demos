@@ -52,14 +52,18 @@ public partial class DashboardPage : ContentPage
 
         if (this.FindTopNavBar() is { } navBar)
         {
-            navBar.RegisterClicked += OnRegisterClicked;
-            navBar.ThemeToggleClicked += OnThemeToggleClicked;
-            navBar.IsDarkMode = _theme.IsDarkMode;
-            _theme.PropertyChanged += OnThemePropertyChanged;
+            this.RegisterClicked += OnRegisterClicked;
         }
 
         if (this.FindSideNavigation() is { } sidebar)
             sidebar.NavItemClicked += OnSidebarNavItemClicked;
+    }
+
+    public event EventHandler? RegisterClicked;
+
+    private void SfButton_Clicked(object sender, EventArgs e)
+    {
+        RegisterClicked?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>Sidebar nav handler — pushes the chosen page via plain
@@ -88,15 +92,6 @@ public partial class DashboardPage : ContentPage
             DirectoryViewModel.Route => _services.GetRequiredService<DirectoryPage>(),
             _ => null,
         };
-    }
-
-    private void OnThemeToggleClicked(object? sender, EventArgs e)
-        => _theme.Toggle();
-
-    private void OnThemePropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (this.FindTopNavBar() is { } navBar && e.PropertyName == nameof(ThemeService.IsDarkMode))
-            navBar.IsDarkMode = _theme.IsDarkMode;
     }
 
     /// <summary>VP-UI register trigger — opens the SfPopup. The popup's

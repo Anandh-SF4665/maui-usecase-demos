@@ -31,7 +31,7 @@
              x:Class="VisitorPass.Views.VisitorDetailsPage"
              x:DataType="vm:VisitorDetailsViewModel"
              Title="Digital Visitor Pass"
-             BackgroundColor="{StaticResource SurfaceAlt}">
+             BackgroundColor="{StaticResource Surface}">
 
     <Grid ColumnDefinitions="{OnIdiom Desktop='232,*', Phone='0,*'}"
           ColumnSpacing="0">
