@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Syncfusion.Maui.DataGrid;
+using ChipSelectionChangedEventArgs = Syncfusion.Maui.Core.Chips.SelectionChangedEventArgs;
 using VisitorPass.Controls;
 using VisitorPass.Models;
 using VisitorPass.Services;
@@ -81,15 +82,19 @@ public partial class DirectoryPage : ContentPage
         await Navigation.PushAsync(page);
     }
 
-    private async void OnCellTapped(object? sender, DataGridCellTappedEventArgs e)
+    private void OnStatusChipSelectionChanged(object? sender, ChipSelectionChangedEventArgs e)
     {
-        if (e.RowData is not Visitor visitor)
+        if (BindingContext is not DirectoryViewModel viewModel)
             return;
 
-        if (BindingContext is DirectoryViewModel vm)
-            vm.SelectedVisitor = visitor;
+        if (e.AddedItem is DirectoryViewModel.StatusFilter filter)
+            viewModel.SelectStatusCommand.Execute(filter);
+    }
 
-        await OpenVisitorDetailsAsync(visitor);
+    private void OnCellTapped(object? sender, DataGridCellTappedEventArgs e)
+    {
+        if (e.RowData is Visitor visitor && BindingContext is DirectoryViewModel viewModel)
+            viewModel.SelectedVisitor = visitor;
     }
 
     /// <summary>

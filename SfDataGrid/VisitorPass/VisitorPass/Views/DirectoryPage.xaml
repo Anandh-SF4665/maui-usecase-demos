@@ -27,7 +27,7 @@
              xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
              xmlns:sfgrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
              xmlns:barcode="clr-namespace:Syncfusion.Maui.Barcode;assembly=Syncfusion.Maui.Barcode"
-             xmlns:chip="clr-namespace:Syncfusion.Maui.Toolkit.Chips;assembly=Syncfusion.Maui.Toolkit"
+             xmlns:chip="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              x:Class="VisitorPass.Views.DirectoryPage"
              x:DataType="vm:DirectoryViewModel"
@@ -335,34 +335,38 @@
         <!--    SelectStatusCommand.        -->
         <!-- ============================== -->
             <chip:SfChipGroup
+                    x:Name="StatusChipGroup"
                     Grid.Row="2"
                     ItemsSource="{Binding StatusFilters}"
                     DisplayMemberPath="Label"
                     ChipType="Choice"
                     ChoiceMode="Single"
-                    SelectedItem="{Binding SelectedStatusFilter, Mode=TwoWay}"
-                    ChipPadding="6,8"
-                    HorizontalOptions="Start">
-                
-                    <!--<chip:SfChipGroup.ItemTemplate>
-                        <DataTemplate>
-                            <chip:SfChip>
-                                <chip:SfChip.Content>
-                                    <Label Text="{Binding Label}" />
-                                </chip:SfChip.Content>
-                            </chip:SfChip>
-                        </DataTemplate>
-                    </chip:SfChipGroup.ItemTemplate>-->
-
-
-                    <!--<chip:SfChipGroup.Style>
-                    <Sfchip:ChipStyle
-                        Background="#F5F6FA"
-                        SelectedBackground="{StaticResource Primary}"
-                        TextColor="{StaticResource TextSecondary}"
-                        SelectedTextColor="{StaticResource White}" />
-                </chip:SfChipGroup.Style>-->
-
+                    ChipPadding="10,8"
+                    HorizontalOptions="Start"
+                    SelectionChanged="OnStatusChipSelectionChanged"
+                    x:DataType="vm:DirectoryViewModel">
+                <chip:SfChipGroup.ItemTemplate>
+                    <DataTemplate x:DataType="vm:DirectoryViewModel+StatusFilter">
+                        <chip:SfChip Text="{Binding Label}">
+                            <chip:SfChip.Triggers>
+                                <DataTrigger TargetType="chip:SfChip"
+                                             Binding="{Binding IsSelected}"
+                                             Value="True">
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                    <Setter Property="TextColor" Value="{StaticResource White}" />
+                                    <Setter Property="FontFamily" Value="OpenSansSemibold" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="chip:SfChip"
+                                             Binding="{Binding IsSelected}"
+                                             Value="False">
+                                    <Setter Property="BackgroundColor" Value="{StaticResource SurfaceAlt}" />
+                                    <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+                                    <Setter Property="FontFamily" Value="OpenSansRegular" />
+                                </DataTrigger>
+                            </chip:SfChip.Triggers>
+                        </chip:SfChip>
+                    </DataTemplate>
+                </chip:SfChipGroup.ItemTemplate>
             </chip:SfChipGroup>
 
         <!-- ============================== -->
@@ -441,12 +445,17 @@
                                                    Width="160">
                                 <sfgrid:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:Visitor">
-                                        <Label Text="{Binding Purpose}"
-                                       VerticalOptions="Center"
-                                       HorizontalOptions="Start"
-                                       FontFamily="OpenSansRegular"
-                                       FontSize="11"
-                                       TextColor="{StaticResource TextSecondary}" />
+                                        <Border BackgroundColor="{StaticResource PrimaryLight}"
+                                                StrokeThickness="0"
+                                                Padding="10,6"
+                                                HorizontalOptions="Start"
+                                                VerticalOptions="Center"
+                                                StrokeShape="RoundRectangle 12">
+                                            <Label Text="{Binding Purpose}"
+                                                   FontFamily="OpenSansSemibold"
+                                                   FontSize="10"
+                                                   TextColor="{StaticResource Primary}" />
+                                        </Border>
                                     </DataTemplate>
                                 </sfgrid:DataGridTemplateColumn.CellTemplate>
                             </sfgrid:DataGridTemplateColumn>
@@ -458,12 +467,17 @@
                                                    Visible="{OnIdiom Phone=False, Default=True}">
                                 <sfgrid:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:Visitor">
-                                        <Label Text="{Binding VisitTime, StringFormat='{hh:mm}'}"
-                                       VerticalOptions="Center"
-                                       HorizontalOptions="Center"
-                                       FontFamily="OpenSansRegular"
-                                       FontSize="11"
-                                       TextColor="{StaticResource TextSecondary}" />
+                                        <Border BackgroundColor="{StaticResource SurfaceAlt}"
+                                                StrokeThickness="0"
+                                                Padding="10,6"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center"
+                                                StrokeShape="RoundRectangle 12">
+                                            <Label Text="{Binding VisitTime, StringFormat='{0:hh\\:mm}'}"
+                                                   FontFamily="OpenSansSemibold"
+                                                   FontSize="10"
+                                                   TextColor="{StaticResource TextSecondary}" />
+                                        </Border>
                                     </DataTemplate>
                                 </sfgrid:DataGridTemplateColumn.CellTemplate>
                             </sfgrid:DataGridTemplateColumn>
@@ -489,35 +503,12 @@
                             <sfgrid:DataGridTemplateColumn HeaderText="Status"
                                                    MappingName="Status"
                                                    HeaderTextAlignment="Start"
-                                                   Width="180">
+                                                   Width="140">
                                 <sfgrid:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:Visitor">
-                                        <Border
-                                        BackgroundColor="{Binding StatusBackgroundBrushKey}"
-                                        StrokeThickness="0"
-                                        Padding="12,8"
-                                        StrokeShape="RoundRectangle 20">
-
-                                            <HorizontalStackLayout Spacing="8">
-
-                                                <!-- Status Dot -->
-                                                <Border
-                                                    WidthRequest="8"
-                                                    HeightRequest="8"
-                                                    BackgroundColor="{Binding StatusBrushKey}"
-                                                    StrokeThickness="0"
-                                                    StrokeShape="RoundRectangle 5"
-                                                    VerticalOptions="Center" />
-
-                                                <!-- Status Text -->
-                                                <Label
-                                                    Text="{Binding Status}"
-                                                    FontSize="12"
-                                                    TextColor="{Binding StatusDisplayLabel}"
-                                                    VerticalOptions="Center" />
-
-                                            </HorizontalStackLayout>
-                                        </Border>
+                                        <controls:VisitorStatusBadge Status="{Binding Status}"
+                                                                     VerticalOptions="Center"
+                                                                     HorizontalOptions="Start" />
                                     </DataTemplate>
                                 </sfgrid:DataGridTemplateColumn.CellTemplate>
                             </sfgrid:DataGridTemplateColumn>
