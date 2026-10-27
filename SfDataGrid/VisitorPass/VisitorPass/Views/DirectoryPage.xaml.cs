@@ -27,13 +27,11 @@ public partial class DirectoryPage : ContentPage
 
     public DirectoryPage(
         DirectoryViewModel viewModel,
-        IServiceProvider services,
-        ThemeService theme)
+        IServiceProvider services)
     {
         InitializeComponent();
         BindingContext = viewModel;
         _services = services;
-        _theme = theme;
 
         if (this.FindTopNavBar() is { } navBar)
         {
@@ -112,6 +110,5 @@ public partial class DirectoryPage : ContentPage
         => Navigation.PushAsync(
             new VisitorDetailsPage(
                 _services.GetRequiredService<VisitorDetailsViewModel>(),
-                _theme,
                 passId: visitor.PassId));
 }

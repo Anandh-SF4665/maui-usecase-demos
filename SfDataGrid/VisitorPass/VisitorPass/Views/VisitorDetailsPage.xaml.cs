@@ -39,13 +39,11 @@ public partial class VisitorDetailsPage : ContentPage
 
     public VisitorDetailsPage(
         VisitorDetailsViewModel viewModel,
-        ThemeService theme,
         string? passId = null)
     {
         InitializeComponent();
         BindingContext = viewModel;
         _viewModel = viewModel;
-        _theme = theme;
 
         if (passId is not null)
             _viewModel.SetPassId(passId);

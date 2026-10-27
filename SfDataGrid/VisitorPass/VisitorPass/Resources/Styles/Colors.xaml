@@ -168,11 +168,13 @@
     <Color x:Key="ChartExpected">#3B82F6</Color>
     <Color x:Key="ChartCheckedIn">#10B981</Color>
     <Color x:Key="ChartCheckedOut">#6B7280</Color>
+    <Color x:Key="ChartCancelled">#dc2626</Color>
     <Color x:Key="ChartOverdue">#F59E0B</Color>
 
     <SolidColorBrush x:Key="ChartExpectedBrush" Color="{StaticResource ChartExpected}" />
     <SolidColorBrush x:Key="ChartCheckedInBrush" Color="{StaticResource ChartCheckedIn}" />
     <SolidColorBrush x:Key="ChartCheckedOutBrush" Color="{StaticResource ChartCheckedOut}" />
+    <SolidColorBrush x:Key="ChartCancelledBrush" Color="{StaticResource ChartCancelled}" />
     <SolidColorBrush x:Key="ChartOverdueBrush" Color="{StaticResource ChartOverdue}" />
 
 </ResourceDictionary>

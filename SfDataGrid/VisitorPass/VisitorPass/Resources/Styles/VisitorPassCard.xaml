@@ -118,6 +118,7 @@
     <Style x:Key="KpiValue" TargetType="Label">
         <Setter Property="FontFamily" Value="OpenSansSemibold" />
         <Setter Property="FontSize" Value="26" />
+        <Setter Property="HorizontalOptions" Value="End" />
         <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
         <Setter Property="LineBreakMode" Value="NoWrap" />
     </Style>

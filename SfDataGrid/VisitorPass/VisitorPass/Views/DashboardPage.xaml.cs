@@ -37,19 +37,15 @@ public partial class DashboardPage : ContentPage
     public const string VisitorIdQueryKey = "passId";
 
     private readonly IServiceProvider _services;
-    private readonly ThemeService _theme;
 
     public DashboardPage(
         DashboardViewModel viewModel,
-        IServiceProvider services,
-        ThemeService theme)
+        IServiceProvider services)
     {
         InitializeComponent();
         BindingContext = viewModel;
         TodayGrid.CellTapped += OnTodayGridCellTapped;
         _services = services;
-        _theme = theme;
-
         if (this.FindTopNavBar() is { } navBar)
         {
             this.RegisterClicked += OnRegisterClicked;
@@ -131,7 +127,6 @@ public partial class DashboardPage : ContentPage
             await Navigation.PushAsync(
                 new VisitorDetailsPage(
                     _services.GetRequiredService<VisitorDetailsViewModel>(),
-                    _theme,
                     passId: visitor.PassId));
         };
     }
@@ -177,7 +172,6 @@ public partial class DashboardPage : ContentPage
         await Navigation.PushAsync(
             new VisitorDetailsPage(
                 _services.GetRequiredService<VisitorDetailsViewModel>(),
-                _theme,
                 passId: visitor.PassId));
     }
 }

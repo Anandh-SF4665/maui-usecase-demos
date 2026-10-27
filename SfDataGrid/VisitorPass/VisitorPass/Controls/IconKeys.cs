@@ -20,9 +20,9 @@ public static class IconKeys
     public const string Dashboard = "\ue9d0";       // dashboard
     public const string List = "\ue896";            // view_list
     public const string Group = "\ue71a";           // group
-    public const string Person = "\ue7fd";          // person
+    public const string Person = "\ue71b";          // person
     public const string PersonAdd = "\ue7fe";       // person_add
-    public const string Search = "\ue8b6";          // search
+    public const string Search = "\ue715";          // search
     public const string MoreVert = "\ue5d4";        // more_vert
     public const string Settings = "\ue8b8";        // settings
     public const string Notifications = "\ue7f4";   // notifications

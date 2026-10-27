@@ -161,10 +161,19 @@
                 <Label Text="Visitor Status Roster" Style="{StaticResource SectionTitle}" />
                 <Label Grid.Row="1" Text="Real-time occupancy status breakdown" FontSize="11" TextColor="{StaticResource TextMuted}" />
                 <Grid Grid.Row="2" RowDefinitions="*,Auto" RowSpacing="8">
-                  <chart:SfCircularChart HeightRequest="{OnIdiom Desktop=242, Phone=210}" Background="{StaticResource SurfaceBrush}">
+                  <chart:SfCircularChart HeightRequest="{OnIdiom Desktop=242, Phone=210}"
+                                         Background="{StaticResource SurfaceBrush}">
                     <chart:SfCircularChart.Series>
-                      <chart:DoughnutSeries ItemsSource="{Binding StatusBreakdown}" XBindingPath="Label" YBindingPath="Count"
-                                            InnerRadius="0.7" EnableTooltip="True" Stroke="White" StrokeWidth="2" />
+                      <chart:DoughnutSeries ItemsSource="{Binding StatusBreakdown}" 
+                                            XBindingPath="Label"
+                                            YBindingPath="Count"
+                                            InnerRadius="0.7"
+                                            StartAngle="0"
+                                            EndAngle="360"
+                                            PaletteBrushes="{Binding PurposeBrushes}"
+                                            EnableTooltip="True"
+                                            Stroke="White"
+                                            StrokeWidth="2" />
                     </chart:SfCircularChart.Series>
                   </chart:SfCircularChart>
                   <Border Grid.Row="0" Stroke="Transparent" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Transparent" InputTransparent="True">
@@ -176,7 +185,7 @@
                       <Label Text="Logged Today" FontSize="9" TextColor="{StaticResource TextSecondary}" HorizontalTextAlignment="Center" />
                     </VerticalStackLayout>
                   </Border>
-                  <Grid Grid.Row="1" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="6">
+                  <Grid Grid.Row="1" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="6">
                     <Border Grid.Row="0" Style="{StaticResource StatusLegendPill}" BackgroundColor="{StaticResource StatusCheckedOutBg}">
                       <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="5">
                         <Ellipse WidthRequest="7" HeightRequest="7" Fill="{StaticResource ChartCheckedOutBrush}" VerticalOptions="Center" />
@@ -205,7 +214,14 @@
                         <Label Grid.Column="2" Text="{Binding Stats.OverdueVisitors}" FontSize="9" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
                       </Grid>
                     </Border>
-                  </Grid>
+                    <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource StatusLegendPill}" BackgroundColor="{StaticResource StatusCancelledBg}">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="5">
+                            <Ellipse WidthRequest="7" HeightRequest="7" Fill="{StaticResource ChartCancelled}" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="Cancelled" FontSize="9" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="{Binding Stats.Cancelled}" FontSize="9" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </Grid>
                 </Grid>
               </Grid>
             </Border>

@@ -100,10 +100,12 @@ public partial class DashboardViewModel : BaseViewModel
 
     public List<Brush> PurposeBrushes { get; } =
     [
-        new SolidColorBrush(Color.FromArgb("#1456CC")),
-        new SolidColorBrush(Color.FromArgb("#3B68E7")),
-        new SolidColorBrush(Color.FromArgb("#A8B8F0")),
-        new SolidColorBrush(Color.FromArgb("#0A8A55"))
+        new SolidColorBrush(Color.FromArgb("#F59E0B")), // Overdue
+        new SolidColorBrush(Color.FromArgb("#10B981")), // Checked In
+        new SolidColorBrush(Color.FromArgb("#6B7280")), // Checked Out
+        new SolidColorBrush(Color.FromArgb("#3B82F6")), // Expected
+        new SolidColorBrush(Color.FromArgb("#DC2626")),  // Cancelled
+        
     ];
 
     private void OnVisitorsChanged(object? sender, Visitor? e)
@@ -116,10 +118,11 @@ public partial class DashboardViewModel : BaseViewModel
 
         // 1. KPI snapshot.
         Stats = new VisitorStats(
-            ExpectedVisitors: CountWhere(visitors, v => v.Status == VisitorStatus.Expected),
-            CheckedIn: CountWhere(visitors, v => v.Status == VisitorStatus.CheckedIn),
-            CheckedOut: CountWhere(visitors, v => v.Status == VisitorStatus.CheckedOut),
-            OverdueVisitors: CountWhere(visitors, v => v.Status == VisitorStatus.Overdue));
+                ExpectedVisitors: CountWhere(visitors, v => v.Status == VisitorStatus.Expected),
+                CheckedIn: CountWhere(visitors, v => v.Status == VisitorStatus.CheckedIn),
+                CheckedOut: CountWhere(visitors, v => v.Status == VisitorStatus.CheckedOut),
+                Cancelled: CountWhere(visitors, v => v.Status == VisitorStatus.Cancelled),
+                OverdueVisitors: CountWhere(visitors, v => v.Status == VisitorStatus.Overdue));
 
         // 2. Donut chart series — always 5 rows.
         ReplaceWith(StatusBreakdown, Enum

@@ -15,39 +15,12 @@
                    FontFamily="OpenSansSemibold"
                    FontSize="22"
                    TextColor="{StaticResource TextPrimary}" />
-            <Label Text="{Binding Subtitle, Source={RelativeSource AncestorType={x:Type ContentView}}}"
-                   FontFamily="OpenSansRegular"
-                   FontSize="11"
-                   TextColor="{StaticResource TextSecondary}"
-                   LineBreakMode="TailTruncation" />
         </VerticalStackLayout>
 
         <Grid Grid.Column="1"
               ColumnDefinitions="Auto,Auto,Auto,*,Auto"
               ColumnSpacing="12"
               VerticalOptions="Center">
-
-            <Border Grid.Column="0"
-                    BackgroundColor="{StaticResource Surface}"
-                    Stroke="{StaticResource Border}"
-                    StrokeThickness="1"
-                    Padding="14,8"
-                    StrokeShape="RoundRectangle 14"
-                    VerticalOptions="Center">
-                <HorizontalStackLayout Spacing="8">
-                    <BoxView WidthRequest="10" HeightRequest="10" Color="{StaticResource StatusCheckedIn}" VerticalOptions="Center" />
-                    <Label Text="Central Office"
-                           FontFamily="OpenSansRegular"
-                           FontSize="14"
-                           TextColor="{StaticResource TextPrimary}"
-                           VerticalOptions="Center" />
-                    <Label Text="⌄"
-                           FontFamily="OpenSansRegular"
-                           FontSize="12"
-                           TextColor="{StaticResource TextMuted}"
-                           VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </Border>
 
             <Border Grid.Column="1"
                     BackgroundColor="{StaticResource Surface}"
@@ -57,13 +30,8 @@
                     StrokeShape="RoundRectangle 14"
                     VerticalOptions="Center">
                 <HorizontalStackLayout Spacing="8">
-                    <Label Text="{x:Static controls:IconKeys.Event}"
-                           FontFamily="MauiMaterialAssets"
-                           FontSize="14"
-                           TextColor="{StaticResource TextMuted}"
-                           VerticalOptions="Center" />
-                    <Label Text="Thursday, Oct 24, 2024"
-                           FontFamily="OpenSansSemibold"
+                    <Image Source="calender.png" HeightRequest="14" WidthRequest="14" />
+                    <Label Text="{Binding CurrentDate, Source={RelativeSource AncestorType={x:Type ContentView}}, StringFormat='{0:dddd, MMM dd, yyyy}'}"
                            FontSize="14"
                            TextColor="{StaticResource TextPrimary}"
                            VerticalOptions="Center" />
@@ -73,8 +41,10 @@
             <Border Grid.Column="2"
                     BackgroundColor="{StaticResource Surface}"
                     Stroke="{StaticResource Border}"
+                    Margin="0,4,0,0"
+                    HeightRequest="40"
                     StrokeThickness="1"
-                    Padding="12,7"
+                    Padding="8,0"
                     StrokeShape="RoundRectangle 14"
                     VerticalOptions="Center">
                 <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
@@ -83,13 +53,13 @@
                            FontSize="14"
                            TextColor="{StaticResource TextMuted}"
                            VerticalOptions="Center" />
-                    <controls:SfEntry Placeholder="Quick search badges, guests (Ctrl+K)"
+                    <controls:SfEntry Placeholder="Quick search badges, guests.. "
                                       Text="{Binding SearchText}"
                                       FontFamily="OpenSansRegular"
                                       FontSize="13"
                                       TextColor="{StaticResource TextPrimary}"
                                       PlaceholderColor="{StaticResource TextMuted}"
-                                      HorizontalOptions="FillAndExpand"
+                                      HorizontalOptions="Fill"
                                       BackgroundColor="Transparent"
                                       VerticalTextAlignment="Center" />
                 </HorizontalStackLayout>
@@ -101,21 +71,6 @@
                   ColumnDefinitions="Auto,Auto"
                   ColumnSpacing="12"
                   VerticalOptions="Center">
-                <Grid WidthRequest="36" HeightRequest="36" VerticalOptions="Center">
-                    <Label Text="{x:Static controls:IconKeys.Notifications}"
-                           FontFamily="MauiMaterialAssets"
-                           FontSize="20"
-                           TextColor="{StaticResource TextPrimary}"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center" />
-                    <Border WidthRequest="8"
-                            HeightRequest="8"
-                            BackgroundColor="{StaticResource StatusCancelled}"
-                            StrokeThickness="0"
-                            StrokeShape="RoundRectangle 4"
-                            HorizontalOptions="End"
-                            VerticalOptions="Start" />
-                </Grid>
 
                 <HorizontalStackLayout Grid.Column="1"
                                        Spacing="10"
@@ -140,8 +95,8 @@
                             BackgroundColor="{StaticResource Primary}"
                             StrokeThickness="0"
                             StrokeShape="RoundRectangle 20">
-                        <Label Text="SJ"
-                               FontFamily="OpenSansSemibold"
+                        <Label Text="{x:Static controls:IconKeys.Person}"
+                               FontFamily="MaterialAssets"
                                TextColor="{StaticResource White}"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />

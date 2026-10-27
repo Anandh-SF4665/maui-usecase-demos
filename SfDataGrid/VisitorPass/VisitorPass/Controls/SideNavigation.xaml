@@ -10,7 +10,7 @@
             Padding="18,22,18,22">
 
         <Grid RowSpacing="18"
-              RowDefinitions="Auto,Auto,*,Auto">
+              RowDefinitions="Auto,*">
 
             <!-- ==================================================
                  1. Brand block
@@ -37,23 +37,12 @@
             </HorizontalStackLayout>
 
             <!-- ==================================================
-                 2. NAVIGATION eyebrow
-                 ================================================== -->
-            <Label Grid.Row="1"
-                   Text="NAVIGATION"
-                   FontFamily="OpenSansSemibold"
-                   FontSize="9"
-                   CharacterSpacing="2"
-                   Margin="2,8,0,0"
-                   TextColor="{StaticResource TextMuted}" />
-
-            <!-- ==================================================
-                 3. Nav items - Command Center + Visitor Directory.
+                 2. Nav items - Command Center + Visitor Directory.
                  Each tile's BackgroundColor + the inner label's
                  font / colour flip via DataTriggers keyed off
                  the Bindable ActiveRoute property.
                  ================================================== -->
-            <VerticalStackLayout Grid.Row="2" Spacing="4">
+            <VerticalStackLayout Grid.Row="1" Spacing="4">
 
                 <!-- Command Center tile -->
                 <Border BackgroundColor="{StaticResource Primary}"
@@ -90,19 +79,16 @@
                                     <Setter Property="StrokeThickness" Value="1" />
                                 </DataTrigger>
                             </Border.Triggers>
-                            <Label Text="&#x25A6;"
-                                   FontSize="12"
-                                   TextColor="{StaticResource White}"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center">
-                                <Label.Triggers>
-                                    <DataTrigger TargetType="Label"
+                            <Image Source="dashboard.png" HeightRequest="12" WidthRequest="12">
+                                <Image.Triggers>
+                                    <DataTrigger TargetType="Image"
                                                  Binding="{Binding ActiveRoute, Source={x:Reference Root}}"
                                                  Value="directory">
-                                        <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+                                        <Setter Property="Source"
+                                                Value="dashboard_inactive.png" />
                                     </DataTrigger>
-                                </Label.Triggers>
-                            </Label>
+                                </Image.Triggers>
+                            </Image>
                         </Border>
                         <Label Text="Command Center"
                                FontFamily="OpenSansSemibold"

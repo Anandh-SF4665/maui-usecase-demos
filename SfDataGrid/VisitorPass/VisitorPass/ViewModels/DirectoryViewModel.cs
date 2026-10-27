@@ -66,6 +66,11 @@ public partial class DirectoryViewModel : BaseViewModel
     public int CheckedInVisitors => _store.Visitors.Count(visitor => visitor.Status == VisitorStatus.CheckedIn);
     public int OverdueVisitors => _store.Visitors.Count(visitor => visitor.Status == VisitorStatus.Overdue);
 
+    public int CheckedOutVisitors => _store.Visitors.Count(visitor => visitor.Status == VisitorStatus.CheckedOut);
+
+    public int CancelledVisitors => _store.Visitors.Count(visitor => visitor.Status == VisitorStatus.Cancelled);
+
+
     /// <summary>
     /// Currently focused row in the directory grid. The Active Dossier
     /// preview card at the bottom of the page binds to this property

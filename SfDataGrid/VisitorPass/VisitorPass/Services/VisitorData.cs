@@ -30,7 +30,7 @@ public static class VisitorData
         "#10B981", // CheckedIn
         "#3B82F6", // Expected
         "#F59E0B", // Overdue
-        "#EF4444", // Cancelled
+        "#DC2626", // Cancelled
         "#6B7280", // CheckedOut
         "#3F38B8", // PrimaryDark
     };

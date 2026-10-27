@@ -17,6 +17,8 @@ public partial class TopNavBar : ContentView
     public static readonly BindableProperty ShowRegisterButtonProperty = BindableProperty.Create(
         nameof(ShowRegisterButton), typeof(bool), typeof(TopNavBar), defaultValue: true);
 
+    public DateTime CurrentDate { get; set; } = DateTime.Now.Date;
+
     /// <summary>Title text — large headline.</summary>
     public string Title
     {
