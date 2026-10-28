@@ -392,8 +392,8 @@
     </Grid>
 
     <sfpopup:SfPopup x:Name="RegisterPopup" ShowHeader="False" ShowFooter="False" ShowCloseButton="True"
-                     Opened="OnRegisterPopupOpened" WidthRequest="{OnIdiom Desktop=640, Phone=340}"
-                     AutoSizeMode="Height">
+                     Closed="OnRegisterPopupClosed" Opened="OnRegisterPopupOpened"
+                     WidthRequest="{OnIdiom Desktop=640, Phone=340}" AutoSizeMode="Height">
       <sfpopup:SfPopup.PopupStyle>
         <sfpopup:PopupStyle StrokeThickness="0" CornerRadius="{OnIdiom Default=16, Phone=24}" />
       </sfpopup:SfPopup.PopupStyle>

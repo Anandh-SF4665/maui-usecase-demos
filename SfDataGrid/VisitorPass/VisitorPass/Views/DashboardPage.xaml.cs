@@ -37,6 +37,9 @@ public partial class DashboardPage : ContentPage
     public const string VisitorIdQueryKey = "passId";
 
     private readonly IServiceProvider _services;
+    private RegisterVisitorView? _activeRegisterView;
+    private EventHandler? _registerDismissHandler;
+    private EventHandler<Visitor>? _passGeneratedHandler;
 
     public DashboardPage(
         DashboardViewModel viewModel,
@@ -118,17 +121,35 @@ public partial class DashboardPage : ContentPage
         // PopupView's child tree and bind the same VM to it.
         var view = FindRegisterVisitorView(popup);
         if (view is null) return;
-        view.BindingContext = vm;
 
-        view.DismissRequested += (_, _) => popup.IsOpen = false;
-        view.PassGenerated += async (_, visitor) =>
+        if (_activeRegisterView is not null)
+        {
+            if (_registerDismissHandler is not null)
+                _activeRegisterView.DismissRequested -= _registerDismissHandler;
+            if (_passGeneratedHandler is not null)
+                _activeRegisterView.PassGenerated -= _passGeneratedHandler;
+        }
+
+        _activeRegisterView = view;
+        view.BindingContext = vm;
+        _registerDismissHandler = (_, _) => popup.IsOpen = false;
+        _passGeneratedHandler = async (_, visitor) =>
         {
             popup.IsOpen = false;
+            await DisplayAlert("Pass Created", $"Visitor pass {visitor.PassId} was created successfully.", "Continue");
             await Navigation.PushAsync(
                 new VisitorDetailsPage(
                     _services.GetRequiredService<VisitorDetailsViewModel>(),
-                    passId: visitor.PassId));
+                    visitor.PassId));
         };
+        view.DismissRequested += _registerDismissHandler;
+        view.PassGenerated += _passGeneratedHandler;
+    }
+
+    private void OnRegisterPopupClosed(object? sender, EventArgs e)
+    {
+        if (sender is SfPopup popup && FindRegisterVisitorView(popup) is { } view)
+            view.BindingContext = null;
     }
 
     /// <summary>Walks <paramref name="popup"/>'s child tree for the
@@ -172,6 +193,6 @@ public partial class DashboardPage : ContentPage
         await Navigation.PushAsync(
             new VisitorDetailsPage(
                 _services.GetRequiredService<VisitorDetailsViewModel>(),
-                passId: visitor.PassId));
+                visitor.PassId));
     }
 }

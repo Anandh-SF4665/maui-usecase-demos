@@ -203,8 +203,9 @@ public partial class RegisterVisitorViewModel : BaseViewModel
             ValidationErrors.Add("Host is required.");
         if (string.IsNullOrWhiteSpace(Purpose))
             ValidationErrors.Add("Purpose is required.");
-        if (string.IsNullOrWhiteSpace(ContactNumber))
-            ValidationErrors.Add("Contact number is required.");
+        var digitsOnlyContact = new string((ContactNumber ?? string.Empty).Where(char.IsDigit).ToArray());
+        if (digitsOnlyContact.Length != 10)
+            ValidationErrors.Add("Contact number must contain exactly 10 digits.");
         return ValidationErrors.Count == 0;
     }
 

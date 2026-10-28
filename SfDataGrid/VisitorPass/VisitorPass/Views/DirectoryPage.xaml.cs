@@ -49,12 +49,8 @@ public partial class DirectoryPage : ContentPage
             return; // already here
         // Pop back to root then push the target page so we don't
         // stack duplicates (uses Navigation, not Shell).
-        await Navigation.PopToRootAsync();
-        //if (route == DashboardViewModel.Route
-        //    && Navigation.NavigationStack[^1].GetType() != typeof(DashboardPage))
-        //{
-        //    await Navigation.PushAsync(_services.GetRequiredService<DashboardPage>());
-        //}
+        if (route == DashboardViewModel.Route)
+            await Navigation.PopToRootAsync();
     }
 
     public event EventHandler? RegisterClicked;
@@ -91,10 +87,13 @@ public partial class DirectoryPage : ContentPage
             viewModel.SelectStatusCommand.Execute(filter);
     }
 
-    private void OnCellTapped(object? sender, DataGridCellTappedEventArgs e)
+    private async void OnCellTapped(object? sender, DataGridCellTappedEventArgs e)
     {
-        if (e.RowData is Visitor visitor && BindingContext is DirectoryViewModel viewModel)
-            viewModel.SelectedVisitor = visitor;
+        if (e.RowData is not Visitor visitor || BindingContext is not DirectoryViewModel viewModel)
+            return;
+
+        viewModel.SelectedVisitor = visitor;
+        await OpenVisitorDetailsAsync(visitor);
     }
 
     /// <summary>
@@ -115,5 +114,5 @@ public partial class DirectoryPage : ContentPage
         => Navigation.PushAsync(
             new VisitorDetailsPage(
                 _services.GetRequiredService<VisitorDetailsViewModel>(),
-                passId: visitor.PassId));
+                visitor.PassId));
 }
