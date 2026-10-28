@@ -37,11 +37,13 @@ public static class IconKeys
     public const string Timeline = "\ue922";        // timeline
     public const string ShowChart = "\ue6e1";        // show_chart
     public const string Refresh = "\ue5d5";         // refresh
-    public const string Assessment = "\ue85e";      // assessment
+    public const string Assessment = "\ue748";      // assessment
     public const string TrendingUp = "\ue8e5";      // trending_up
     public const string TrendingDown = "\ue8e4";    // trending_down
 
     // Visitors / pass / status
+
+    public const string Clock = "\ue71e";           // clock
     public const string Event = "\ue774";            // event
     public const string EventAvailable = "\ue614";   // event_available
     public const string EventNote = "\ue861";        // event_note
@@ -86,12 +88,12 @@ public static class IconKeys
     public const string Lock = "\ue77b";            // lock
     public const string LockOpen = "\ue898";        // lock_open
     public const string Visibility = "\ue8f4";     // visibility
-    public const string Block = "\ue14b";           // block
+    public const string Block = "\ue79e";           // block
 
     // Status indicators
     public const string Warning = "\ue002";         // warning
     public const string Error = "\ue000";           // error
-    public const string Info = "\ue88e";            // info
+    public const string Info = "\ue78f";            // info
     public const string ScheduleSend = "\ue5a1";    // schedule_send
     public const string EventBusy = "\ue615";       // event_busy
     public const string History = "\ue889";         // history

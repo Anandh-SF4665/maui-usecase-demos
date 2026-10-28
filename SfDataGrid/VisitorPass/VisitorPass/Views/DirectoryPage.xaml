@@ -80,9 +80,7 @@
         <!-- 1. TopNavBar (no register)     -->
         <!-- ============================== -->
         <controls:TopNavBar Grid.Row="0"
-                            Title="Visitor Directory"
                             ShowTitle="False"
-                            Subtitle="Search and filter every visit"
                             ShowRegisterButton="False" />
 
         <!-- ============================== -->
@@ -505,7 +503,7 @@
                             <sfgrid:DataGridTemplateColumn HeaderText="Status"
                                                    MappingName="Status"
                                                    HeaderTextAlignment="Start"
-                                                   Width="160">
+                                                   Width="200">
                                 <sfgrid:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:Visitor">
                                         <controls:VisitorStatusBadge Status="{Binding Status}"
