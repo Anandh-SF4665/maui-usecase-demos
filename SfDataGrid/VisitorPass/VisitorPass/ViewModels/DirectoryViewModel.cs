@@ -51,6 +51,7 @@ public partial class DirectoryViewModel : BaseViewModel
     /// <summary>Filtered visitor list bound to the SfDataGrid.</summary>
     public ObservableCollection<Visitor> FilteredVisitors { get; } = new();
 
+
     [ObservableProperty]
     private string _searchText = string.Empty;
 
@@ -103,6 +104,9 @@ public partial class DirectoryViewModel : BaseViewModel
 
         Rebuild();
     }
+
+    public double GridHeight =>
+            42 + (FilteredVisitors?.Count ?? 0) * 56;
 
     /// <summary>
     /// Raised when the user taps a status chip. Sets

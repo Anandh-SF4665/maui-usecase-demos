@@ -39,6 +39,20 @@ public partial class VisitorStatusBadge : ContentView
         set => SetValue(StatusProperty, value);
     }
 
+    public static readonly BindableProperty BackgroundKeyProperty =
+    BindableProperty.Create(
+        nameof(BackgroundKey),
+        typeof(string),
+        typeof(VisitorStatusBadge),
+        string.Empty,
+        propertyChanged: OnStatusChanged);
+
+    public string BackgroundKey
+    {
+        get => (string)GetValue(BackgroundKeyProperty);
+        set => SetValue(BackgroundKeyProperty, value);
+    }
+
     public VisitorStatusBadge()
     {
         InitializeComponent();
@@ -58,6 +72,16 @@ public partial class VisitorStatusBadge : ContentView
         // The badge's BackgroundColor is the pale shade (background
         // brush). The inner Label sets its own foreground (white)
         // for contrast — see VisitorStatusBadge.xaml.
-        // Badge.BackgroundColor = (Color)Resources[Status.BackgroundBrushKey()];
+        if (Application.Current?.Resources.TryGetValue(BackgroundKey, out var resource) == true)
+        {
+            if (resource is Color color)
+            {
+                Badge.BackgroundColor = color;
+            }
+            else if (resource is SolidColorBrush brush)
+            {
+                Badge.BackgroundColor = brush.Color;
+            }
+        }
     }
 }

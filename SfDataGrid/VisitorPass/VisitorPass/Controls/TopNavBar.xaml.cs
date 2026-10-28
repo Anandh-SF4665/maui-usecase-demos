@@ -17,6 +17,19 @@ public partial class TopNavBar : ContentView
     public static readonly BindableProperty ShowRegisterButtonProperty = BindableProperty.Create(
         nameof(ShowRegisterButton), typeof(bool), typeof(TopNavBar), defaultValue: true);
 
+    public static readonly BindableProperty ShowTitleProperty =
+    BindableProperty.Create(
+        nameof(ShowTitle),
+        typeof(bool),
+        typeof(TopNavBar),
+        true);
+
+    public bool ShowTitle
+    {
+        get => (bool)GetValue(ShowTitleProperty);
+        set => SetValue(ShowTitleProperty, value);
+    }
+
     public DateTime CurrentDate { get; set; } = DateTime.Now.Date;
 
     /// <summary>Title text — large headline.</summary>
@@ -32,6 +45,7 @@ public partial class TopNavBar : ContentView
         get => (string?)GetValue(SubtitleProperty);
         set => SetValue(SubtitleProperty, value);
     }
+
 
     /// <summary>When true the "Register Visitor" trigger is shown.</summary>
     public bool ShowRegisterButton

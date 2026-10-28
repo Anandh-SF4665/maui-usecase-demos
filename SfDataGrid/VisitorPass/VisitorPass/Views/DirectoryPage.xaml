@@ -81,6 +81,7 @@
         <!-- ============================== -->
         <controls:TopNavBar Grid.Row="0"
                             Title="Visitor Directory"
+                            ShowTitle="False"
                             Subtitle="Search and filter every visit"
                             ShowRegisterButton="False" />
 
@@ -353,8 +354,8 @@
                                              Binding="{Binding IsSelected}"
                                              Value="True">
                                     <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
-                                    <Setter Property="TextColor" Value="{StaticResource White}" />
-                                    <Setter Property="FontFamily" Value="OpenSansSemibold" />
+                                    <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+                                    <Setter Property="FontFamily" Value="OpenSansRegular" />
                                 </DataTrigger>
                                 <DataTrigger TargetType="chip:SfChip"
                                              Binding="{Binding IsSelected}"
@@ -372,22 +373,22 @@
         <!-- ============================== -->
         <!-- 4. SfDataGrid OR EmptyState    -->
         <!-- ============================== -->
-        <Grid Grid.Row="3">
+                <Grid Grid.Row="3">
 
-            <!-- The data grid is the default. -->
+                    <!-- The data grid is the default. -->
                     <sfgrid:SfDataGrid x:Name="VisitorGrid"
-                               ItemsSource="{Binding FilteredVisitors}"
-                               AutoGenerateColumnsMode="None"
-                               SelectionMode="Single"
-                               ColumnWidthMode="Auto"
-                               HeaderRowHeight="42"
-                               RowHeight="64"
-                               VerticalScrollBarVisibility="Never"
-                               HorizontalScrollBarVisibility="Never"
-                               HeightRequest="500"
-                               GridLinesVisibility="Horizontal"
-                               DefaultStyle="{StaticResource DirectoryGridStyle}"
-                               CellTapped="OnCellTapped">
+                                       ItemsSource="{Binding FilteredVisitors}"
+                                       AutoGenerateColumnsMode="None"
+                                       SelectionMode="Single"
+                                       ColumnWidthMode="Auto"
+                                       HeaderRowHeight="42"
+                                       RowHeight="56"
+                                       VerticalScrollBarVisibility="Never"
+                                       HorizontalScrollBarVisibility="Never"
+                                       HeightRequest="{Binding GridHeight}"
+                                       GridLinesVisibility="Horizontal"
+                                       DefaultStyle="{StaticResource DirectoryGridStyle}"
+                                       CellTapped="OnCellTapped">
 
                         <sfgrid:SfDataGrid.Columns>
 
@@ -442,7 +443,7 @@
                             <sfgrid:DataGridTemplateColumn HeaderText="Purpose"
                                                    MappingName="Purpose"
                                                    HeaderTextAlignment="Start"
-                                                   Width="160">
+                                                   Width="120">
                                 <sfgrid:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:Visitor">
                                         <Border BackgroundColor="{StaticResource PrimaryLight}"
@@ -484,17 +485,18 @@
 
                             <!-- Pass ID (hidden on phone). -->
                             <sfgrid:DataGridTemplateColumn HeaderText="Pass ID"
-                                                   MappingName="PassId"
-                                                   Width="150"
-                                                   Visible="{OnIdiom Phone=False, Default=True}">
+                                                           HeaderTextAlignment="Center"
+                                                           MappingName="PassId"
+                                                           Width="180"
+                                                           Visible="{OnIdiom Phone=False, Default=True}">
                                 <sfgrid:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:Visitor">
                                         <Label Text="{Binding PassId}"
-                                       VerticalOptions="Center"
-                                       HorizontalOptions="Start"
-                                       FontFamily="OpenSansSemibold"
-                                       FontSize="11"
-                                       TextColor="{StaticResource Primary}" />
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="Center"
+                                               FontFamily="OpenSansSemibold"
+                                               FontSize="11"
+                                               TextColor="{StaticResource Primary}" />
                                     </DataTemplate>
                                 </sfgrid:DataGridTemplateColumn.CellTemplate>
                             </sfgrid:DataGridTemplateColumn>
@@ -503,10 +505,11 @@
                             <sfgrid:DataGridTemplateColumn HeaderText="Status"
                                                    MappingName="Status"
                                                    HeaderTextAlignment="Start"
-                                                   Width="140">
+                                                   Width="160">
                                 <sfgrid:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="models:Visitor">
                                         <controls:VisitorStatusBadge Status="{Binding Status}"
+                                                                     BackgroundKey="{Binding StatusBackgroundBrushKey}"
                                                                      VerticalOptions="Center"
                                                                      HorizontalOptions="Start" />
                                     </DataTemplate>
@@ -516,14 +519,7 @@
                     </sfgrid:SfDataGrid>
                 </Grid>
 
-            <!--
-                Empty state — shown when filters exclude every visitor.
-            -->
-            <controls:EmptyState IsVisible="{Binding HasNoResults}"
-                                 Title="No visitors match your filters"
-                                 Message="Try clearing the search box or selecting a different status." />
-
-            <!-- ============================== -->
+                <!-- ============================== -->
             <!-- 4b. Active Dossier preview      -->
             <!-- ============================== -->
             <Border Grid.Row="4"

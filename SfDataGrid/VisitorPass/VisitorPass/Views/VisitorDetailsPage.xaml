@@ -763,11 +763,6 @@
 
                 </Grid>
 
-                <!-- Empty state when no visitor is loaded. -->
-                <controls:EmptyState Title="No visitor selected"
-                                     Message="Tap any visitor in the directory or today's activity grid to view their digital pass."
-                                     IsVisible="{Binding HasVisitor, Converter={StaticResource InvertBoolConverter}}" />
-
             </VerticalStackLayout>
         </ScrollView>
     </Grid>

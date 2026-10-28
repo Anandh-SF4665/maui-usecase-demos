@@ -3,44 +3,53 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              x:Class="VisitorPass.Controls.VisitorStatusBadge">
-
-    <!--
-        Reusable status pill (VP-020).
-
-        Wraps Syncfusion SfBadgeView. Consumers set exactly one
-        property, Status; the wrapper handles:
-
-          - The correct foreground / background brush via the
-            StaticResource keys returned by
-            VisitorStatus.BrushKey() / BackgroundBrushKey()
-            (see VisitorStatus.cs). Code-behind resolves those keys
-            on StatusProperty change because the keys are functions
-            of the runtime Status property.
-
-          - Per-idiom label: full Display() on desktop / tablet, the
-            compact Short() on phone. Implemented as two Label
-            elements switched by OnIdiom.IsVisible so the idiom
-            check stays in XAML (per AGENTS.md).
-    -->
+    
     <core:SfBadgeView x:Name="Badge"
-                      Padding="10,4"
+                      HeightRequest="30"
+                      WidthRequest="90"
                       HorizontalOptions="Center"
                       VerticalOptions="Center">
-        <Grid>
-            <!-- Desktop / Tablet: full label. -->
-            <Label Text="{Binding Status, Source={RelativeSource AncestorType={x:Type ContentView}}, Converter={StaticResource VisitorStatusToDisplayLabelConverter}}"
-                   TextColor="{StaticResource White}"
+        <core:SfBadgeView.Content>
+            <Grid>
+                 <!--Desktop / Tablet: full label.--> 
+                <Label Text="{Binding Status, Source={RelativeSource AncestorType={x:Type ContentView}}, Converter={StaticResource VisitorStatusToDisplayLabelConverter}}"
+                   TextColor="{StaticResource TextSecondary}"
                    FontFamily="OpenSansSemibold"
                    FontSize="11"
+                   VerticalTextAlignment="Center"
                    HorizontalTextAlignment="Center"
                    IsVisible="{OnIdiom Phone=False, Default=True}" />
-            <!-- Phone: compact label. -->
-            <Label Text="{Binding Status, Source={RelativeSource AncestorType={x:Type ContentView}}, Converter={StaticResource VisitorStatusToShortLabelConverter}}"
-                   TextColor="{StaticResource White}"
+                 <!--Phone: compact label.--> 
+                <Label Text="{Binding Status, Source={RelativeSource AncestorType={x:Type ContentView}}, Converter={StaticResource VisitorStatusToShortLabelConverter}}"
+                       TextColor="{StaticResource TextSecondary}"
+                       FontFamily="OpenSansSemibold"
+                       FontSize="11"
+                       HorizontalTextAlignment="Center"
+                       IsVisible="{OnIdiom Phone=True, Default=False}" />
+            </Grid>
+        </core:SfBadgeView.Content>
+    </core:SfBadgeView>
+
+    <!--<Border Padding="10,4"
+            StrokeThickness="0"
+            StrokeShape="RoundRectangle 16"
+            BackgroundColor="{Binding BackgroundBrushKey}">
+
+        <HorizontalStackLayout Spacing="6">
+
+            <Label Text="{Binding BrushKey, Source={RelativeSource AncestorType={x:Type ContentView}}, Converter={StaticResource VisitorStatusToDisplayLabelConverter}}"
+                   FontFamily="MauiMaterialAssets"
+                   FontSize="12"
+                   TextColor="{Binding BrushKey}"
+                   VerticalOptions="Center"/>
+
+            <Label Text="{Binding status, Source={RelativeSource AncestorType={x:Type ContentView}}, Converter={StaticResource VisitorStatusToDisplayLabelConverter}}"
                    FontFamily="OpenSansSemibold"
                    FontSize="11"
-                   HorizontalTextAlignment="Center"
-                   IsVisible="{OnIdiom Phone=True, Default=False}" />
-        </Grid>
-    </core:SfBadgeView>
+                   TextColor="{Binding BrushKey}"
+                   VerticalOptions="Center"/>
+
+        </HorizontalStackLayout>
+
+    </Border>-->
 </ContentView>

@@ -42,7 +42,7 @@ public static class IconKeys
     public const string TrendingDown = "\ue8e4";    // trending_down
 
     // Visitors / pass / status
-    public const string Event = "\ue878";            // event
+    public const string Event = "\ue774";            // event
     public const string EventAvailable = "\ue614";   // event_available
     public const string EventNote = "\ue861";        // event_note
     public const string Place = "\ue55a";            // place
@@ -83,7 +83,7 @@ public static class IconKeys
     public const string Cancel = "\ue70e";          // cancel
     public const string Edit = "\ue756";            // edit
     public const string Delete = "\ue70f";          // delete
-    public const string Lock = "\ue897";            // lock
+    public const string Lock = "\ue77b";            // lock
     public const string LockOpen = "\ue898";        // lock_open
     public const string Visibility = "\ue8f4";     // visibility
     public const string Block = "\ue14b";           // block

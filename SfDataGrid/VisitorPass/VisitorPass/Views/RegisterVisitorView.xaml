@@ -1,199 +1,278 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--
-    Reusable ContentView carrying the registration form layout.
+<ContentView
+    x:Class="VisitorPass.Views.RegisterVisitorView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:VisitorPass.Controls;assembly=VisitorPass"
+    xmlns:vm="clr-namespace:VisitorPass.ViewModels;assembly=VisitorPass"
+    x:DataType="vm:RegisterVisitorViewModel">
 
-    Wrapped by:
-      - Views/RegisterVisitorPage.xaml  (ContentPage host, for any
-        future Navigation.PushModalAsync slide-up use).
-      - DashboardPage.xaml              (the two OnIdiom containers
-        in VP-073 — SfPopup on desktop/tablet, phone overlay on
-        phone). Both containers instantiate this view directly so
-        the form XAML exists exactly once.
+    <Border
+        BackgroundColor="{StaticResource Surface}"
+        Stroke="{StaticResource Border}"
+        StrokeShape="RoundRectangle 16"
+        Padding="0">
 
-    Step 1 — Visitor info (name, host Picker, purpose Picker,
-             contact, vehicle).
-    Step 2 — Schedule (DatePicker, TimePicker, duration Picker).
-    Step 3 — Pass-generated confirmation.
+        <Grid RowDefinitions="Auto,Auto,Auto">
 
-    Why Picker / DatePicker / TimePicker instead of Syncfusion
-    SfComboBox / SfDateTimePicker:
-      Syncfusion.Maui.Core 33.2.15 and Syncfusion.Maui.Toolkit
-      1.0.11 don't ship those controls in this version. The
-      in-repo reference pattern (VisitorDetailsPage timeline +
-      pass-code label) matches this approach.
--->
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:VisitorPass.ViewModels;assembly=VisitorPass"
-             x:Class="VisitorPass.Views.RegisterVisitorView"
-             x:DataType="vm:RegisterVisitorViewModel">
+            <!-- HEADER -->
 
-    <Border BackgroundColor="{StaticResource Surface}"
-            Stroke="{StaticResource Border}"
-            StrokeThickness="1"
-            StrokeShape="RoundRectangle 12"
-            Padding="20">
-        <Grid RowSpacing="14"
-              RowDefinitions="Auto,*,Auto">
+            <Grid
+                Grid.Row="0"
+                Padding="24,20"
+                ColumnDefinitions="*,Auto">
 
-            <!-- ====================================================
-                 Header — eyebrow + step heading
-                 ==================================================== -->
-            <VerticalStackLayout Grid.Row="0" Spacing="4">
-                <Label Text="REGISTRATION"
-                       FontFamily="OpenSansSemibold"
-                       FontSize="11"
-                       CharacterSpacing="1.5"
-                       TextColor="{StaticResource Primary}" />
-                <Label Text="{Binding StepHeading}"
-                       FontFamily="OpenSansSemibold"
-                       FontSize="18"
-                       TextColor="{StaticResource TextPrimary}" />
-            </VerticalStackLayout>
+                <HorizontalStackLayout
+                    Spacing="12"
+                    VerticalOptions="Center">
 
-            <!-- ====================================================
-                 Step body
-                 ==================================================== -->
+                    <Label
+                        Text="{x:Static controls:IconKeys.Badge}"
+                        FontFamily="MauiMaterialAssets"
+                        FontSize="18"
+                        TextColor="{StaticResource Primary}" />
+
+                    <Label
+                        Text="Visitor Information"
+                        Style="{StaticResource SectionTitle}" />
+                </HorizontalStackLayout>
+            </Grid>
+
+            <!-- CONTENT -->
+
             <ScrollView Grid.Row="1">
-                <VerticalStackLayout Spacing="14">
 
-                    <!-- Error banner (only visible when ValidationErrors has rows). -->
-                    <Border BackgroundColor="{StaticResource StatusCancelledBg}"
-                            StrokeShape="RoundRectangle 8"
-                            StrokeThickness="0"
-                            Padding="12"
-                            IsVisible="{Binding ValidationErrors.Count, Converter={StaticResource IntToBoolConverter}}">
-                        <CollectionView ItemsSource="{Binding ValidationErrors}"
-                                        SelectionMode="None">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="x:String">
-                                    <Label Text="{Binding}"
-                                           TextColor="{StaticResource StatusCancelledBrush}"
-                                           FontFamily="OpenSansRegular"
-                                           FontSize="11" />
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </Border>
+                <VerticalStackLayout
+                    Padding="24,0,24,24"
+                    Spacing="24">
 
-                    <!-- Step 1 — Visitor info. -->
-                    <VerticalStackLayout Spacing="10"
-                                         IsVisible="{Binding CurrentStep, Converter={StaticResource IntEqualsConverter}, ConverterParameter=1}">
-                        <Label Text="Visitor Information" Style="{StaticResource SectionTitle}" />
+                    <!-- VISITOR INFORMATION -->
 
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="Visitor Name" Style="{StaticResource SectionEyebrow}" />
-                            <Entry Text="{Binding VisitorName}" Placeholder="e.g. Anu Kumar" />
+                    <Grid
+                        ColumnDefinitions="*,*"
+                        RowDefinitions="Auto,Auto"
+                        ColumnSpacing="18"
+                        RowSpacing="18">
+
+                        <!-- Visitor Name -->
+
+                        <VerticalStackLayout
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Spacing="6">
+
+                            <Label
+                                Text="Visitor Name"
+                                Style="{StaticResource SectionEyebrow}" />
+
+                            <Border BackgroundColor="{StaticResource SurfaceAlt}"
+                                    StrokeShape="RoundRectangle 4"
+                                    HeightRequest="34"
+                                    Padding="8,0">
+                                <controls:SfEntry
+                                    BackgroundColor="{StaticResource SurfaceAlt}"
+                                    Text="{Binding VisitorName}"
+                                    Placeholder="Enter Visitor Name" />
+                            </Border>
                         </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="Host" Style="{StaticResource SectionEyebrow}" />
-                            <Picker Title="Select host"
-                                    ItemsSource="{Binding HostOptions}"
-                                    SelectedItem="{Binding Host}" />
+                        <!-- Contact Number -->
+
+                        <VerticalStackLayout
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Spacing="6">
+
+                            <Label
+                                Text="Contact Number"
+                                Style="{StaticResource SectionEyebrow}" />
+                            <Border BackgroundColor="{StaticResource SurfaceAlt}"
+                                    StrokeShape="RoundRectangle 4"
+                                    HeightRequest="34"
+                                    Padding="8,0">
+                                <controls:SfEntry
+                                    Placeholder="Enter Contact Number"
+                                    BackgroundColor="{StaticResource SurfaceAlt}"
+                                    Text="{Binding ContactNumber}"
+                                    Keyboard="Telephone" />
+                            </Border>
                         </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="Purpose" Style="{StaticResource SectionEyebrow}" />
-                            <Picker Title="Select purpose"
-                                    ItemsSource="{Binding PurposeOptions}"
-                                    SelectedItem="{Binding Purpose}" />
+                        <!-- Host -->
+
+                        <VerticalStackLayout
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Spacing="6">
+
+                            <Label
+                                Text="Host Employee Escort"
+                                Style="{StaticResource SectionEyebrow}" />
+
+                            <Picker
+                                HeightRequest="42"
+                                ItemsSource="{Binding HostOptions}"
+                                SelectedItem="{Binding Host}" />
                         </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="Contact Number" Style="{StaticResource SectionEyebrow}" />
-                            <Entry Text="{Binding ContactNumber}" Placeholder="e.g. +91 98765 43210"
-                                   Keyboard="Telephone" />
+                        <!-- Purpose -->
+
+                        <VerticalStackLayout
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Spacing="6">
+
+                            <Label
+                                Text="Visit Purpose"
+                                Style="{StaticResource SectionEyebrow}" />
+
+                            <Picker
+                                HeightRequest="42"
+                                ItemsSource="{Binding PurposeOptions}"
+                                SelectedItem="{Binding Purpose}" />
                         </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="Vehicle Number (optional)" Style="{StaticResource SectionEyebrow}" />
-                            <Entry Text="{Binding VehicleNumber}" Placeholder="e.g. TN-01-AB-1234" />
-                        </VerticalStackLayout>
+                    </Grid>
+
+                    <!-- VEHICLE -->
+
+                    <VerticalStackLayout Spacing="8"
+                                         HeightRequest="54">
+
+                        <Label
+                            Text="Vehicle Number Plate"
+                            Style="{StaticResource SectionEyebrow}" />
+
+                        <Border BackgroundColor="{StaticResource SurfaceAlt}"
+                                StrokeShape="RoundRectangle 4"
+                                HeightRequest="34"
+                                Padding="8,0">
+                            <controls:SfEntry
+                                Placeholder="7XYZ88"
+                                BackgroundColor="{StaticResource SurfaceAlt}"
+                                Text="{Binding VehicleNumber}" />
+                        </Border>
+
                     </VerticalStackLayout>
 
-                    <!-- Step 2 — Schedule. -->
-                    <VerticalStackLayout Spacing="10"
-                                         IsVisible="{Binding CurrentStep, Converter={StaticResource IntEqualsConverter}, ConverterParameter=2}">
-                        <Label Text="Schedule" Style="{StaticResource SectionTitle}" />
 
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="Visit Date" Style="{StaticResource SectionEyebrow}" />
-                            <DatePicker Date="{Binding VisitDate}" />
+                    <!-- SCHEDULE HEADER -->
+
+                    <Grid
+                        ColumnDefinitions="*,Auto"
+                        Margin="0,4,0,0">
+
+                        <HorizontalStackLayout
+                            Spacing="10"
+                            VerticalOptions="Center">
+
+                            <Label
+                                Text="{x:Static controls:IconKeys.Event}"
+                                FontFamily="MauiMaterialAssets"
+                                TextColor="{StaticResource Primary}" />
+
+                            <Label
+                                Text="Schedule &amp; Authorization"
+                                Style="{StaticResource SectionTitle}" />
+                        </HorizontalStackLayout>
+
+                        <Label
+                            Grid.Column="1"
+                            Text="Timezone: UTC-5 (EST)"
+                            VerticalOptions="Center"
+                            TextColor="{StaticResource TextSecondary}" />
+
+                    </Grid>
+
+                    <!-- SCHEDULE -->
+
+                    <Grid
+                        ColumnDefinitions="Auto,*,Auto"
+                        ColumnSpacing="18">
+
+                        <VerticalStackLayout Spacing="6">
+
+                            <Label
+                                Text="Visit Date"
+                                Style="{StaticResource SectionEyebrow}" />
+
+                            <DatePicker
+                                HeightRequest="42"
+                                WidthRequest="180"
+                                Date="{Binding VisitDate}" />
                         </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="Visit Time" Style="{StaticResource SectionEyebrow}" />
-                            <TimePicker Time="{Binding VisitTime}" />
+                        <VerticalStackLayout
+                            Grid.Column="1"
+                            Spacing="6">
+
+                            <Label
+                                Text="Expected Time"
+                                Style="{StaticResource SectionEyebrow}" />
+
+                            <TimePicker
+                                HeightRequest="62"
+                                Time="{Binding VisitTime}" />
                         </VerticalStackLayout>
 
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="Expected Duration" Style="{StaticResource SectionEyebrow}" />
-                            <Picker Title="Select duration"
-                                    ItemsSource="{Binding DurationPresets}"
-                                    SelectedItem="{Binding ExpectedDurationMinutes}" />
+                        <VerticalStackLayout
+                            Grid.Column="2"
+                            Spacing="6">
+
+                            <Label
+                                Text="Pass Duration"
+                                Style="{StaticResource SectionEyebrow}" />
+
+                            <Picker
+                                HeightRequest="42"
+                                WidthRequest="120"
+                                ItemsSource="{Binding DurationPresets}"
+                                SelectedItem="{Binding ExpectedDurationMinutes}" />
                         </VerticalStackLayout>
-                    </VerticalStackLayout>
 
-                    <!-- Step 3 — Pass generated. -->
-                    <VerticalStackLayout Spacing="14"
-                                         HorizontalOptions="Center"
-                                         VerticalOptions="Center"
-                                         Margin="0,20,0,0"
-                                         IsVisible="{Binding CurrentStep, Converter={StaticResource IntEqualsConverter}, ConverterParameter=3}">
-                        <Label Text="PASS GENERATED"
-                               FontFamily="OpenSansSemibold"
-                               FontSize="12"
-                               CharacterSpacing="2"
-                               HorizontalTextAlignment="Center"
-                               TextColor="{StaticResource StatusCheckedIn}" />
-                        <Label Text="{Binding CreatedVisitor.PassId}"
-                               FontFamily="OpenSansSemibold"
-                               FontSize="22"
-                               HorizontalTextAlignment="Center"
-                               TextColor="{StaticResource TextPrimary}" />
-                        <Label Text="The visitor has been added to the directory and their pass is ready."
-                               FontFamily="OpenSansRegular"
-                               FontSize="11"
-                               HorizontalTextAlignment="Center"
-                               TextColor="{StaticResource TextMuted}" />
-                    </VerticalStackLayout>
-
+                    </Grid>
                 </VerticalStackLayout>
             </ScrollView>
 
-            <!-- ====================================================
-                 Action row — Next / Back / Generate / Cancel
-                 ==================================================== -->
-            <Grid Grid.Row="2" ColumnSpacing="10"
-                  ColumnDefinitions="{OnIdiom Desktop='*,*', Phone='Auto,*,*'}">
+            <!-- FOOTER -->
 
-                <Button Grid.Column="0"
-                        Text="Cancel"
-                        Style="{StaticResource ActionSecondaryButton}"
-                        Command="{Binding RequestCancelCommand}"
-                        HorizontalOptions="{OnIdiom Desktop=Start, Phone=Fill}" />
+            <Grid
+                Grid.Row="2"
+                BackgroundColor="{StaticResource SurfaceAlt}"
+                Padding="24,16"
+                ColumnDefinitions="*,Auto,Auto">
 
-                <Button Grid.Column="1"
-                        Text="Back"
-                        Style="{StaticResource ActionSecondaryButton}"
-                        IsVisible="{Binding CurrentStep, Converter={StaticResource IntGreaterThanConverter}, ConverterParameter=1}"
-                        Command="{Binding BackFromStep2Command}"
-                        HorizontalOptions="{OnIdiom Desktop=End, Phone=Fill}" />
+                <HorizontalStackLayout
+                    Spacing="8"
+                    VerticalOptions="Center">
 
-                <Button Grid.Column="2"
-                        Text="Next"
-                        Style="{StaticResource ActionPrimaryButton}"
-                        IsVisible="{Binding CurrentStep, Converter={StaticResource IntEqualsConverter}, ConverterParameter=1}"
-                        Command="{Binding NextFromStep1Command}"
-                        HorizontalOptions="{OnIdiom Desktop=End, Phone=Fill}" />
+                    <Label
+                        Text="{x:Static controls:IconKeys.Lock}"
+                        FontFamily="MauiMaterialAssets"
+                        TextColor="{StaticResource StatusCheckedIn}" />
 
-                <Button Grid.Column="2"
-                        Text="Generate Pass"
-                        Style="{StaticResource ActionPrimaryButton}"
-                        IsVisible="{Binding CurrentStep, Converter={StaticResource IntEqualsConverter}, ConverterParameter=2}"
-                        Command="{Binding SubmitCommand}"
-                        HorizontalOptions="{OnIdiom Desktop=End, Phone=Fill}" />
+                    <Label
+                        Text="Encrypted badge issuance"
+                        TextColor="{StaticResource TextSecondary}"
+                        FontSize="12" />
+                </HorizontalStackLayout>
+
+                <Button
+                    Grid.Column="1"
+                    HeightRequest="48"
+                    WidthRequest="80"
+                    Text="Cancel"
+                    Command="{Binding RequestCancelCommand}"
+                    Style="{StaticResource ActionSecondaryButton}" />
+
+                <Button
+                    Grid.Column="2"
+                    Margin="12,0,0,0"
+                    HeightRequest="48"
+                    WidthRequest="160"
+                    Text="Generate Visitor Pass"
+                    Command="{Binding SubmitCommand}"
+                    Style="{StaticResource ActionPrimaryButton}" />
 
             </Grid>
         </Grid>

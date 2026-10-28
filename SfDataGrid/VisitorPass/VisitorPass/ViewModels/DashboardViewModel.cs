@@ -98,6 +98,9 @@ public partial class DashboardViewModel : BaseViewModel
         RecomputeAll();
     }
 
+    public double GridHeight =>
+           34 + (TodayVisitors?.Count ?? 0) * 50;
+
     public List<Brush> PurposeBrushes { get; } =
     [
         new SolidColorBrush(Color.FromArgb("#F59E0B")), // Overdue

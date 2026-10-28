@@ -37,16 +37,16 @@ public sealed class PassCodeGenerator
     /// <returns>The new pass code, e.g. <c>VP-20260121-0001</c>.</returns>
     public string Next(DateTime? date = null)
     {
-        var stamp = (date ?? Clock()).Date;
-        var dayKey = stamp.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
-
         lock (_lock)
         {
-            _perDayCounter.TryGetValue(dayKey, out var seq);
+            _perDayCounter.TryGetValue("Counter", out var seq);
             seq += 1;
-            _perDayCounter[dayKey] = seq;
-            return string.Format(CultureInfo.InvariantCulture,
-                "VP-{0}-{1:D4}", dayKey, seq);
+            _perDayCounter["Counter"] = seq;
+
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "VP-{0:D4}",
+                seq);
         }
     }
 }

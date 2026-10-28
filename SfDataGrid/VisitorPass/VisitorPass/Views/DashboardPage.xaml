@@ -320,7 +320,7 @@
                                  HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never" ScrollingMode="Line"
                                  HeaderRowHeight="34" RowHeight="50" DefaultStyle="{StaticResource TodayGridStyle}"
                                  SelectionMode="Single" NavigationMode="Row" CellTapped="OnTodayGridCellTapped"
-                                 HeightRequest="{OnIdiom Desktop=442, Phone=390}">
+                                 HeightRequest="{Binding GridHeight}">
                 <sfgrid:SfDataGrid.Columns>
                   <sfgrid:DataGridTemplateColumn HeaderText="Visitor / Organization" MappingName="VisitorName" Width="200">
                     <sfgrid:DataGridTemplateColumn.CellTemplate>
@@ -393,7 +393,7 @@
 
     <sfpopup:SfPopup x:Name="RegisterPopup" ShowHeader="False" ShowFooter="False" ShowCloseButton="True"
                      Opened="OnRegisterPopupOpened" WidthRequest="{OnIdiom Desktop=640, Phone=340}"
-                     HeightRequest="{OnIdiom Desktop=640, Phone=560}">
+                     AutoSizeMode="Height">
       <sfpopup:SfPopup.PopupStyle>
         <sfpopup:PopupStyle StrokeThickness="0" CornerRadius="{OnIdiom Default=16, Phone=24}" />
       </sfpopup:SfPopup.PopupStyle>
