@@ -106,6 +106,7 @@
                      ======================================================= -->
                 <Grid IsVisible="{Binding HasVisitor}"
                       ColumnDefinitions="{OnIdiom Desktop='5*,7*', Phone='*'}"
+                      RowDefinitions="{OnIdiom Desktop='Auto,Auto,Auto', Phone='Auto,Auto,Auto,Auto,Auto'}"
                       ColumnSpacing="18">
 
                     <!-- ===============================================
@@ -388,17 +389,28 @@
                                         </HorizontalStackLayout>
                                     </Border>
                                 </Grid>
-                                <!-- Step spine (SfStepProgressBar) — full checkpoint cards
-                                     render inside StepTemplate so each card aligns to its node. -->
-                                <progressbar:SfStepProgressBar ItemsSource="{Binding Journey}"
+                                <!-- Step spine (SfStepProgressBar) — uses the
+                                     StepProgressBarItem-mirror collection; the
+                                     rich checkpoint cards render in a separate
+                                     CollectionView below, so both lists stay in
+                                     lockstep with the visitor's status. -->
+                                <progressbar:SfStepProgressBar ItemsSource="{Binding JourneySteps}"
                                                                Orientation="Vertical"
                                                                LabelPosition="End"
                                                                ShowToolTip="False"
                                                                ProgressAnimationDuration="0"
                                                                ProgressBarBackground="{StaticResource Border}"
                                                                HorizontalOptions="Fill"
-                                                               VerticalOptions="Start">
-                                    <progressbar:SfStepProgressBar.StepTemplate>
+                                                               VerticalOptions="Start" />
+
+                                <!-- Rich checkpoint cards (one per Journey entry).
+                                     Decoupled from SfStepProgressBar so the
+                                     control receives the strongly-typed items
+                                     it expects. -->
+                                <CollectionView ItemsSource="{Binding Journey}"
+                                                SelectionMode="None"
+                                                VerticalScrollBarVisibility="Never">
+                                    <CollectionView.ItemTemplate>
                                         <DataTemplate x:DataType="vm:JourneyCheckpoint">
                                             <Border BackgroundColor="{StaticResource SurfaceAlt}"
                                                     Stroke="{StaticResource Border}"
@@ -462,8 +474,8 @@
                                                 </VerticalStackLayout>
                                             </Border>
                                         </DataTemplate>
-                                    </progressbar:SfStepProgressBar.StepTemplate>
-                                </progressbar:SfStepProgressBar>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
                             </VerticalStackLayout>
                         </Border>
 

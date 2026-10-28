@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Syncfusion.Maui.ProgressBar;
@@ -94,6 +95,18 @@ public partial class VisitorDetailsViewModel : BaseViewModel, IQueryAttributable
     /// visitor's current status.
     /// </summary>
     public ObservableCollection<JourneyCheckpoint> Journey { get; } = new();
+
+    /// <summary>
+    /// Parallel collection of <see cref="Syncfusion.Maui.ProgressBar.StepProgressBarItem"/>
+    /// entries the <c>SfStepProgressBar</c> binds to. The control accepts only
+    /// <see cref="Syncfusion.Maui.ProgressBar.StepProgressBarItem"/> (or a
+    /// collection wired through <c>StepProgressBarMapping</c>) — see the
+    /// control's <c>OnItemsSourceChanged</c> path — so a custom-typed
+    /// collection such as <see cref="Journey"/> would silently render no
+    /// steps. We mirror <see cref="Journey"/> here so the bar's nodes
+    /// line up with the rich checkpoint cards.
+    /// </summary>
+    public ObservableCollection<StepProgressBarItem> JourneySteps { get; } = new();
 
     /// <summary>Number of checkpoints cleared (0-4), shown in the "3 Checkpoints Cleared" chip.</summary>
     public int CheckpointsCleared { get; private set; }
@@ -402,6 +415,7 @@ public partial class VisitorDetailsViewModel : BaseViewModel, IQueryAttributable
         Timeline.Clear();
         StepItems.Clear();
         Journey.Clear();
+        JourneySteps.Clear();
         if (Visitor is not { } v)
         {
             CheckpointsCleared = 0;
@@ -471,6 +485,21 @@ public partial class VisitorDetailsViewModel : BaseViewModel, IQueryAttributable
             "1h 45m Remaining",
             departedCompleted ? StepStatus.Completed
                 : StepStatus.NotStarted));
+
+        // Mirror the rich checkpoint list as StepProgressBarItem entries.
+        // The SfStepProgressBar only renders items of type
+        // StepProgressBarItem (or a collection wired through
+        // StepProgressBarMapping); passing a JourneyCheckpoint collection
+        // directly results in zero steps being drawn. Syncfusion's
+        // StepProgressBarItem.Status setter is internal in 33.2.15 — we
+        // reach it through reflection so the bar's node colours reflect
+        // each checkpoint's Completed / InProgress / NotStarted state.
+        foreach (var checkpoint in Journey)
+        {
+            var item = new StepProgressBarItem();
+            StepItemStatusAccessor.Set(item, checkpoint.Status);
+            JourneySteps.Add(item);
+        }
 
         CheckpointsCleared = (int)(
             (regCompleted ? 1 : 0)
@@ -580,6 +609,7 @@ public partial class VisitorDetailsViewModel : BaseViewModel, IQueryAttributable
         Timeline.Clear();
         StepItems.Clear();
         Journey.Clear();
+        JourneySteps.Clear();
         CheckpointsCleared = 0;
         _pendingPassId = null;
         NotifyDerived();
@@ -698,4 +728,27 @@ public sealed record JourneyCheckpoint(
 
     /// <summary>TRUE when this checkpoint has completed.</summary>
     public bool IsCompleted => Status == StepStatus.Completed;
+}
+
+/// <summary>
+/// Reflection shim for <see cref="StepProgressBarItem"/>.
+/// Syncfusion 33.2.15's <c>Status</c> setter is <c>internal</c>; the
+/// public <c>StepProgressBarItemMapping</c> only forwards
+/// <c>PrimaryText</c> / <c>SecondaryText</c> / <c>ImageSource</c>. To
+/// drive the bar's Completed / InProgress / NotStarted visuals from a
+/// custom checkpoint list, we set <c>Status</c> through the property's
+/// auto-generated setter. The setter is a plain CLR property — the
+/// reflection cost is a one-off cached lookup.
+/// </summary>
+internal static class StepItemStatusAccessor
+{
+    private static readonly PropertyInfo StatusProperty =
+        typeof(StepProgressBarItem).GetProperty(
+            "Status",
+            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+        ?? throw new InvalidOperationException(
+            "StepProgressBarItem.Status property not found; Syncfusion API changed.");
+
+    public static void Set(StepProgressBarItem item, StepStatus status)
+        => StatusProperty.SetValue(item, status);
 }
