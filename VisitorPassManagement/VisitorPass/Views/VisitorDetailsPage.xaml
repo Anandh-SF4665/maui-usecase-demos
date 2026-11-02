@@ -311,6 +311,25 @@
                                         </VerticalStackLayout>
                                     </Grid>
                                 </Border>
+
+                                <!-- Notes (only shown when the visitor
+                                     has a non-empty note attached). -->
+                                <Border BackgroundColor="{StaticResource SurfaceAlt}"
+                                        StrokeShape="RoundRectangle 14"
+                                        Padding="16,14"
+                                        IsVisible="{Binding Visitor.Notes, Converter={StaticResource StringNotEmptyToBoolConverter}}">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                        <Border Grid.Column="0" BackgroundColor="{StaticResource StatusExpectedBg}"
+                                                StrokeThickness="0" StrokeShape="RoundRectangle 11"
+                                                WidthRequest="22" HeightRequest="22" VerticalOptions="Start">
+                                            <Label Text="{x:Static controls:IconKeys.Assessment}" FontFamily="MauiMaterialAssets" FontSize="12" TextColor="{StaticResource StatusExpected}" HorizontalOptions="Center" VerticalOptions="Center" />
+                                        </Border>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                                            <Label Text="Visit Notes" FontFamily="OpenSansSemibold" FontSize="12" TextColor="{StaticResource TextPrimary}" />
+                                            <Label Text="{Binding Visitor.Notes}" FontFamily="OpenSansRegular" FontSize="11" TextColor="{StaticResource TextSecondary}" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Border>
                             </VerticalStackLayout>
                         </Border>
 
