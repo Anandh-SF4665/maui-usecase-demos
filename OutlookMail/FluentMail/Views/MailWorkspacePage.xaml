@@ -287,7 +287,7 @@
                             Grid.Column="2"
                             Background="#F3F0ED"
                             StrokeThickness="0"
-                            Padding="6,0"
+                            Padding="6,2"
                             HeightRequest="34"
                             HorizontalOptions="Start">
 
@@ -304,7 +304,7 @@
                                     DropDownBackground="White"
                                     SelectedDropDownItemBackground="#D7E8FB"
                                     TextColor="#1F3B5B"
-                                    FontSize="16"
+                                    FontSize="14"
                                     IsClearButtonVisible="False"
                                     IsDropDownShadowVisible="False" />
                         </Border>
@@ -379,7 +379,7 @@
                     <Border Grid.Row="0" WidthRequest="48" HeightRequest="40" VerticalOptions="Start" Stroke="#D1D1D1" StrokeThickness="1" StrokeShape="RoundRectangle 4" BackgroundColor="White">
                        <Label Text="To" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center" />
                     </Border>
-                    <editors:SfAutocomplete Grid.Row="0" Grid.Column="1" MinimumHeightRequest="40" VerticalOptions="Start" SelectedDropDownItemBackground="#D7E8FB"
+                    <editors:SfAutocomplete x:Name="DesktopTo" Grid.Row="0" Grid.Column="1" MinimumHeightRequest="40" VerticalOptions="Start" SelectedDropDownItemBackground="#D7E8FB"
                                             ItemsSource="{Binding Composer.DesktopContacts}" SelectionMode="Multiple" MultiSelectionDisplayMode="Token" TokensWrapMode="Wrap"
                                             SelectedItems="{Binding Composer.ToContacts, Mode=TwoWay}" Text="{Binding Composer.ToText, Mode=TwoWay}"
                                             DisplayMemberPath="Name" TextMemberPath="Name" ShowBorder="False" ShowSuggestionsOnFocus="True"
@@ -397,7 +397,7 @@
                     <Border Grid.Row="2" WidthRequest="48" HeightRequest="40" VerticalOptions="Start" Stroke="#D1D1D1" StrokeThickness="1" StrokeShape="RoundRectangle 4" BackgroundColor="White">
                         <Label Text="Cc" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center" />
                     </Border>
-                    <editors:SfAutocomplete Grid.Row="2" Grid.Column="1" MinimumHeightRequest="40" VerticalOptions="Start" SelectedDropDownItemBackground="#D7E8FB"
+                    <editors:SfAutocomplete x:Name="DesktopCc" Grid.Row="2" Grid.Column="1" MinimumHeightRequest="40" VerticalOptions="Start" SelectedDropDownItemBackground="#D7E8FB"
                                         ItemsSource="{Binding Composer.DesktopContacts}" SelectionMode="Multiple" MultiSelectionDisplayMode="Token" TokensWrapMode="Wrap"
                                         SelectedItems="{Binding Composer.CcContacts, Mode=TwoWay}" Text="{Binding Composer.CcText, Mode=TwoWay}"
                                         DisplayMemberPath="Name" TextMemberPath="Name" ShowBorder="False" ShowSuggestionsOnFocus="True"
@@ -417,8 +417,9 @@
                 <!-- Editor -->
                 <richtext:SfRichTextEditor Grid.Row="5"
                                            Grid.ColumnSpan="2"
+                                           x:Name="DesktopEditor"
                                            ShowToolbar="True"
-                                           EditorBackgroundColor="White" >
+                                           EditorBackgroundColor="White">
                     <richtext:SfRichTextEditor.ToolbarItems>
                         <!-- Define a custom set of toolbar items -->
                             <richtext:RichTextToolbarItem Type="Bold" />
@@ -592,6 +593,12 @@
                     </Grid>
                     <Label Text="{Binding OpenedMessage.Greeting}" FontSize="16" FontAttributes="Bold" />
                     <Label Text="{Binding OpenedMessage.Body}" FontSize="15" LineHeight="1.5" />
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="10" Padding="0,10,0,0">
+                        <Label Text="To" FontAttributes="Bold" FontSize="16" />
+                        <Label Grid.Column="1" Text="{Binding OpenedMessage.RecipientsDisplay}" FontSize="16" />
+                        <Label Grid.Row="1" Text="Cc" FontAttributes="Bold" FontSize="16" />
+                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding OpenedMessage.CcDisplay}" FontSize="16" />
+                    </Grid>
                 </VerticalStackLayout>
             </ScrollView>
         </Grid>
@@ -605,26 +612,27 @@
                 <Button Grid.Column="2" Text="Send" Command="{Binding Composer.SendCommand}" BackgroundColor="#0F5DB5" TextColor="White" CornerRadius="20" />
             </Grid>
             <VerticalStackLayout Grid.Row="1" Padding="20,8" Spacing="10">
-                <editors:SfAutocomplete Placeholder="To" MinimumHeightRequest="48"
+                <editors:SfAutocomplete x:Name="PhoneTo" Placeholder="To" MinimumHeightRequest="48"
                                         ItemsSource="{Binding Composer.PhoneContacts}" SelectionMode="Multiple" MultiSelectionDisplayMode="Token" TokensWrapMode="Wrap"
                                         SelectedItems="{Binding Composer.ToContacts, Mode=TwoWay}" Text="{Binding Composer.ToText, Mode=TwoWay}"
-                                        DisplayMemberPath="Name" TextMemberPath="Name" ShowBorder="True" ShowSuggestionsOnFocus="True"
+                                        DisplayMemberPath="Name" TextMemberPath="Name" ShowBorder="True" ShowSuggestionsOnFocus="True" SelectedDropDownItemBackground="#D7E8FB"
                                         TextSearchMode="Contains" IsDropDownShadowVisible="True" DropDownItemHeight="64" DropDownBackground="White">
                     <editors:SfAutocomplete.ItemTemplate>
                         <StaticResource Key="ContactSuggestionTemplate" />
                     </editors:SfAutocomplete.ItemTemplate>
                 </editors:SfAutocomplete>
-                <editors:SfAutocomplete Placeholder="Cc" MinimumHeightRequest="48"
+                <editors:SfAutocomplete x:Name="PhoneCc" Placeholder="Cc" MinimumHeightRequest="48"
                                         ItemsSource="{Binding Composer.PhoneContacts}" SelectionMode="Multiple" MultiSelectionDisplayMode="Token" TokensWrapMode="Wrap"
                                         SelectedItems="{Binding Composer.CcContacts, Mode=TwoWay}" Text="{Binding Composer.CcText, Mode=TwoWay}"
-                                        DisplayMemberPath="Name" TextMemberPath="Name" ShowBorder="True" ShowSuggestionsOnFocus="True"
+                                        DisplayMemberPath="Name" TextMemberPath="Name" ShowBorder="True" ShowSuggestionsOnFocus="True" SelectedDropDownItemBackground="#D7E8FB"
                                         TextSearchMode="Contains" IsDropDownShadowVisible="True" DropDownItemHeight="64" DropDownBackground="White">
                     <editors:SfAutocomplete.ItemTemplate>
                         <StaticResource Key="ContactSuggestionTemplate" />
                     </editors:SfAutocomplete.ItemTemplate>
                 </editors:SfAutocomplete>
-                <Entry Placeholder="Subject" Text="{Binding Composer.Subject}" />
-                <Editor Placeholder="Write your message" Text="{Binding Composer.Body}" HeightRequest="320" AutoSize="Disabled" />
+                    <controls:SfEntry Placeholder="Subject" Text="{Binding Composer.Subject}" />
+                    <BoxView HeightRequest="0.75" Color="Black" Margin="0,-10,0,0"/>
+                    <Editor Placeholder="Write your message" Text="{Binding Composer.Body}" HeightRequest="320" AutoSize="Disabled" />
             </VerticalStackLayout>
         </Grid>
     </Grid>

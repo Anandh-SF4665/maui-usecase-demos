@@ -100,14 +100,14 @@ public static class MockData
 
         var sent = new[]
         {
-            ("Me", "me@contoso.com", "Executive summary shared", "I shared the executive summary with the leadership team.", "ceo@contoso.com, finance@contoso.com", true),
-            ("Me", "me@contoso.com", "Workshop invitation", "The workshop invite was sent to the operations group.", "operations@contoso.com", false),
-            ("Me", "me@contoso.com", "Project status update", "Weekly status update sent to the delivery stakeholders.", "pm@contoso.com, engineering@contoso.com", false),
-            ("Me", "me@contoso.com", "Invoice follow-up", "I sent a follow-up on the outstanding invoices.", "accounts.payable@contoso.com", false),
-            ("Me", "me@contoso.com", "Hiring panel schedule", "The interview panel calendar has been circulated.", "talent@contoso.com", false),
-            ("Me", "me@contoso.com", "Budget revision sent", "The revised budget was shared with the finance leads.", "finance@contoso.com", true),
-            ("Me", "me@contoso.com", "Client call recap", "I sent the recap and next steps after the client call.", "clientsuccess@contoso.com", false),
-            ("Me", "me@contoso.com", "Security training reminder", "The reminder was sent to the entire department.", "allstaff@contoso.com", false),
+            ("Kerry Best", "kerrybest@contoso.com", "Executive summary shared", "I shared the executive summary with the leadership team.", "ceo@contoso.com, finance@contoso.com", true),
+            ("Kerry Best", "kerrybest@contoso.com", "Workshop invitation", "The workshop invite was sent to the operations group.", "operations@contoso.com", false),
+            ("Kerry Best", "kerrybest@contoso.com", "Project status update", "Weekly status update sent to the delivery stakeholders.", "pm@contoso.com, engineering@contoso.com", false),
+            ("Kerry Best", "kerrybest@contoso.com", "Invoice follow-up", "I sent a follow-up on the outstanding invoices.", "accounts.payable@contoso.com", false),
+            ("Kerry Best", "kerrybest@contoso.com", "Hiring panel schedule", "The interview panel calendar has been circulated.", "talent@contoso.com", false),
+            ("Kerry Best", "kerrybest@contoso.com", "Budget revision sent", "The revised budget was shared with the finance leads.", "finance@contoso.com", true),
+            ("Kerry Best", "kerrybest@contoso.com", "Client call recap", "I sent the recap and next steps after the client call.", "clientsuccess@contoso.com", false),
+            ("Kerry Best", "kerrybest@contoso.com", "Security training reminder", "The reminder was sent to the entire department.", "allstaff@contoso.com", false),
         };
 
         for (var i = 0; i < sent.Length; i++)
@@ -117,8 +117,8 @@ public static class MockData
             {
                 Id = $"sent-{i + 1}",
                 Folder = "Sent Items",
-                Sender = item.Item1,
-                SenderEmail = item.Item2,
+                Sender = "Kerry Best",
+                SenderEmail = "kerry.best@contoso.com",
                 Subject = item.Item3,
                 Preview = item.Item4,
                 Body = BuildBody(item.Item4, item.Item1),
@@ -144,11 +144,11 @@ public static class MockData
             {
                 Id = $"draft-{i + 1}",
                 Folder = "Drafts",
-                Sender = "Me",
-                SenderEmail = "me@contoso.com",
+                Sender = "Kerry Best",
+                SenderEmail = "kerrybest@contoso.com",
                 Subject = drafts[i].Item1,
                 Preview = drafts[i].Item3,
-                Body = BuildBody(drafts[i].Item3, "Me"),
+                Body = BuildBody(drafts[i].Item3, "Kerry Best"),
                 Recipients = drafts[i].Item2,
                 HasAttachments = i % 2 == 0,
                 ReceivedOn = DateTime.Today.AddDays(-i)
@@ -220,6 +220,10 @@ public static class MockData
         {
             var local = message.Recipients.Split(',')[0].Trim().Split('@')[0];
             var name = string.Join(' ', local.Split('.', StringSplitOptions.RemoveEmptyEntries).Select(x => char.ToUpper(x[0]) + x[1..]));
+            if (message.Folder != "Inbox" && string.IsNullOrEmpty(message.Cc))
+                message.Cc = new[] { "project.office@contoso.com", "hr@contoso.com", "legal@contoso.com" }[Math.Abs(message.Id.GetHashCode()) % 3];
+            message.RecipientsDisplay = message.Recipients;
+            message.CcDisplay = message.Cc;
             if (message.HasAttachments)
                 message.AttachmentName = new[] { "spec-v2.fig", "Pitch-Final.pptx", "boarding-pass.pdf", "Q3-Forecast.xlsx" }[Math.Abs(message.Id.GetHashCode()) % 4];
             if (message.Folder == "Inbox" && Math.Abs(message.Id.GetHashCode()) % 3 == 0)

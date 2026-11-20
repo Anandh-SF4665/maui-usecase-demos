@@ -69,7 +69,7 @@ public partial class ComposeViewModel : ObservableObject
         plainBody = System.Text.RegularExpressions.Regex.Replace(plainBody, @"\s+", " ");
         var recipients = Resolve(ToContacts, ToText);
         var cc = Resolve(CcContacts, CcText);
-        mailbox.SentItems.Insert(0, new MailMessage { Id = $"sent-{Guid.NewGuid():N}", Folder = "Sent Items", Sender = "Me", SenderEmail = "me@contoso.com", Subject = string.IsNullOrWhiteSpace(Subject) ? "(No subject)" : Subject, Preview = plainBody[..Math.Min(plainBody.Length, 80)], Body = plainBody, ReceivedOn = DateTime.Now, Recipients = recipients, Cc = cc, IsRead = true });
+        mailbox.SentItems.Insert(0, new MailMessage { Id = $"sent-{Guid.NewGuid():N}", Folder = "Sent Items", Sender = "Kerry Best", SenderEmail = "kerry.best@contoso.com", Subject = string.IsNullOrWhiteSpace(Subject) ? "(No subject)" : Subject, Preview = plainBody[..Math.Min(plainBody.Length, 80)], Body = plainBody, ReceivedOn = DateTime.Now, Recipients = recipients, RecipientsDisplay = recipients, Cc = cc, CcDisplay = cc, IsRead = true });
         mailbox.RefreshCounts();
         Reset();
         ShowMessage = true;

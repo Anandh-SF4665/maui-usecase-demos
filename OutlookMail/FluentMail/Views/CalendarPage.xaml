@@ -26,7 +26,7 @@
                         </Border>
                     </Grid>
                     <Border StrokeThickness="0" BackgroundColor="White" StrokeShape="RoundRectangle 16" Padding="4">
-                        <calendar:SfCalendar x:Name="PhoneCalendar" View="Month" SelectedDate="{Binding SelectedDate, Mode=TwoWay}" HeightRequest="{Binding PhoneCalendarHeight}" ShowTrailingAndLeadingDates="False" Background="White" />
+                        <calendar:SfCalendar x:Name="PhoneCalendar" View="Month" SelectedDate="{Binding SelectedDate, Mode=TwoWay}" SelectionBackground="#106EBE" TodayHighlightBrush="#106EBE" HeightRequest="{Binding PhoneCalendarHeight}" ShowTrailingAndLeadingDates="False" Background="White" />
                     </Border>
                     <VerticalStackLayout BindableLayout.ItemsSource="{Binding AgendaGroups}" Spacing="6">
                         <BindableLayout.ItemTemplate>

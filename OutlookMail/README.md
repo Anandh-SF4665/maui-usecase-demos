@@ -56,15 +56,6 @@ This sample does not use AI.
 - Syncfusion MAUI packages referenced in the project file
 - A Syncfusion license key if your environment requires one
 
-## AI Configuration
-No AI configuration is required.
-
-### Default Behavior
-
-- Mock AI: not used
-- Local/offline logic: used throughout the sample
-- Real cloud AI service: not used
-
 ### Environment Variables / Secrets
 
 | Variable | Required | Description |
@@ -87,7 +78,9 @@ If you want to target a specific platform, use the matching MAUI target framewor
 
 ## Output
 
-Visual summary: an Outlook-style mail workspace with a folder column, message list, search page, mobile folder popup, swipe actions on mobile, calendar view, and a compose experience.
+Visual summary: an Outlook-style mail workspace with a folder column, message list, calendar view, and a compose experience.
+
+![.NET MAUI Outlook Sample demo.](OutlookSampleDemo.gif)
 
 ## Project Structure
 

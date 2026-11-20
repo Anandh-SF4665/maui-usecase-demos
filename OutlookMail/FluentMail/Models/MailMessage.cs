@@ -12,7 +12,9 @@ public partial class MailMessage : ObservableObject
     public string Preview { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
     public string Recipients { get; set; } = string.Empty;
+    public string RecipientsDisplay { get; set; } = string.Empty;
     public string Cc { get; set; } = string.Empty;
+    public string CcDisplay { get; set; } = string.Empty;
     public string AttachmentName { get; set; } = string.Empty;
     public string Tag { get; set; } = string.Empty;
     public bool HasTag => !string.IsNullOrEmpty(Tag);

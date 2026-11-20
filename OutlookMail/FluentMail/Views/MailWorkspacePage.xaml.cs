@@ -9,6 +9,29 @@ public partial class MailWorkspacePage : ContentPage
     public MailWorkspacePage()
     {
         InitializeComponent();
+        if (DeviceInfo.Idiom != DeviceIdiom.Phone)
+            DesktopEditor.SetBinding(Syncfusion.Maui.RichTextEditor.SfRichTextEditor.ValueProperty,
+                new Binding("Composer.Body", BindingMode.TwoWay));
+        if (BindingContext is MailWorkspaceViewModel vm)
+            vm.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName is nameof(MailWorkspaceViewModel.IsComposing) or nameof(MailWorkspaceViewModel.IsMessageOpen))
+                {
+                    CloseDropDowns();
+                    // The popup can be re-opened asynchronously by the text reset; close it again afterwards.
+                    Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(150), CloseDropDowns);
+                    Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(500), CloseDropDowns);
+                }
+            };
+    }
+
+    void CloseDropDowns()
+    {
+        foreach (var box in new[] { DesktopTo, DesktopCc, PhoneTo, PhoneCc })
+        {
+            box.IsDropDownOpen = false;
+            box.Unfocus();
+        }
     }
 
     void OnMobileSwipeEnded(object? sender, Syncfusion.Maui.ListView.SwipeEndedEventArgs e)
