@@ -93,33 +93,6 @@ Visual summary: an Outlook-style mail workspace with a folder column, message li
 
 ## Troubleshooting
 
-**Issue 1: Missing AI configuration**  
-Cause: Required environment variables or secrets are not set.  
-Fix: Not applicable to this sample because it does not use AI configuration.
+### Path too long exception
 
-**Issue 2: Build or workload errors**  
-Cause: Missing SDK, workload, or incompatible package version.  
-Fix: Verify the required .NET version and install the needed MAUI workload.
-
-**Issue 3: UI content does not appear as expected**  
-Cause: Local mock data, bindings, or view-model state may be out of sync.  
-Fix: Check the relevant ViewModel and XAML binding paths.
-
-## Security and Privacy Notes
-
-- Do not hard-code API keys.
-- Avoid sending unnecessary sensitive data to any external service.
-- Minimize prompt content to only what is needed when AI is added later.
-- Prefer secure storage for credentials.
-- Review any external API calls for data exposure.
-
-## Supported Platforms
-
-- Android
-- iOS
-- Windows
-- macOS
-
-## License
-
-This repository is intended for demonstration and learning purposes. Follow the repository license and any applicable Syncfusion licensing terms before distributing or reusing the sample.
+If you encounter a "Path Too Long" exception while building the project, close Visual Studio, rename the repository folder to a shorter name, and rebuild the project.
